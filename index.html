@@ -1192,9 +1192,26 @@ function product(i,mode){
   '<div class="ln"><span>Tovar narxi</span><b>'+fmt(goods(p))+'</b></div><div class="ln"><span>Cargo ~'+p.kg+' kg × $'+CG[m]+'</span><span>~'+fmt(cargo(p,m))+'</span></div><div class="note">Cargo alohida hisoblanadi: tovar omborga kelganda haqiqiy og\'irlik o\'lchanadi.</div>'+
   '<div class="err" id="pe"></div><button class="btn" data-a="add" data-v="'+i+'">Savatga qo\'shish</button>'+simBox(i));
 }
-function login(step,phone){
-  if(step===1)openSheet('<h3 style="margin:0 0 6px">Kirish</h3><div class="note">Telefon raqamingizni kiriting, tasdiqlash kodi yuboriladi.</div><input id="lp" type="tel" placeholder="+998 90 123 45 67"><div class="demo">Demo rejim: SMS yuborilmaydi, kod <b>1234</b></div><div class="err" id="le"></div><button class="btn" data-a="sendcode">Kod yuborish</button>');
-  if(step===2)openSheet('<h3 style="margin:0 0 6px">Kodni kiriting</h3><div class="note">'+esc(phone)+' raqamiga yuborildi (demo kod: 1234)</div><input id="lc" inputmode="numeric" maxlength="4" placeholder="4 xonali kod"><input id="ln" placeholder="Ismingiz"><div class="err" id="le"></div><button class="btn" data-a="verify" data-v="'+esc(phone)+'">Kirish</button>');
+function login(){
+  var id=Math.random().toString(36).slice(2,12)+Date.now().toString(36);
+  openSheet('<h3 style="margin:0 0 6px">Kirish</h3><div class="note">Telegram botimizda telefon raqamingizni yuboring. Bot tasdiqlagach, bu yerda avtomatik kirasiz.</div><a id="tgl" class="btn" href="#" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none">Telegram orqali kirish</a><div class="note" id="tgs">Tayyorlanmoqda...</div>');
+  fetch(WORKER+"/customer-bot").then(function(r){return r.json()}).then(function(d){
+    var l=$("tgl"); if(!l||!d.username){if($("tgs"))$("tgs").textContent="Xato: bot topilmadi";return}
+    l.href="https://t.me/"+d.username+"?start=s_"+id;
+    if($("tgs"))$("tgs").textContent="Botni oching, 'Start' bosing va raqamni yuboring.";
+    var tries=0, timer=setInterval(function(){
+      tries++; if(tries>90){clearInterval(timer);return}
+      fetch(WORKER+"/login-status?id="+id).then(function(r){return r.json()}).then(function(x){
+        if(!x.ok)return;
+        clearInterval(timer);
+        S.sess={token:x.token,name:x.name};
+        try{localStorage.setItem("sarbon.sess",JSON.stringify(S.sess))}catch(e){}
+        S.user={name:x.name,phone:""};
+        fetch(WORKER+"/me?token="+x.token).then(function(r){return r.json()}).then(function(me){if(me.ok){S.user={name:me.name,phone:me.phone};save();render()}});
+        save(); closeSheet(); render();
+      }).catch(function(){});
+    },2000);
+  }).catch(function(){ if($("tgs"))$("tgs").textContent="Internet xatosi" });
 }
 function delivery(){
   openSheet('<h3 style="margin:0 0 6px">Yetkazish: UzPost filiali</h3><div class="note">1. Viloyatni tanlang</div><div class="tmap">'+REG.map(function(x){return '<button data-a="rg" data-v="'+esc(x)+'" class="'+(S.dr===x?"on":"")+'">'+esc(x)+'</button>'}).join("")+'</div><div class="note">2. Filial nomi va qayerda joylashgani</div><input id="bn" placeholder="Masalan: Chilonzor, 9-kvartal" value="'+esc(S.dl?S.dl.b:"")+'"><div class="err" id="de"></div><button class="btn" data-a="dsave">Saqlash</button><div class="note">Filial nomini uz.post/uz/map sahifasidan topishingiz mumkin.</div>');
@@ -1254,7 +1271,8 @@ document.addEventListener("click",function(e){
     items: S.cart.map(function(c){ return { n: P[c.i].n, q: c.q, sz: c.sz || "", col: c.col || "", m: c.m }; }),
     subtotal: cartSub(),
     discount: cartDisc(),
-    promo: S.promo || "",
+    session: S.sess ? S.sess.token : "",
+  promo: S.promo || "",
     cargo: cartCargo(),
     total: cartTotal(),
     uzp: (S.dl ? S.dl.r + ", " + S.dl.b : "")
@@ -1345,6 +1363,8 @@ nav.addEventListener("pointerup",end);nav.addEventListener("pointercancel",end);
 nav.addEventListener("click",function(e){if(sup){e.stopPropagation();e.preventDefault()}},true)})();
 
 var WORKER="https://sarbon-orders.winncloudd.workers.dev";
+try{var sv=JSON.parse(localStorage.getItem("sarbon.sess")||"null");if(sv&&sv.token){S.sess=sv;fetch(WORKER+"/me?token="+sv.token).then(function(r){return r.json()}).then(function(me){if(me.ok){S.user={name:me.name,phone:me.phone};render()}else{S.sess=null;localStorage.removeItem("sarbon.sess")}}).catch(function(){})}}catch(e){}
+
 Promise.all([fetch(WORKER+"/settings").then(function(r){return r.json()}),fetch(WORKER+"/products").then(function(r){return r.json()})]).then(function(res){
   var st=res[0], list=res[1];
   RATE=st.rate; USD=st.usd; MK=1+st.markup/100; CG={auto:st.cargoAuto,avia:st.cargoAvia};
