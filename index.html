@@ -965,7 +965,14 @@ var P=[
 {n:"Xiaomi Redmi A24 monitor 24 dyuym",y:360,c:"kompyuter",b:"#DDF1DC",s:27900,kg:4.3,av:false},
 {n:"Xiaomi A27Qi monitor 27 dyuym 2K",y:850,c:"kompyuter",b:"#FADDE6",s:19400,kg:6.3,av:false},
 {n:"KTC H27T22 monitor 27 dyuym 165Hz",y:1100,c:"kompyuter",b:"#DCE3FA",s:23100,kg:6.6,av:false},
-{n:"AOC 24G2 monitor 24 dyuym 144Hz",y:720,c:"kompyuter",b:"#D5F0EE",s:16500,kg:4.8,av:false}
+{n:"AOC 24G2 monitor 24 dyuym 144Hz",y:720,c:"kompyuter",b:"#D5F0EE",s:16500,kg:4.8,av:false},
+{n:"TEST telefon g'ilofi",y:22,c:"kompyuter",b:"#E8E3F5",s:1500,kg:0.1,av:false},
+{n:"TEST quloqchin",y:45,c:"kompyuter",b:"#DCE3FA",s:820,kg:0.15,av:false},
+{n:"TEST USB kabel",y:12,c:"kompyuter",b:"#FADDE6",s:2300,kg:0.05,av:false},
+{n:"TEST sumka",y:80,c:"kompyuter",b:"#FBEFD0",s:410,kg:0.6,av:false},
+{n:"TEST ko'zoynak",y:60,c:"kompyuter",b:"#DDF1DC",s:190,kg:0.1,av:false},
+{n:"TEST termos",y:55,c:"kompyuter",b:"#D5F0EE",s:660,kg:0.4,av:false},
+{n:"TEST kompyuter korpusi",y:150,c:"kompyuter",b:"#E4E9F7",s:3100,kg:4.5,av:false,img:"test-kompyuter.png"}
 ];
 var REG=["Toshkent sh.","Toshkent v.","Samarqand","Buxoro","Navoiy","Qashqadaryo","Surxondaryo","Jizzax","Sirdaryo","Farg'ona","Andijon","Namangan","Xorazm","Qoraqalpog'iston"];
 var BU=["Oziq-ovqat mahsulotlari","Tibbiy buyumlar","Ommaviy axborot vositalari (telefon, simkarta, smart soatlar)","Oltin, kumush va qimmatbaho zargarlik buyumlari","Qurollar, tamaki va giyohvand moddalar","Suyuqliklar, kukunsimon moddalar","Dronlar","Harbiy vositalar","18+ mahsulotlar","Diniy buyumlar","Batareyasi, akkumulyatori yoki magniti bor har qanday narsa","Telefon, kompyuter, noutbuk, AirPods","Yonuvchan mahsulotlar (zajigalka, gugurt va h.k.)","Sirena, migalka chiroqlari"];
@@ -1045,7 +1052,7 @@ var PROMOS={SARBON10:.1};
 function cartSub(){return S.cart.reduce(function(s,c){return s+goods(P[c.i])*c.q},0)}
 function cartDisc(){return S.promo&&PROMOS[S.promo]?Math.round(cartSub()*PROMOS[S.promo]/1000)*1000:0}
 function cartTotal(){return cartSub()-cartDisc()}
-function skOpts(p){var o={sz:null,col:null},n=p.n;
+function skOpts(p){if(p.olcham||p.rang)return{sz:(p.olcham&&p.olcham.length)?p.olcham:null,col:(p.rang&&p.rang.length)?p.rang:null};var o={sz:null,col:null},n=p.n;
  if(/Bolalar krossovka/i.test(n))o.sz=["28","30","32","34"];
  else if(/^Krossovka/i.test(n))o.sz=["38","40","41","42","43","44"];
  else if(/ko'ylak|Futbolka|Jinsi|Kurtka/i.test(n))o.sz=["S","M","L","XL"];
@@ -1336,6 +1343,15 @@ function end(){if(!down)return;down=false;if(!drag)return;drag=false;sup=true;se
  if(t&&t.dataset.v&&t.dataset.v!==S.tab){S.tab=t.dataset.v;if(S.tab==="catalog")S.sub="";S.anim=true;$("mv").classList.remove("open");render();window.scrollTo(0,0)}else{placePill();p.classList.remove("jig");void p.offsetWidth;p.classList.add("jig")}}
 nav.addEventListener("pointerup",end);nav.addEventListener("pointercancel",end);
 nav.addEventListener("click",function(e){if(sup){e.stopPropagation();e.preventDefault()}},true)})();
+
+var WORKER="https://sarbon-orders.winncloudd.workers.dev";
+Promise.all([fetch(WORKER+"/settings").then(function(r){return r.json()}),fetch(WORKER+"/products").then(function(r){return r.json()})]).then(function(res){
+  var st=res[0], list=res[1];
+  RATE=st.rate; USD=st.usd; MK=1+st.markup/100; CG={auto:st.cargoAuto,avia:st.cargoAvia};
+  PROMOS={}; Object.keys(st.promos||{}).forEach(function(k){PROMOS[k]=st.promos[k]/100});
+  list.forEach(function(x){ x.img = WORKER + x.img; P.push(x); });
+  render();
+}).catch(function(){});
 </script>
 </body>
 </html>
