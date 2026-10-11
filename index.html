@@ -1245,13 +1245,17 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
   }
   @media (pointer: coarse) { .lx-reveal, .lx-ring, .glass { display: none !important; } }
   /* ===== IXCHAM OYNA (telefon): tepa va past bo'shliq kichik ===== */
-  @media (max-height: 520px) and (min-width: 761px) {
+  @media (max-height: 560px) and (min-width: 761px) {
     .main { padding: 14px 12px 8px 24px; }
     .info { padding: 14px 24px 8px 0; gap: 8px; }
     .spec-float { left: 6px; bottom: 4px; text-shadow: 0 1px 6px rgba(0,0,0,.85); }
   }
   /* ===== SAYT BILAN QO'SHILIB KETISH: fon qatlamlari chetlarda yo'qoladi ===== */
   body.dusk, body { background: transparent !important; }
+  .lx-base, .lx-shade, .lx-reveal, .lx-ring, .glass { display: none !important; }
+  .stage { --ink: #1d2b4f; --muted: #4a5680; --sage: #2f3f86; }
+  .spec-line:hover { color: #0b1330; text-shadow: none; }
+  .spec-float { text-shadow: none !important; }
   .lx-base, .lx-shade {
     -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(180deg, transparent 0, #000 24%, #000 76%, transparent 100%);
     -webkit-mask-composite: source-in;
@@ -1699,6 +1703,7 @@ function markInteract() {
 }
 
 stage.addEventListener('pointerdown', e => {
+  userAt = performance.now();
   stage.setPointerCapture(e.pointerId);
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   markInteract();
@@ -1923,8 +1928,10 @@ function typeSpecs(i) {
   step();
 }
 
+let autoSwitching = false, userAt = 0;
 function selectProduct(i) {
   if (i === active) return;
+  if (!autoSwitching) userAt = performance.now();
   const old = active;
   const dir = Math.sign(i - old);
   active = i;
@@ -2080,7 +2087,7 @@ function frame(now) {
   } else {
     tcx = sr.left - hr.left + sr.width / 2;
     tcy = hr.height * 0.5;
-    tpx = Math.min(sr.width * 0.5, sr.height * 0.6) * (hr.height <= 520 ? 1.42 : 1.16);
+    tpx = Math.min(sr.width * 0.5, sr.height * 0.6) * (hr.height <= 560 ? 1.0 : 1.16);
     if (hr.width <= 760) {
       const ir = document.querySelector('.info').getBoundingClientRect();
       const top = sr.top - hr.top;
@@ -2102,6 +2109,15 @@ function frame(now) {
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
 }
+
+/* ---------- Har 3 soniyada keyingi tovarga o'tish ---------- */
+setInterval(() => {
+  if (paused || document.hidden || anim || drag || pointers.size) return;
+  if (performance.now() - userAt < 6000) return;   /* foydalanuvchi tegsa, 6 soniya kutadi */
+  const n = (active + 1) % rigs.length;
+  if (!rigs[n].loaded && !rigs[n].failed) return;
+  autoSwitching = true; selectProduct(n); autoSwitching = false;
+}, 3000);
 
 /* ---------- Ishga tushirish ---------- */
 function init() {
