@@ -874,8 +874,11 @@ html[data-theme="dark"] .bellp{background:rgba(26,30,72,.97);color:#ECEEFF}html[
 body{padding-top:calc(76px + env(safe-area-inset-top,0px))!important}
 /* ---- Vesper fon: tun rejimida aniq qora, ozgina blur video + dona-dona yulduzlar ---- */
 html[data-theme="dark"]{background:#000!important;animation:none!important}
+html[data-day] .csun{opacity:1;transform:none}
+html[data-day] .csun::before,html[data-day] .csun::after{opacity:1}
+html[data-day] .cmoon{opacity:0;transform:scale(.6) rotate(-35deg)}
 .sbbg{position:fixed;inset:0;z-index:-2;background:#000;overflow:hidden;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .8s,visibility .8s}
-html[data-theme="dark"] .sbbg{opacity:1;visibility:visible}
+html[data-day] .sbbg{opacity:1;visibility:visible}
 .sbbg video{position:absolute;left:-4%;top:-4%;width:108%;height:108%;object-fit:cover;filter:blur(3px) brightness(.8);transform:translateZ(0)}
 .sbbg::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.5)}
 .sbst{position:absolute;inset:0;z-index:1;animation:sbtw 6s ease-in-out infinite alternate}
@@ -2688,9 +2691,11 @@ function toggleTheme(btn){
   requestAnimationFrame(function(){requestAnimationFrame(function(){w.style.clipPath="circle("+R+"px at "+cx+"px "+cy+"px)"})});
   setTimeout(function(){S.night=nxt;applyTheme();try{localStorage.setItem("sarbon.theme",nxt?"dark":"light")}catch(e){}setTimeout(function(){w.remove()},80)},1150);
 }
-function applyTheme(){document.documentElement.setAttribute("data-theme",S.night?"dark":"light");
+function applyTheme(){var de=document.documentElement;
+  de.setAttribute("data-theme","dark");
+  if(S.night)de.removeAttribute("data-day");else de.setAttribute("data-day","1");
   var v=document.getElementById("sbvid");if(!v)return;
-  if(S.night){if(!v.dataset.i){v.dataset.i="1";try{var so=document.createElement("source");so.src=ghBase()+"vesper-bg.mp4";so.type="video/mp4";v.insertBefore(so,v.firstChild);v.load()}catch(e){}}
+  if(!S.night){if(!v.dataset.i){v.dataset.i="1";try{var so=document.createElement("source");so.src=ghBase()+"vesper-bg.mp4";so.type="video/mp4";v.insertBefore(so,v.firstChild);v.load()}catch(e){}}
     var p=v.play();if(p&&p.catch)p.catch(function(){})}else{try{v.pause()}catch(e){}}}
 function render(){
   var h=S.tab==="home"?home():S.tab==="catalog"?catalog():S.tab==="cart"?cart():S.tab==="orders"?orders():support();
@@ -2889,7 +2894,7 @@ catIdx=(catIdx+1)%8;var p=catPos(catIdx);if(!p)return;catHist.push(p);if(catHist
 var segs=box.querySelectorAll('.cseg');segs.forEach(function(el,k){var q=catHist[catHist.length-1-k];if(!q){el.style.opacity=0;return}el.style.opacity='';el.style.transform='translate('+(q.x-el.offsetWidth/2)+'px,'+(q.y-el.offsetHeight/2)+'px)'})}
 
 
-S.night=true;try{S.night=localStorage.getItem("sarbon.theme")!=="light"}catch(e){}
+try{S.night=localStorage.getItem("sarbon.theme")==="dark"}catch(e){}
 try{var sb=parseFloat(localStorage.getItem("sarbon.fb"));if(sb){fbB=sb;$("fab").style.bottom=sb+"px";$("ap").style.bottom=(sb+66)+"px"}}catch(e){}
 applyTheme();
 render();
