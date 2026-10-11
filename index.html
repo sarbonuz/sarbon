@@ -1252,14 +1252,13 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
   }
   /* ===== SAYT BILAN QO'SHILIB KETISH: fon qatlamlari chetlarda yo'qoladi ===== */
   body.dusk, body { background: transparent !important; }
-  .lx-base, .lx-shade, .lx-reveal, .lx-ring, .glass { display: none !important; }
-  .stage { --ink: #1d2b4f; --muted: #4a5680; --sage: #2f3f86; }
-  .spec-line:hover { color: #0b1330; text-shadow: none; }
-  .spec-float { text-shadow: none !important; }
-  .lx-base, .lx-shade {
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(180deg, transparent 0, #000 24%, #000 76%, transparent 100%);
+  .lx-reveal, .lx-ring, .glass, .lx-shade { display: none !important; }
+  .lx-base {
+    inset: 0 !important; animation: none !important; background-image: none !important;
+    background: radial-gradient(ellipse 70% 80% at 50% 48%, #14161b 0%, #07080a 60%, #000 100%) !important;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%), linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%);
     -webkit-mask-composite: source-in;
-            mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(180deg, transparent 0, #000 24%, #000 76%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%), linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%);
             mask-composite: intersect;
   }
 </style>
@@ -1679,14 +1678,85 @@ const LIGHTS = {
 };
 const lightCur = { env: 0.95, keyI: 1.6, rimI: 0.5, exp: 1.05, k: new THREE.Color(0xfff4e2) };
 
+/* ---------- Motion blur: oldingi kadr bilan aralashtirish (bitta qo'shimcha o'tish) ---------- */
+let mb = null, mbOn = false;
+try {
+  const ext = renderer.extensions;
+  if (renderer.capabilities.isWebGL2 && (ext.has('EXT_color_buffer_float') || ext.has('EXT_color_buffer_half_float'))) {
+    const msaa = ext.has('EXT_color_buffer_float') ? 4 : 0;
+    const mk = (samples, depth) => new THREE.WebGLRenderTarget(2, 2, {
+      type: THREE.HalfFloatType, format: THREE.RGBAFormat,
+      minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
+      depthBuffer: depth, samples
+    });
+    const vs = 'varying vec2 vUv;\nvoid main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+    const blendMat = new THREE.ShaderMaterial({
+      uniforms: { tCur: { value: null }, tPrev: { value: null }, k: { value: 0 } },
+      vertexShader: vs,
+      fragmentShader: ['uniform sampler2D tCur;', 'uniform sampler2D tPrev;', 'uniform float k;', 'varying vec2 vUv;',
+        'void main(){ gl_FragColor = mix(texture2D(tCur, vUv), texture2D(tPrev, vUv), k); }'].join('\n'),
+      depthTest: false, depthWrite: false, blending: THREE.NoBlending, toneMapped: false
+    });
+    const outMat = new THREE.ShaderMaterial({
+      uniforms: { tex: { value: null } },
+      vertexShader: vs,
+      fragmentShader: ['uniform sampler2D tex;', 'varying vec2 vUv;',
+        'void main(){', '  gl_FragColor = texture2D(tex, vUv);',
+        '  #include <tonemapping_fragment>', '  #include <colorspace_fragment>', '}'].join('\n'),
+      depthTest: false, depthWrite: false, blending: THREE.NoBlending, toneMapped: true
+    });
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), blendMat);
+    quad.frustumCulled = false;
+    const qs = new THREE.Scene(); qs.add(quad);
+    mb = { scene: mk(msaa, true), a: mk(0, false), b: mk(0, false), flip: false, quad, qs,
+           qcam: new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), blendMat, outMat, k: 0 };
+    mbOn = true;
+    renderer.debug.onShaderError = () => { mbOn = false; };
+  }
+} catch (err) { mb = null; mbOn = false; }
+
+function resizeMB(w, h) {
+  if (!mb) return;
+  w = Math.max(2, Math.round(w)); h = Math.max(2, Math.round(h));
+  mb.scene.setSize(w, h); mb.a.setSize(w, h); mb.b.setSize(w, h);
+}
+function renderMB() {
+  const m = mb;
+  renderer.setRenderTarget(m.scene);
+  renderer.render(scene, camera);
+  const prevRT = m.flip ? m.b : m.a, outRT = m.flip ? m.a : m.b;
+  m.quad.material = m.blendMat;
+  m.blendMat.uniforms.tCur.value = m.scene.texture;
+  m.blendMat.uniforms.tPrev.value = prevRT.texture;
+  m.blendMat.uniforms.k.value = m.k;
+  renderer.setRenderTarget(outRT);
+  renderer.render(m.qs, m.qcam);
+  m.quad.material = m.outMat;
+  m.outMat.uniforms.tex.value = outRT.texture;
+  renderer.setRenderTarget(null);
+  renderer.render(m.qs, m.qcam);
+  m.flip = !m.flip;
+}
+
+/* kadr ichida har safar layout o'qimaslik uchun o'lchamlar keshlanadi */
+let HR = null, SR = null;
+function refreshRects() { HR = hero.getBoundingClientRect(); SR = stage.getBoundingClientRect(); }
+const _kc = new THREE.Color();
+const _pq = new THREE.Quaternion();
+let _pqRig = null, _animSeen = null, _prevAx = 0, _prevEY = 0, mbSm = 0, _avgMs = 16, _nFr = 0;
+
 /* ---------- O'lchov ---------- */
 function resize() {
   const r = hero.getBoundingClientRect();
   renderer.setSize(r.width, r.height, false);
+  resizeMB(r.width, r.height);
+  refreshRects();
   camera.aspect = r.width / r.height;
   camera.updateProjectionMatrix();
 }
 new ResizeObserver(resize).observe(hero);
+new ResizeObserver(refreshRects).observe(stage);
+setInterval(refreshRects, 700);
 resize();
 
 /* ---------- Aylantirish ---------- */
@@ -1969,7 +2039,7 @@ let prev = performance.now();
 let swayClock = 0;
 let paused = false, rafOn = false, lastDraw = 0;
 const COARSE = matchMedia('(pointer: coarse)').matches || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-const MIN_DT = COARSE ? 24 : 0;
+const MIN_DT = COARSE ? 14 : 0;   /* ~60 fps (120Hz ekranda 60 bilan cheklanadi) */
 function wake() {
   if (rafOn || paused || document.hidden) return;
   rafOn = true; prev = performance.now(); requestAnimationFrame(frame);
@@ -2069,7 +2139,7 @@ function frame(now) {
   lightCur.keyI += (L.keyI - lightCur.keyI) * lf;
   lightCur.rimI += (L.rimI - lightCur.rimI) * lf;
   lightCur.exp += (L.exp - lightCur.exp) * lf;
-  lightCur.k.lerp(new THREE.Color(L.keyC), lf);
+  lightCur.k.lerp(_kc.set(L.keyC), lf);
   scene.environmentIntensity = lightCur.env;
   key.intensity = lightCur.keyI;
   key.color.copy(lightCur.k);
@@ -2077,8 +2147,8 @@ function frame(now) {
   renderer.toneMappingExposure = lightCur.exp;
 
   /* Kadrlash: markaz va masofa */
-  const hr = hero.getBoundingClientRect();
-  const sr = stage.getBoundingClientRect();
+  if (!HR) refreshRects();
+  const hr = HR, sr = SR;
   let tcx, tcy, tpx;
   if (focusMode) {
     tcx = hr.width / 2;
@@ -2106,7 +2176,33 @@ function frame(now) {
   camera.setViewOffset(W, H, W / 2 - camCX, H / 2 - camCY, W, H);
   camera.updateProjectionMatrix();
 
-  renderer.render(scene, camera);
+  /* Motion blur kuchi: model ekranda qancha tez siljiyotganiga qarab */
+  if (mbOn) {
+    const R = 0.7 * camPX * zoom;
+    if (_pqRig !== rig) { _pqRig = rig; _pq.copy(rig.spin.quaternion); }
+    let mvPx = R * _pq.angleTo(rig.spin.quaternion);
+    _pq.copy(rig.spin.quaternion);
+    if (anim) {
+      const ax = anim.inn.pivot.position.x * camPX * zoom, ey = anim.inn.extraYaw;
+      if (_animSeen !== anim) { _animSeen = anim; _prevAx = ax; _prevEY = ey; }
+      mvPx += Math.abs(ax - _prevAx) + Math.abs(ey - _prevEY) * R;
+      _prevAx = ax; _prevEY = ey;
+    } else _animSeen = null;
+    const mvN = mvPx * (1 / 60) / Math.max(dt, 1 / 240);
+    mbSm += (mvN - mbSm) * 0.5;
+    let k = 0.62 * mbSm / (mbSm + 6);
+    mb.k = k < 0.02 ? 0 : k;
+    /* qurilma sekin bo'lsa, motion blur o'zi o'chadi (qotib qolmasligi uchun) */
+    _avgMs += (Math.min(50, dt * 1000) - _avgMs) * 0.05;
+    if (++_nFr > 120 && _avgMs > 24) mbOn = false;
+  }
+  if (mbOn) {
+    try { renderMB(); }
+    catch (err) { mbOn = false; renderer.setRenderTarget(null); renderer.render(scene, camera); }
+  } else {
+    renderer.setRenderTarget(null);
+    renderer.render(scene, camera);
+  }
   requestAnimationFrame(frame);
 }
 
