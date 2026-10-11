@@ -845,6 +845,12 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
 
 
 </style>
+<style>
+/* menyu tugmasi pastga (qidiruv qatori bilan bir qatorga), qidiruv esa yuqoriga va tugmaning o'ng tomoniga */
+.top>.ib[data-a="menu"]{transform:translateY(72px)}
+.top.up>.ib[data-a="menu"]{opacity:0;pointer-events:none}
+#app .search{margin:-1px 14px 0 66px;position:relative;z-index:6}
+</style>
 <style>.b3d{margin:0}#b3dhost{position:absolute;z-index:1;left:0;top:0;width:100%;height:0;overflow:hidden;background:transparent;isolation:isolate;display:none;pointer-events:auto;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);mask-composite:intersect}#b3dhost iframe{position:absolute;left:0;top:0;border:0;width:1040px;height:640px;transform-origin:0 0;background:transparent;will-change:transform}</style>
 <script type="text/plain" id="hero3d-src"><!DOCTYPE html>
 <html lang="uz">
@@ -1701,6 +1707,7 @@ const lightCur = { env: 0.95, keyI: 1.6, rimI: 0.5, exp: 1.05, k: new THREE.Colo
    Harakat yo'q  -> sahna to'g'ridan-to'g'ri ekranga chiziladi (100% tiniq, qo'shimcha o'tish yo'q)
    Harakat bor   -> sahna bir marta RT ga chiziladi, so'ng tezlik yo'nalishi bo'ylab 11 ta o'qish bilan blur */
 let mb = null, mbOn = false, mbStrikes = 0, mbOffAt = 0, mbVX = 0, mbVY = 0;
+const MB_STRENGTH = 0.25;        /* 0 = blur butunlay o'chiq, 0.25 = yengil, 0.75 = kuchli */
 const MB_SCALE = 0.85;           /* blur paytida ichki o'lcham (blur yashiradi), tinch holatda esa 100% */
 try {
   const ext = renderer.extensions;
@@ -2234,18 +2241,18 @@ function frame(now) {
     bx *= nf; by *= nf;
     if (Math.hypot(bx, by) < 0.35) { mbVX = 0; mbVY = 0; }          /* to'xtadi -> darhol tiniq */
     else { mbVX += (bx - mbVX) * 0.6; mbVY += (by - mbVY) * 0.6; }
-    const SHUTTER = 0.75;
+    const SHUTTER = MB_STRENGTH;
     let lx = mbVX * SHUTTER, ly = mbVY * SHUTTER;
-    const cap = Math.max(40, hr.width * 0.07), ll = Math.hypot(lx, ly);
+    const cap = Math.max(10, hr.width * 0.02), ll = Math.hypot(lx, ly);
     if (ll > cap) { lx *= cap / ll; ly *= cap / ll; }
     blurPx = Math.hypot(lx, ly);
     bdx = lx / hr.width; bdy = ly / hr.height;
     _avgMs += (Math.min(50, dt * 1000) - _avgMs) * 0.05;
-    if (blurPx > 1.2 && ++_nFr > 40 && _avgMs > 26) { mbOn = false; mbOffAt = now; mbStrikes++; _nFr = 0; }
+    if (blurPx > 0.8 && ++_nFr > 40 && _avgMs > 26) { mbOn = false; mbOffAt = now; mbStrikes++; _nFr = 0; }
   } else if (mb && mbStrikes < 3 && now - mbOffAt > 5000) {
     mbOn = true; _avgMs = 16; _nFr = 0; mbVX = mbVY = 0;
   }
-  if (mbOn && blurPx > 1.2) {
+  if (mbOn && MB_STRENGTH > 0 && blurPx > 0.8) {
     try { renderMB(bdx, bdy); }
     catch (err) { mbOn = false; mbStrikes = 9; renderer.setRenderTarget(null); renderer.render(scene, camera); }
   } else {
