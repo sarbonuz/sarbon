@@ -845,8 +845,1316 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
 
 
 </style>
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
-<style>.b3d{margin:14px 0}.b3d:empty{display:none}.b3d-in{display:flex;border-radius:22px;overflow:hidden;height:190px;padding:4px}.b3d-in model-viewer{flex:1 1 0;min-width:0;height:100%;background:transparent;--poster-color:transparent;touch-action:pan-y}</style>
+<style>.b3d{margin:14px 0}#b3dhost{position:absolute;z-index:1;left:0;top:0;width:100%;height:0;overflow:hidden;border-radius:22px;clip-path:inset(0 round 22px);background:#14170f;isolation:isolate;display:none}#b3dhost iframe{position:absolute;left:0;top:0;border:0;width:1280px;height:600px;transform-origin:0 0;background:transparent}</style>
+<script type="text/plain" id="hero3d-src"><!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sarbon — 3D mahsulotlar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<script>window.SARBON_MODELS=/*__MODELS__*/{};<\/script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+<\/script>
+<style>
+  :root {
+    --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+    --sans: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+    --bg: #f6f1e7; --panel: #fbf8f1; --line: #e7e0d1; --ink: #1b1a17; --muted: #6d685d;
+    --sage: #4d5a3d; --sage-ink: #ffffff; --sage-tint: #e9ebdc; --chip: #efeadd;
+    --shadow: 60,48,28;
+    --ease: cubic-bezier(.22,.8,.24,1);
+  }
+  .hero[data-light="dusk"] {
+    --bg: transparent; --panel: rgba(27,31,21,.55); --line: rgba(45,51,36,.8); --ink: #f2ecdf; --muted: #a8a392;
+    --sage: #a9b98a; --sage-ink: #14170f; --sage-tint: #283020; --chip: #262b1d; --shadow: 0,0,0;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink); overflow: hidden;
+    font-family: var(--sans); -webkit-font-smoothing: antialiased;
+  }
+  body.dusk { background: #14170f; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; }
+  .ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* ===== HERO GRID ===== */
+  .hero {
+    position: relative; height: 100vh; height: 100dvh; overflow: hidden;
+    display: grid; grid-template-columns: 196px minmax(0,1fr) clamp(300px,27vw,356px);
+    background: var(--bg); color: var(--ink);
+    transition: background .6s, color .6s;
+  }
+  .bg-video {
+    position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    z-index: 0; pointer-events: none;
+  }
+  .bg-shade {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55));
+  }
+  .hero { background: transparent !important; position: relative; z-index: 2; }
+
+  /* ===== FON: 2 qatlam + kursor spotlight ===== */
+  .lx-base, .lx-reveal {
+    position: fixed; inset: 0; background-position: center; background-size: cover; background-repeat: no-repeat;
+  }
+  .lx-base { z-index: 0; inset: -24px; filter: blur(2.5px); background-image: url("https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85"); animation: lxZoom 1.8s cubic-bezier(.16,1,.3,1) both; }
+  .lx-shade { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.6)); }
+  .lx-reveal {
+    z-index: 1; pointer-events: none; background-image: url("https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_201152_bba90a12-bf12-459f-91f0-51f237dbaf3b.png&w=1280&q=85");
+    --mx: -999px; --my: -999px;
+    -webkit-mask-image: radial-gradient(circle 260px at var(--mx) var(--my), #000 0%, #000 40%, rgba(0,0,0,.75) 60%, rgba(0,0,0,.4) 75%, rgba(0,0,0,.12) 88%, transparent 100%);
+            mask-image: radial-gradient(circle 260px at var(--mx) var(--my), #000 0%, #000 40%, rgba(0,0,0,.75) 60%, rgba(0,0,0,.4) 75%, rgba(0,0,0,.12) 88%, transparent 100%);
+  }
+  .lx-reveal::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(74,140,62,.55), rgba(40,96,40,.45));
+    mix-blend-mode: color;
+  }
+  .lx-ring {
+    position: fixed; z-index: 1; width: 520px; height: 520px; pointer-events: none;
+    left: var(--mx, -999px); top: var(--my, -999px); transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(120,190,90,.16) 0%, rgba(120,190,90,.05) 45%, transparent 70%);
+    mix-blend-mode: screen;
+  }
+  @keyframes lxZoom { from { transform: scale(1.12); } to { transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .lx-base { animation: none; } }
+
+  /* ===== GLASS LENS (iOS-uslubidagi, sichqonchaga ergashadi) ===== */
+  .glass {
+    position: fixed; z-index: 3; width: 150px; height: 150px; border-radius: 50%;
+    left: -999px; top: -999px; pointer-events: none; will-change: transform;
+    backdrop-filter: blur(7px) saturate(1.5) brightness(1.08);
+    -webkit-backdrop-filter: blur(7px) saturate(1.5) brightness(1.08);
+    background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.03) 60%, rgba(255,255,255,.12));
+    border: 1px solid rgba(255,255,255,.38);
+    box-shadow: inset 0 1px 2px rgba(255,255,255,.55), inset 0 -10px 24px rgba(255,255,255,.06), 0 14px 36px rgba(0,0,0,.28);
+  }
+  /* ===== SPECIFICATIONS: modelning chetida, yozilib boradi ===== */
+  .spec-float {
+    position: absolute; left: 52px; bottom: 96px; width: min(330px, 30%); z-index: 6;
+    font-size: 12.5px; line-height: 1.55; color: var(--ink); pointer-events: auto;
+  }
+  .spec-float .eyebrow { margin-bottom: 10px; }
+  .spec-line {
+    display: block; margin-top: 9px; cursor: zoom-in; transform-origin: left center;
+    transition: transform .55s cubic-bezier(.22,1,.36,1), color .35s, text-shadow .35s;
+  }
+  .spec-line:hover { transform: scale(1.14) translateX(8px); color: #fff; text-shadow: 0 0 14px rgba(255,255,255,.25); }
+  .spec-line .k { color: var(--sage); font-weight: 600; }
+  .spec-caret { display: inline-block; width: 6px; height: 13px; margin-left: 2px; vertical-align: -2px; background: var(--sage); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (max-width: 760px) { .spec-float { display: none; } .glass { width: 96px; height: 96px; } }
+
+
+  .side, .card { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  #gl {
+    position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .side {
+    display: flex; flex-direction: column; padding: 22px 12px 18px 24px;
+    border-right: 1px solid var(--line); transition: opacity .5s var(--ease), transform .5s var(--ease);
+  }
+  .brand { font-family: var(--serif); font-size: 26px; letter-spacing: -.01em; line-height: 1.1; }
+  .nav { margin: 20px 0 12px; display: grid; gap: 2px; }
+  .nav button {
+    display: flex; align-items: center; gap: 16px; padding: 7px 10px; border-radius: 10px;
+    font-size: 14.5px; text-align: left; transition: background .2s;
+  }
+  .nav button { position: relative; overflow: hidden; isolation: isolate; }
+  .nav button::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.16) 50%, transparent 70%);
+    transform: translateX(-120%); transition: transform 0.6s ease;
+  }
+  .nav button:hover { background: var(--chip); }
+  .nav button:hover::before { transform: translateX(120%); }
+  .tab, .lens-btn, .buy { position: relative; overflow: hidden; isolation: isolate; }
+  .tab::before, .lens-btn::before, .buy::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.22) 48%, transparent 76%);
+    transform: translateX(-130%); transition: transform 0.65s ease;
+  }
+  .tab:hover::before, .lens-btn:hover::before, .buy:hover::before { transform: translateX(130%); }
+  .nav button[aria-current="page"] { background: var(--sage-tint); }
+  .nav small { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
+  .feat {
+    margin-top: auto; background: var(--sage-tint); border-radius: 10px; padding: 14px 14px 16px;
+  }
+  .eyebrow {
+    font-size: 9.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+    font-weight: 600;
+  }
+  .pic { position: relative; display: block; }
+  .pic:not(.has)::after {
+    content: "Rasm"; position: absolute; inset: 0; display: grid; place-items: center;
+    border: 1px dashed var(--line); border-radius: 8px; font-size: 11px; color: var(--muted);
+  }
+  .pic img { width: 100%; height: 100%; object-fit: contain; display: none; }
+  .pic.has img { display: block; }
+  .feat .pic { width: 92px; height: 76px; margin: 10px auto 8px; }
+  .feat h3 { font-family: var(--serif); font-weight: 500; font-size: 18px; }
+  .feat p { font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 4px; }
+  .link {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .link .ic { width: 14px; height: 14px; }
+
+  /* ===== CENTRE ===== */
+  .main {
+    display: grid; grid-template-rows: auto minmax(0,1fr); padding: 48px 18px 14px 26px;
+    min-width: 0; transition: opacity .5s var(--ease), transform .5s var(--ease);
+  }
+  .tabs { display: flex; gap: 28px; }
+  .tab {
+    width: 130px; padding: 8px 8px 11px; display: grid; justify-items: center; gap: 2px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    transition: transform .2s var(--ease), background .3s, border-color .3s;
+  }
+  .tab:hover { transform: translateY(-2px); }
+  .tab .pic { width: 58px; height: 52px; }
+  .tab .n { font-family: var(--serif); font-size: 15.5px; }
+  .tab .l { font-family: var(--serif); font-style: italic; font-size: 12.5px; color: var(--muted); }
+  .tab[aria-selected="true"] {
+    background: var(--sage-tint); border-color: color-mix(in srgb, var(--sage) 45%, transparent);
+  }
+  .stage {
+    position: relative; min-height: 0; touch-action: pan-y; cursor: grab; user-select: none;
+    outline: none;
+  }
+  .stage.drag { cursor: grabbing; }
+  .shadow {
+    position: absolute; left: 50%; bottom: 15%; width: min(62%,460px); height: 44px;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(var(--shadow),.22), transparent);
+    transition: opacity .4s, transform .4s;
+  }
+  .stage.switching .shadow { opacity: 0; transform: translateX(-50%) scaleX(.4); }
+  .loader {
+    position: absolute; inset: 0; display: grid; place-items: center; align-content: center;
+    gap: 12px; text-align: center; color: var(--muted); font-size: 12.5px;
+    transition: opacity .4s; pointer-events: none;
+  }
+  .loader::before {
+    content: ""; width: 30px; height: 30px; margin: 0 auto; border-radius: 50%;
+    border: 1.5px solid var(--line); border-top-color: var(--sage);
+    animation: spin 1s linear infinite;
+  }
+  .loader.off { opacity: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fallback {
+    position: absolute; left: 50%; top: 50%; width: min(60%,360px); transform: translate(-50%,-50%);
+    display: none; pointer-events: none;
+  }
+  .fallback.show { display: block; }
+  .fallback img { width: 100%; height: auto; }
+  .hint {
+    position: absolute; top: 0; right: 0; display: flex; align-items: center; gap: 6px;
+    font-size: 11.5px; color: var(--muted); transition: opacity .5s;
+  }
+  .hint .ic { width: 16px; height: 16px; }
+  .hint.gone { opacity: 0; }
+  .pnav {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 6;
+    width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+    border: 1px solid rgba(255,255,255,.22); background: rgba(10,12,20,.25);
+    color: var(--ink); opacity: .7; transition: opacity .2s, border-color .2s, background .2s;
+  }
+  .pnav:hover { opacity: 1; border-color: var(--sage); background: rgba(10,12,20,.45); }
+  .pnav .ic { width: 16px; height: 16px; }
+  .pnav.prev { left: 8px; }
+  .pnav.next { right: 8px; }
+  .rail {
+    position: absolute; left: 0; top: 0; z-index: 6;
+    display: grid; gap: 9px;
+  }
+  .rail button {
+    width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--panel); border: 1px solid var(--line); transition: border-color .2s, transform .15s, background .2s;
+  }
+  .rail button:hover { border-color: var(--sage); }
+  .rail button:active { transform: scale(.92); }
+  .rail button[aria-pressed="true"] { background: var(--sage); color: var(--sage-ink); border-color: var(--sage); }
+  .rail .ic { width: 17px; height: 17px; }
+  .turn {
+    position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); z-index: 6;
+    display: flex; align-items: center; gap: 4px; padding: 3px 6px; border-radius: 999px;
+    background: var(--panel); border: 1px solid var(--line); font-size: 13px;
+  }
+  .turn button { padding: 6px 10px; border-radius: 999px; display: grid; place-items: center; }
+  .turn button:hover { background: var(--chip); }
+  .turn .ic { width: 16px; height: 16px; }
+  .caption {
+    position: absolute; left: 0; right: 0; bottom: 0; text-align: center; z-index: 6;
+    font-family: var(--serif); font-style: italic; font-size: clamp(16px,1.55vw,20px);
+  }
+
+  /* ===== RIGHT COLUMN ===== */
+  .info {
+    display: grid; grid-template-rows: auto minmax(0,1fr); gap: 16px; padding: 13px 26px 14px 0;
+    min-width: 0; transition: opacity .5s var(--ease), transform .5s var(--ease);
+  }
+  .topbar { display: flex; align-items: center; gap: 8px; }
+  .search {
+    flex: 1; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: var(--muted);
+  }
+  .search input {
+    flex: 1; min-width: 0; border: 0; background: none; font: inherit; font-size: 11.5px; color: var(--ink);
+  }
+  .search input:focus { outline: none; }
+  .search .ic { width: 15px; height: 15px; }
+  .icon-btn {
+    width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+    border: 1px solid var(--line); background: var(--panel);
+  }
+  .icon-btn .ic { width: 16px; height: 16px; }
+  .acc {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--bg);
+    display: grid; place-items: center;
+  }
+  .acc .ic { width: 13px; height: 13px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    padding: 22px 20px 16px; overflow-y: auto; min-height: 0; display: flex; flex-direction: column;
+    scrollbar-width: thin;
+  }
+  .detail { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .detail > * { transition: opacity .2s ease-in, transform .2s ease-in; }
+  .detail.out > * { opacity: 0; transform: translateY(-6px); }
+  .detail.in > * { animation: rise .6s var(--ease) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  h1 {
+    font-family: var(--serif); font-weight: 500; font-size: clamp(40px,4.2vw,54px);
+    line-height: 1; letter-spacing: -.025em; margin-top: 8px;
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .tags span {
+    font-size: 11.5px; padding: 6px 13px; border-radius: 999px; background: var(--chip);
+  }
+  .desc { font-size: 13.5px; line-height: 1.55; margin-top: 14px; text-wrap: pretty; color: var(--ink); }
+  h2 {
+    font-family: var(--serif); font-weight: 400; font-size: 21px; margin-top: 18px;
+    border-top: 1px solid var(--line); padding-top: 14px;
+  }
+  .trait {
+    display: grid; grid-template-columns: 22px 88px minmax(0,1fr); gap: 16px;
+    align-items: center; margin-top: 10px; font-size: 13px;
+  }
+  .trait .ic { width: 22px; height: 22px; }
+  .trait .k { color: var(--muted); }
+  .habitat { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; line-height: 1.5; }
+  .habitat .ic { width: 22px; height: 22px; margin-top: 1px; }
+  .variants { margin-top: 16px; }
+  .variants .lab { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--chip); font-size: 12.5px;
+  }
+  .chip i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--line); }
+  .chip[aria-pressed="true"] { border-color: color-mix(in srgb, var(--sage) 60%, transparent); background: var(--sage-tint); }
+  .price { margin-top: 16px; font-family: var(--serif); font-size: 22px; }
+  .credit { margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .buy {
+    margin-top: 10px; height: 40px; border-radius: 8px; background: var(--sage); color: var(--sage-ink);
+    font-size: 13.5px; font-weight: 700;
+  }
+  .lens-btn {
+    margin-top: auto; display: grid; grid-template-columns: 76px minmax(0,1fr) 18px; gap: 14px;
+    align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 8px;
+    text-align: left; transition: border-color .2s, background .2s; width: 100%;
+  }
+  .lens-btn:hover, .lens-btn[aria-pressed="true"] { border-color: var(--sage); background: var(--sage-tint); }
+  .lens {
+    width: 76px; height: 76px; border-radius: 50%; background: var(--chip) center / 520% no-repeat;
+    border: 1px solid var(--line);
+  }
+  .lens-btn h4 { font-family: var(--serif); font-weight: 500; font-size: 18px; }
+  .lens-btn p { font-size: 11.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .lens-btn .ic { transition: transform .3s var(--ease); }
+  .lens-btn[aria-pressed="true"] .ic { transform: rotate(180deg); }
+
+  /* ===== FOCUS MODE ===== */
+  .hero.focus .side { opacity: 0; transform: translateX(-24px); pointer-events: none; }
+  .hero.focus .info { opacity: 0; transform: translateX(24px); pointer-events: none; }
+  .hero.focus .tabs { opacity: 0; transform: translateY(-16px); pointer-events: none; }
+  .tabs { transition: opacity .5s var(--ease), transform .5s var(--ease); }
+
+  /* ===== TABLET ===== */
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: minmax(0,1fr) clamp(280px,36vw,340px); }
+    .side { display: none; }
+    .main { padding-left: 20px; }
+  }
+
+  /* ===== SHORT ===== */
+  @media (max-height: 620px) and (min-width: 761px) {
+    .main { padding-top: 22px; }
+    .side { padding-top: 14px; }
+    .feat .pic, .feat p { display: none; }
+  }
+
+  /* ===== PHONE ===== */
+  .phonebar { display: none; }
+  @media (max-width: 760px) {
+    .hero {
+      grid-template-columns: minmax(0,1fr); grid-template-rows: auto minmax(0,1fr) auto;
+      height: 100vh; height: 100dvh;
+    }
+    .side { display: none; }
+    .phonebar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px 0; position: relative; z-index: 7;
+    }
+    .phonebar .brand { font-size: 21px; }
+    .phonebar .pb-right { display: flex; gap: 8px; }
+    .phonebar .search { display: none; }
+    .main { padding: 10px 14px 6px; grid-template-rows: auto minmax(0,1fr); }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .tab { width: auto; grid-template-columns: 44px 1fr; grid-template-rows: auto auto; justify-items: start;
+      column-gap: 8px; padding: 6px 10px; align-items: center; }
+    .tab .pic { width: 44px; height: 40px; grid-row: span 2; }
+    .tab .n { font-size: 15px; }
+    .tab .l { font-size: 12px; }
+    .rail { gap: 7px; }
+    .rail button { width: 34px; height: 34px; }
+    .turn { bottom: 30px; }
+    .caption { font-size: 15px; }
+    .hint { display: none; }
+    .shadow { bottom: 17%; height: 30px; }
+    .info { grid-template-rows: auto; padding: 0; position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; }
+    .info .topbar { display: none; }
+    .card {
+      max-height: 40dvh; border-radius: 16px 16px 0 0; border: 0; border-top: 1px solid var(--line);
+      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+    }
+    h1 { font-size: 34px; }
+    h2 { font-size: 19px; }
+    .hero.focus .info { transform: translateY(100%); opacity: 0; }
+    .hero.focus .phonebar { opacity: 0; pointer-events: none; }
+    .info { transition: opacity .5s var(--ease), transform .5s var(--ease); }
+    .phonebar { transition: opacity .5s; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body class="dusk">
+<div class="lx-base" aria-hidden="true"></div>
+<div class="lx-shade" aria-hidden="true"></div>
+<div class="lx-reveal" aria-hidden="true"></div>
+<div class="lx-ring" aria-hidden="true"></div>
+<div class="glass" id="glass" aria-hidden="true"></div>
+
+<!-- SVG ikonkalar (chiziq uslubi) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-house" viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5"/></symbol>
+  <symbol id="i-watch" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="3"/><path d="M9 6.5 9.6 3h4.8l.6 3.5M9 17.5l.6 3.5h4.8l.6-3.5M17.5 10.5v3"/></symbol>
+  <symbol id="i-buds" viewBox="0 0 24 24"><path d="M7 5a3 3 0 0 0-3 3v5a3 3 0 0 0 3 3h1V8a3 3 0 0 0-1-3Z"/><path d="M17 5a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3h-1V8a3 3 0 0 1 1-3Z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9 6.8 19.5l1-5.8-4.2-4.1 5.8-.8Z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15Z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></symbol>
+  <symbol id="i-arrow-l" viewBox="0 0 24 24"><path d="M19 12H5m5-5-5 5 5 5"/></symbol>
+  <symbol id="i-arrow-r" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4M11 8v6M8 11h6"/></symbol>
+  <symbol id="i-zoom-out" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4M8 11h6"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.2 5.2l1.8 1.8M17 17l1.8 1.8M5.2 18.8 7 17M17 7l1.8-1.8"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 12V6.5a1.5 1.5 0 0 1 3 0V11m0-1V4.5a1.5 1.5 0 0 1 3 0V11m0-1V5.5a1.5 1.5 0 0 1 3 0V13c0 4-2.2 6.5-6 6.5-2.6 0-4-1.5-5-3.5L4.5 12a1.5 1.5 0 0 1 2.4-1.8L8 12"/></symbol>
+  <symbol id="i-ccw" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4v4h4"/></symbol>
+  <symbol id="i-cw" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4v4h-4"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3.5 16.5 16.5 3.5l4 4-13 13Z"/><path d="m7.5 12.5 2 2m1.5-5 2 2m1.5-5 2 2"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 3v3m6-3v3M9 18v3m6-3v3M3 9h3m-3 6h3M18 9h3m-3 6h3"/></symbol>
+  <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3" y="7.5" width="16" height="9" rx="2"/><path d="M21 10.5v3M6.5 10.5h7v3h-7z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5 19 6v5.5c0 4.2-2.9 7.5-7 9-4.1-1.5-7-4.8-7-9V6Z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 3 2.5 14 0 17M12 3.5c-2.5 3-2.5 14 0 17"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+</svg>
+
+<div class="hero" id="hero" data-light="dusk">
+
+  <!-- Sidebar -->
+  <aside class="side">
+    <div class="brand">Sarbon</div>
+    <nav class="nav" aria-label="Mahsulot turlari">
+      <button type="button" data-goto="0" aria-current="page">
+        <svg class="ic"><use href="#i-watch"/></svg>
+        <span>iWatch<small>Smartwatch</small></span>
+      </button>
+      <button type="button" data-goto="1">
+        <svg class="ic"><use href="#i-buds"/></svg>
+        <span>AirPods<small>Quloqchin</small></span>
+      </button>
+      <button type="button" data-goto="2">
+        <svg class="ic"><use href="#i-phone"/></svg>
+        <span>iPhone 18 Pro Max<small>Smartfon</small></span>
+      </button>
+    </nav>
+    <div class="feat">
+      <div class="eyebrow">Tanlangan mahsulot</div>
+      <span class="pic" id="featPic"><img alt=""></span>
+      <h3 id="featName"></h3>
+      <p id="featText"></p>
+      <a class="link" href="#" id="featLink">Batafsil <svg class="ic"><use href="#i-arrow-r"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- Markaziy ustun -->
+  <section class="main">
+    <div class="phonebar">
+      <div class="brand">Sarbon</div>
+      <div class="pb-right">
+        <button class="icon-btn" type="button" aria-label="Qidirish"><svg class="ic"><use href="#i-search"/></svg></button>
+        <button class="icon-btn" type="button" aria-label="Bildirishnomalar"><svg class="ic"><use href="#i-bell"/></svg></button>
+        <button class="acc" type="button" aria-label="Hisob"><svg class="ic"><use href="#i-user"/></svg></button>
+      </div>
+    </div>
+
+    <div>
+      <div class="tabs" role="tablist" aria-label="Mahsulotlar">
+        <button class="tab" role="tab" type="button" aria-selected="true" data-tab="0">
+          <span class="pic"><img alt=""></span>
+          <span class="n">iWatch</span>
+          <span class="l">Smartwatch</span>
+        </button>
+        <button class="tab" role="tab" type="button" aria-selected="false" data-tab="1" tabindex="-1">
+          <span class="pic"><img alt=""></span>
+          <span class="n">AirPods</span>
+          <span class="l">Quloqchin</span>
+        </button>
+        <button class="tab" role="tab" type="button" aria-selected="false" data-tab="2" tabindex="-1">
+          <span class="pic"><img alt=""></span>
+          <span class="n">iPhone 18 Pro Max</span>
+          <span class="l">Smartfon</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage" tabindex="0" role="application"
+         aria-label="3D ko'rinish. Aylantirish uchun suring, yaqinlashtirish uchun g'ildiraging, asl holatga qaytarish uchun ikki marta bosing.">
+      <button class="pnav prev" type="button" id="prevP" aria-label="Oldingi mahsulot"><svg class="ic"><use href="#i-arrow-l"/></svg></button>
+      <button class="pnav next" type="button" id="nextP" aria-label="Keyingi mahsulot"><svg class="ic"><use href="#i-arrow-r"/></svg></button>
+      <div class="shadow"></div>
+      <div class="loader" id="loader">Model yuklanmoqda…</div>
+      <div class="fallback" id="fallback"><img alt=""></div>
+      <div class="hint" id="hint"><svg class="ic"><use href="#i-hand"/></svg>Aylantirish uchun suring · yaqinlashtirish uchun g'ildiraging</div>
+
+      <div class="rail" role="group" aria-label="Boshqaruv">
+        <button type="button" id="zin" aria-label="Yaqinlashtirish"><svg class="ic"><use href="#i-zoom-in"/></svg></button>
+        <button type="button" id="zout" aria-label="Uzoqlashtirish"><svg class="ic"><use href="#i-zoom-out"/></svg></button>
+        <button type="button" id="expand" aria-label="To'liq ekran ko'rinish" aria-pressed="false"><svg class="ic"><use href="#i-expand"/></svg></button>
+        <button type="button" id="light" aria-label="Yorug'lik rejimi" aria-pressed="false"><svg class="ic"><use href="#i-sun"/></svg></button>
+      </div>
+
+      <div class="turn" role="group" aria-label="Aylantirish">
+        <button type="button" id="tl" aria-label="Chapga 90°"><svg class="ic"><use href="#i-ccw"/></svg></button>
+        <button type="button" id="t360" aria-label="360°">360°</button>
+        <button type="button" id="tr" aria-label="O'ngga 90°"><svg class="ic"><use href="#i-cw"/></svg></button>
+      </div>
+
+      <div class="caption" id="caption"></div>
+      <div class="spec-float" id="specFloat" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- O'ng ustun -->
+  <section class="info">
+    <div class="topbar">
+      <label class="search">
+        <svg class="ic"><use href="#i-search"/></svg>
+        <input type="text" placeholder="Mahsulot qidirish…" aria-label="Mahsulot qidirish">
+      </label>
+      <button class="icon-btn" type="button" aria-label="Bildirishnomalar"><svg class="ic"><use href="#i-bell"/></svg></button>
+      <button class="acc" type="button" aria-label="Hisob"><svg class="ic"><use href="#i-user"/></svg></button>
+    </div>
+
+    <div class="card">
+      <article class="detail" id="detail" aria-live="polite">
+        <div class="eyebrow" id="dFamily"></div>
+        <h1 id="dName"></h1>
+        <div class="tags" id="dTags"></div>
+        <p class="desc" id="dDesc"></p>
+        <h2>Asosiy xususiyatlar</h2>
+        <div id="dTraits"></div>
+        <h2>Tavsif</h2>
+        <div class="habitat"><svg class="ic"><use href="#i-globe"/></svg><span id="dHabitat"></span></div>
+        <div class="variants">
+          <div class="lab" id="dVarLab">Variant</div>
+          <div class="chips" id="dChips" role="group" aria-label="Variantlar"></div>
+        </div>
+        <div class="price" id="dPrice"></div>
+        <div class="credit" id="dCredit"></div>
+        <button class="buy" type="button" id="buy">Savatga qo'shish</button>
+        <button class="lens-btn" type="button" id="lensBtn" aria-pressed="false">
+          <span class="lens" id="lens"></span>
+          <span><h4>Yaqindan ko'rish</h4><p id="dCloseText"></p></span>
+          <svg class="ic"><use href="#i-chevron"/></svg>
+        </button>
+      </article>
+    </div>
+  </section>
+
+  <canvas id="gl" aria-hidden="true"></canvas>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* =====================================================================
+   MAHSULOTLAR — URL, narx va matnlarni shu yerda to'ldiring.
+   glb/png bo'sh bo'lsa, o'rnida "Rasm"/"Model yuklanmagan" ko'rinadi.
+   narx: so'mda raqam (masalan 1500000). Bo'sh qolsa "Narx kiritilmagan" chiqadi.
+   variants: har bir rang/o'lcham uchun. glb bo'lsa o'sha model yuklanadi.
+   ===================================================================== */
+const PRODUCTS = [
+  {
+    id: 'macbook', name: 'MacBook Pro M3 16"', family: 'NOUTBUK', sub: 'Noutbuk',
+    tags: ['Noutbuk', 'M3', '16 dyuym'],
+    desc: 'Tavsif kiriting.',
+    specs: [
+      { icon: 'i-ruler', k: 'Ekran', v: '—' },
+      { icon: 'i-cpu', k: 'Protsessor', v: '—' },
+      { icon: 'i-battery', k: 'Batareya', v: '—' },
+      { icon: 'i-shield', k: 'Himoya', v: '—' }
+    ],
+    habitat: "Sotuv: Sarbon do'konida. Yetkazib berish shartlarini kiriting.",
+    caption: 'Har bir qadamni kuzatib boring.',
+    closeText: 'Mahsulotni batafsil ko\'ring.',
+    lens: '50% 50%',
+    featText: 'Qisqa tavsif kiriting.',
+    png: '', glb: 'models/macbook-pro-m3-16.glb', price: null,
+    credit: "3D model: jackbaeten (Sketchfab), CC BY 4.0. Muallifni ko'rsatish shart.",
+    variants: [
+      { id: 'black', name: 'Kosmik kulrang', hex: '#4a4a4d', glb: '', price: null },
+      { id: 'silver', name: 'Kumush', hex: '#d9d9dc', glb: '', price: null }
+    ]
+  },
+  {
+    id: 'airpods', name: 'AirPods', family: 'QULOQCHIN', sub: 'Quloqchin',
+    tags: ['Quloqchin', 'Simsiz', 'Shovqin bostirish'],
+    desc: 'Tavsif kiriting.',
+    specs: [
+      { icon: 'i-buds', k: 'Ulanish', v: '—' },
+      { icon: 'i-cpu', k: 'Chip', v: '—' },
+      { icon: 'i-battery', k: 'Batareya', v: '—' },
+      { icon: 'i-shield', k: 'Himoya', v: '—' }
+    ],
+    habitat: "Sotuv: Sarbon do'konida. Yetkazib berish shartlarini kiriting.",
+    caption: 'Musiqa, o\'z tartibida.',
+    closeText: 'Mahsulotni batafsil ko\'ring.',
+    lens: '50% 50%',
+    featText: 'Qisqa tavsif kiriting.',
+    png: '', glb: 'models/airpods-pro-3.glb', price: null,
+    variants: [
+      { id: 'white', name: 'Oq', hex: '#f4f4f2', glb: '', price: null },
+      { id: 'black', name: 'Qora', hex: '#1d1d1f', glb: '', price: null }
+    ]
+  },
+  {
+    id: 'iphone', name: 'iPhone 18 Pro Max', family: 'SMARTFON', sub: 'Smartfon',
+    tags: ['Smartfon', 'Pro', 'Max'],
+    desc: 'Tavsif kiriting.',
+    specs: [
+      { icon: 'i-ruler', k: 'Ekran', v: '—' },
+      { icon: 'i-cpu', k: 'Chip', v: '—' },
+      { icon: 'i-battery', k: 'Batareya', v: '—' },
+      { icon: 'i-shield', k: 'Himoya', v: '—' }
+    ],
+    habitat: "Sotuv: Sarbon do'konida. Yetkazib berish shartlarini kiriting.",
+    caption: 'Eng kuchli iPhone, qo\'lingizda.',
+    closeText: 'Mahsulotni batafsil ko\'ring.',
+    lens: '50% 50%',
+    featText: 'Qisqa tavsif kiriting.',
+    png: '', glb: 'models/iphone-18-pro-max.glb', price: null,
+    variants: [
+      { id: 'natural', name: 'Tabiiy titan', hex: '#a7a29a', glb: '', price: null },
+      { id: 'black', name: 'Qora titan', hex: '#2b2b2d', glb: '', price: null },
+      { id: 'desert', name: 'Qum rang', hex: '#c8b89a', glb: '', price: null }
+    ]
+  }
+];
+
+/* Uzun specifikatsiyalar (yozilib boradi). Noma'lum joylarni o'zingiz to'ldiring. */
+const LONG_SPECS = {
+  macbook: [
+    ['Displey', "16,2 dyuym Liquid Retina XDR. Yuqori yorqinlik, keng rang gamutini (P3) va ProMotion chastotasi bilan."],
+    ['Protsessor', "Apple M3 Pro yoki M3 Max chip. Ko'p yadroli CPU va GPU bilan og'ir ishlarni tez bajaradi."],
+    ['Xotira', "Birlashgan xotira, konfiguratsiyaga qarab 18 GB dan 128 GB gacha."],
+    ['Batareya', "Rasmiy ma'lumotga ko'ra, video ko'rishda 22 soatgacha ishlash (modelga bog'liq)."],
+    ['Ulanish', "Thunderbolt 4 portlari, HDMI, SDXC karta o'quvchi, MagSafe 3 quvvatlash."],
+    ['Klaviatura', "Magic Keyboard, Touch ID va keng sensorli trackpad."],
+    ['Eslatma', "Ma'lumotlarni sotuvdan oldin rasmiy manbadan tekshiring."]
+  ],
+  airpods: [
+    ['Ulanish', "Bu yerga AirPods Pro 3 ning ulanish turi va qurilmalar bilan moslik ma'lumotini kiriting."],
+    ['Shovqin bostirish', "Bu yerga shovqin bostirish (ANC) darajasi va xususiyatlarini kiriting."],
+    ['Batareya', "Bu yerga quloqchin va zaryad qutisi batareya muddatini kiriting."],
+    ['Chip', "Bu yerga ishlatilgan chip va uning afzalliklarini kiriting."],
+    ['Himoya', "Bu yerga suv va chang himoyasi (IP reytingi) ma'lumotini kiriting."],
+    ['Eslatma', "Bu yerga mahsulot haqida qo'shimcha matnni kiriting."]
+  ],
+  iphone: [
+    ['Displey', "Bu yerga iPhone 18 Pro Max ekran o'lchami va turini kiriting."],
+    ['Protsessor', "Bu yerga chip nomi va unumdorlik ma'lumotini kiriting."],
+    ['Kamera', "Bu yerga asosiy va qo'shimcha kameralar tavsifini kiriting."],
+    ['Batareya', "Bu yerga batareya muddati va zaryad tezligini kiriting."],
+    ['Xotira', "Bu yerga xotira hajmi variantlarini kiriting."],
+    ['Eslatma', "Bu yerga mahsulot haqida qo'shimcha matnni kiriting."]
+  ]
+};
+
+/* ---------- Umumiy yordamchilar ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const fmtPrice = n => (n == null ? 'Narx kiritilmagan' : n.toLocaleString('uz-UZ') + " so'm");
+const easeIn3 = t => t * t * t;
+const easeOut3 = t => 1 - Math.pow(1 - t, 3);
+const outBack = t => 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function setPic(el, src) {
+  el.classList.toggle('has', !!src);
+  const img = el.querySelector('img');
+  if (src) img.src = src; else img.removeAttribute('src');
+}
+
+/* ---------- Sahna ---------- */
+const hero = $('#hero');
+const stage = $('#stage');
+const canvas = $('#gl');
+const loaderEl = $('#loader');
+const fallbackEl = $('#fallback');
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 1.05;
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.95;
+
+const FOV = 26;
+const camera = new THREE.PerspectiveCamera(FOV, 1, 0.01, 100);
+
+const key = new THREE.DirectionalLight(0xfff4e2, 1.6);
+key.position.set(2.5, 4, 5);
+const rim = new THREE.DirectionalLight(0xbfd8ff, 0.5);
+rim.position.set(-4, 2, -3);
+const fill = new THREE.DirectionalLight(0xdfe8ff, 0.55); fill.position.set(-3.5, 1.2, 4); scene.add(fill);
+const topRim = new THREE.DirectionalLight(0xffffff, 0.7); topRim.position.set(0, 5, -4); scene.add(topRim);
+scene.add(key, rim);
+
+const dracoLoader = new DRACOLoader().setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+const gltfLoader = new GLTFLoader().setDRACOLoader(dracoLoader).setMeshoptDecoder(MeshoptDecoder);
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+
+/* Har bir mahsulot uchun: pivot > spin > holder > GLB */
+const HOME_EULER = new THREE.Euler(0.12, 0.75, 0, 'YXZ');
+const rigs = PRODUCTS.map((p, i) => {
+  const pivot = new THREE.Group();
+  const spin = new THREE.Group();
+  const holder = new THREE.Group();
+  holder.rotation.copy(HOME_EULER);
+  spin.add(holder);
+  pivot.add(spin);
+  pivot.visible = i === 0;
+  scene.add(pivot);
+  return { p, idx: i, pivot, spin, holder, loaded: false, failed: false, extraYaw: 0, variant: 0, loadToken: 0 };
+});
+
+/* MacBook/AirPods/iPhone materiallari: aniqroq metall, to'g'ri aks va teksturalar */
+function enhanceMaterials(obj) {
+  obj.traverse(o => {
+    if (!o.isMesh) return;
+    o.frustumCulled = false;
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    mats.forEach(m => {
+      if (!m) return;
+      ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap'].forEach(k => {
+        if (m[k]) { m[k].anisotropy = maxAniso; m[k].needsUpdate = true; }
+      });
+      if (m.isMeshStandardMaterial || m.isMeshPhysicalMaterial) {
+        m.envMapIntensity = 1.25;
+        if (m.metalness > 0.5) m.roughness = Math.min(Math.max(m.roughness, 0.22), 0.4);
+        m.needsUpdate = true;
+      }
+    });
+  });
+}
+
+function clearHolder(rig) {
+  while (rig.holder.children.length) rig.holder.remove(rig.holder.children[0]);
+}
+
+/* Modelni yuklash; bo'sh URL bo'lsa "yuklanmagan" deb belgilaydi */
+function loadModel(rig, url) {
+  const token = ++rig.loadToken;
+  if (!url) {
+    rig.failed = true; rig.loaded = false; rig.errMsg = 'Model hali yo\'q';
+    clearHolder(rig);
+    refreshLoader();
+    return;
+  }
+  rig.failed = false;
+  const src = (window.SARBON_MODELS && window.SARBON_MODELS[url]) || url;
+  gltfLoader.load(src, gltf => {
+    if (token !== rig.loadToken) return;
+    clearHolder(rig);
+    const obj = gltf.scene;
+    obj.traverse(o => {
+      if (o.isMesh) {
+        o.frustumCulled = false;
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        mats.forEach(m => { if (m && m.map) m.map.anisotropy = maxAniso; });
+      }
+    });
+    enhanceMaterials(obj);
+    rig.holder.add(obj);
+    const box = new THREE.Box3().setFromObject(obj);
+    const sphere = box.getBoundingSphere(new THREE.Sphere());
+    obj.position.sub(sphere.center);
+    rig.holder.scale.setScalar(0.7 / Math.max(sphere.radius, 1e-6));
+    rig.loaded = true;
+    refreshLoader();
+  }, undefined, () => {
+    if (token !== rig.loadToken) return;
+    rig.failed = true; rig.loaded = false;
+    rig.errMsg = 'Model yuklanmadi. GitHub papkasidagi .glb fayl nomini tekshiring.';
+    refreshLoader();
+  });
+}
+
+function currentVariant(rig) {
+  return rig.p.variants[rig.variant] || null;
+}
+function modelUrlFor(rig) {
+  const v = currentVariant(rig);
+  return (v && v.glb) || rig.p.glb;
+}
+
+/* ---------- Holat ---------- */
+let active = 0;
+let anim = null;               /* tab almashish animatsiyasi */
+let zoomT = 1, zoom = 1;
+let camCX = 0, camCY = 0, camPX = 100;
+let vYaw = 0, vPitch = 0;      /* inersiya tezligi (rad/s) */
+let queue = 0;                 /* burilish navbati (rad) */
+let drag = null;
+const pointers = new Map();
+let pinchStart = 0, pinchZoom = 1;
+let lastInteract = performance.now();
+let ptx = 0, pty = 0, px_ = 0, py_ = 0;
+addEventListener('pointermove', e => { ptx = (e.clientX / innerWidth - 0.5) * 2; pty = (e.clientY / innerHeight - 0.5) * 2; });
+let idleAmt = 0;
+let focusMode = false;
+let lightMode = 0;             /* 0 = kun, 1 = alacakaranlik */
+const LIGHTS = {
+  day:  { env: 0.95, keyC: 0xfff4e2, keyI: 1.6, rimI: 0.5, exp: 1.05 },
+  dusk: { env: 0.28, keyC: 0xffc98a, keyI: 2.6, rimI: 1.9, exp: 1.0 }
+};
+const lightCur = { env: 0.95, keyI: 1.6, rimI: 0.5, exp: 1.05, k: new THREE.Color(0xfff4e2) };
+
+/* ---------- O'lchov ---------- */
+function resize() {
+  const r = hero.getBoundingClientRect();
+  renderer.setSize(r.width, r.height, false);
+  camera.aspect = r.width / r.height;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(hero);
+resize();
+
+/* ---------- Aylantirish ---------- */
+const AX_Y = new THREE.Vector3(0, 1, 0);
+const AX_X = new THREE.Vector3(1, 0, 0);
+function rotateSpin(rig, yaw, pitch) {
+  const qy = new THREE.Quaternion().setFromAxisAngle(AX_Y, yaw);
+  const qx = new THREE.Quaternion().setFromAxisAngle(AX_X, pitch);
+  rig.spin.quaternion.premultiply(qy).premultiply(qx);
+}
+function markInteract() {
+  lastInteract = performance.now();
+  if (!hint.classList.contains('gone')) hint.classList.add('gone');
+}
+
+stage.addEventListener('pointerdown', e => {
+  stage.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  markInteract();
+  if (pointers.size === 1) {
+    drag = { x: e.clientX, y: e.clientY, t: performance.now() };
+    stage.classList.add('drag');
+    vYaw = vPitch = 0;
+  } else if (pointers.size === 2) {
+    const [a, b] = [...pointers.values()];
+    pinchStart = Math.hypot(a.x - b.x, a.y - b.y);
+    pinchZoom = zoomT;
+    drag = null;
+  }
+});
+stage.addEventListener('pointermove', e => {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  const rig = rigs[active];
+  if (pointers.size === 2) {
+    const [a, b] = [...pointers.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    if (pinchStart > 0) zoomT = clamp(pinchZoom * (d / pinchStart), 0.55, 3.4);
+    return;
+  }
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  drag.x = e.clientX; drag.y = e.clientY;
+  const k = Math.PI / Math.max(260, camPX * 1.6);
+  const yaw = dx * k, pitch = dy * k;
+  rotateSpin(rig, yaw, pitch);
+  const dt = Math.max(1e-3, (performance.now() - drag.t) / 1000);
+  drag.t = performance.now();
+  vYaw = yaw / dt * 0.016; vPitch = pitch / dt * 0.016;
+});
+function endPointer(e) {
+  pointers.delete(e.pointerId);
+  if (pointers.size === 0) {
+    drag = null;
+    stage.classList.remove('drag');
+  } else if (pointers.size === 1) {
+    const [p] = [...pointers.values()];
+    drag = { x: p.x, y: p.y, t: performance.now() };
+  }
+}
+stage.addEventListener('pointerup', endPointer);
+stage.addEventListener('pointercancel', endPointer);
+
+stage.addEventListener('wheel', e => {
+  e.preventDefault();
+  markInteract();
+  const f = Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0016));
+  zoomT = clamp(zoomT * f, 0.55, 3.4);
+}, { passive: false });
+
+stage.addEventListener('dblclick', () => resetView());
+function resetView() {
+  zoomT = 1;
+  rigs[active].target = true;
+  rigs[active].resetting = true;
+  markInteract();
+}
+
+stage.addEventListener('keydown', e => {
+  const rig = rigs[active];
+  const step = 0.18;
+  if (e.key === 'ArrowLeft') rotateSpin(rig, -step, 0);
+  else if (e.key === 'ArrowRight') rotateSpin(rig, step, 0);
+  else if (e.key === 'ArrowUp') rotateSpin(rig, 0, -step);
+  else if (e.key === 'ArrowDown') rotateSpin(rig, 0, step);
+  else if (e.key === '+' || e.key === '=') zoomT = clamp(zoomT * 1.2, 0.55, 3.4);
+  else if (e.key === '-') zoomT = clamp(zoomT / 1.2, 0.55, 3.4);
+  else if (e.key === '0') resetView();
+  else return;
+  e.preventDefault();
+  markInteract();
+});
+
+/* ---------- Boshqaruv tugmalari ---------- */
+const hint = $('#hint');
+$('#zin').addEventListener('click', () => { zoomT = clamp(zoomT * 1.35, 0.55, 3.4); markInteract(); });
+$('#zout').addEventListener('click', () => { zoomT = clamp(zoomT / 1.35, 0.55, 3.4); markInteract(); });
+$('#tl').addEventListener('click', () => { queue -= Math.PI / 2; markInteract(); });
+$('#tr').addEventListener('click', () => { queue += Math.PI / 2; markInteract(); });
+$('#t360').addEventListener('click', () => { queue += Math.PI * 2; markInteract(); });
+
+const expandBtn = $('#expand');
+expandBtn.addEventListener('click', () => setFocus(!focusMode));
+function setFocus(on) {
+  focusMode = on;
+  hero.classList.toggle('focus', on);
+  expandBtn.setAttribute('aria-pressed', String(on));
+  markInteract();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && focusMode) setFocus(false); });
+
+const lightBtn = $('#light');
+lightBtn.addEventListener('click', () => {
+  lightMode = lightMode ? 0 : 1;
+  hero.dataset.light = lightMode ? 'dusk' : 'day';
+  document.body.classList.toggle('dusk', !!lightMode);
+  lightBtn.setAttribute('aria-pressed', String(!!lightMode));
+});
+
+const lensBtn = $('#lensBtn');
+lensBtn.addEventListener('click', () => {
+  const on = lensBtn.getAttribute('aria-pressed') !== 'true';
+  lensBtn.setAttribute('aria-pressed', String(on));
+  zoomT = on ? 2.6 : 1;
+  markInteract();
+});
+
+/* ---------- Mahsulot tanlash ---------- */
+const tabs = $$('.tab');
+const navBtns = $$('.nav button');
+
+function refreshLoader() {
+  const rig = rigs[active];
+  if (rig.loaded) {
+    loaderEl.classList.add('off');
+    fallbackEl.classList.remove('show');
+  } else if (rig.failed) {
+    const png = currentVariant(rig)?.png || rig.p.png;
+    if (png) {
+      loaderEl.classList.add('off');
+      fallbackEl.querySelector('img').src = png;
+      fallbackEl.classList.add('show');
+    } else {
+      fallbackEl.classList.remove('show');
+      loaderEl.classList.remove('off');
+      loaderEl.textContent = rig.errMsg || 'Model yuklanmadi.';
+    }
+  } else {
+    loaderEl.classList.remove('off');
+    loaderEl.textContent = 'Model yuklanmoqda…';
+    fallbackEl.classList.remove('show');
+  }
+}
+
+function syncNav() {
+  tabs.forEach((t, i) => {
+    t.setAttribute('aria-selected', String(i === active));
+    t.tabIndex = i === active ? 0 : -1;
+  });
+  navBtns.forEach((b, i) => {
+    if (i === active) b.setAttribute('aria-current', 'page');
+    else b.removeAttribute('aria-current');
+  });
+}
+
+function fillDetail(i, animate) {
+  const p = PRODUCTS[i];
+  const rig = rigs[i];
+  const v = currentVariant(rig);
+  const detail = $('#detail');
+  const write = () => {
+    $('#dFamily').textContent = p.family;
+    $('#dName').textContent = p.name;
+    $('#dTags').innerHTML = p.tags.map(t => `<span>${t}</span>`).join('');
+    $('#dDesc').textContent = p.desc;
+    $('#dTraits').innerHTML = p.specs.map(s =>
+      `<div class="trait"><svg class="ic"><use href="#${s.icon}"/></svg><span class="k">${s.k}</span><span>${s.v}</span></div>`
+    ).join('');
+    $('#dHabitat').textContent = p.habitat;
+    $('#dVarLab').textContent = 'Variant: ' + (v ? v.name : '—');
+    $('#dChips').innerHTML = p.variants.map((vv, vi) =>
+      `<button class="chip" type="button" data-v="${vi}" aria-pressed="${vi === rig.variant}">
+         <i style="background:${vv.hex}"></i>${vv.name}</button>`
+    ).join('');
+    $('#dPrice').textContent = fmtPrice((v && v.price) ?? p.price);
+    $('#dCloseText').textContent = p.closeText;
+    $('#dCredit').textContent = p.credit || '';
+    $('#lens').style.backgroundImage = p.png ? `url("${p.png}")` : 'none';
+    $('#lens').style.backgroundPosition = p.lens;
+    $('#caption').textContent = p.caption;
+    $('#featName').textContent = p.name;
+    $('#featText').textContent = p.featText;
+    setPic($('#featPic'), p.png);
+    tabs.forEach((t, ti) => setPic(t.querySelector('.pic'), PRODUCTS[ti].png));
+  };
+  if (!animate || reduce) { write(); return; }
+  detail.classList.add('out');
+  detail.classList.remove('in');
+  setTimeout(() => {
+    write();
+    detail.classList.remove('out');
+    detail.classList.add('in');
+    setTimeout(() => detail.classList.remove('in'), 900);
+  }, 200);
+}
+
+$('#dChips').addEventListener('click', e => {
+  const b = e.target.closest('.chip');
+  if (!b) return;
+  const rig = rigs[active];
+  rig.variant = Number(b.dataset.v);
+  const url = modelUrlFor(rig);
+  loadModel(rig, url);
+  fillDetail(active, false);
+  markInteract();
+});
+
+$('#buy').addEventListener('click', () => {
+  const rig = rigs[active];
+  const v = currentVariant(rig);
+  window.dispatchEvent(new CustomEvent('sarbon:add-to-cart', {
+    detail: { product: rig.p.id, variant: v ? v.id : null, price: (v && v.price) ?? rig.p.price }
+  }));
+});
+
+let specTimer = null;
+function typeSpecs(i) {
+  const box = document.getElementById('specFloat');
+  if (!box) return;
+  clearTimeout(specTimer);
+  const lines = LONG_SPECS[PRODUCTS[i].id] || [];
+  box.innerHTML = '<div class="eyebrow">Specifikatsiya</div>';
+  let li = 0, ci = 0, cur = null;
+  const step = () => {
+    if (li >= lines.length) { if (cur) cur.querySelector('.spec-caret')?.remove(); return; }
+    const [k, v] = lines[li];
+    if (!cur) {
+      cur = document.createElement('span');
+      cur.className = 'spec-line';
+      cur.innerHTML = '<span class="k"></span> <span class="v"></span><span class="spec-caret"></span>';
+      box.appendChild(cur);
+    }
+    if (ci === 0) cur.querySelector('.k').textContent = k + ': ';
+    const vEl = cur.querySelector('.v');
+    if (ci < v.length) {
+      ci++; vEl.textContent = v.slice(0, ci);
+      specTimer = setTimeout(step, 14);
+    } else {
+      cur.querySelector('.spec-caret')?.remove();
+      li++; ci = 0; cur = null;
+      specTimer = setTimeout(step, 180);
+    }
+  };
+  step();
+}
+
+function selectProduct(i) {
+  if (i === active) return;
+  const old = active;
+  const dir = Math.sign(i - old);
+  active = i;
+  const outRig = rigs[old];
+  const inRig = rigs[i];
+  inRig.pivot.visible = true;
+  inRig.spin.quaternion.identity();
+  zoomT = 1;
+  stage.classList.add('switching');
+  setTimeout(() => stage.classList.remove('switching'), 780);
+  anim = { out: outRig, inn: inRig, dir, t: 0 };
+  if (!inRig.loaded && !inRig.failed && !inRig.variantLoading) loadModel(inRig, modelUrlFor(inRig));
+  syncNav();
+  fillDetail(i, true);
+  typeSpecs(i);
+  refreshLoader();
+  markInteract();
+}
+
+tabs.forEach((t, i) => t.addEventListener('click', () => selectProduct(i)));
+$('#prevP').addEventListener('click', () => selectProduct((active - 1 + PRODUCTS.length) % PRODUCTS.length));
+$('#nextP').addEventListener('click', () => selectProduct((active + 1) % PRODUCTS.length));
+navBtns.forEach((b, i) => b.addEventListener('click', () => selectProduct(i)));
+
+$('#featLink').addEventListener('click', e => e.preventDefault());
+
+/* Tab klaviatura navigatsiyasi */
+$('.tabs').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  const n = (active + (e.key === 'ArrowRight' ? 1 : -1) + PRODUCTS.length) % PRODUCTS.length;
+  selectProduct(n);
+  tabs[n].focus();
+});
+
+/* ---------- Kadr sikli ---------- */
+let prev = performance.now();
+let swayClock = 0;
+
+function frame(now) {
+  const dt = Math.min(0.05, (now - prev) / 1000);
+  prev = now;
+  swayClock += dt;
+
+  /* Idle */
+  const sinceInteract = (now - lastInteract) / 1000;
+  const targetIdle = (!reduce && sinceInteract > 1.8) ? 1 : 0;
+  idleAmt += (targetIdle - idleAmt) * (1 - Math.exp(-dt * (targetIdle ? 1 / 1.5 * 3 : 6)));
+
+  /* Inersiya va navbat */
+  const decay = Math.exp(-dt * 4.5);
+  const rig = rigs[active];
+  if (!drag && (Math.abs(vYaw) > 1e-4 || Math.abs(vPitch) > 1e-4)) {
+    rotateSpin(rig, vYaw * dt * 60, vPitch * dt * 60);
+    vYaw *= decay; vPitch *= decay;
+  }
+  if (Math.abs(queue) > 1e-4) {
+    const step = queue * (1 - Math.exp(-dt * 4.2));
+    rotateSpin(rig, step, 0);
+    queue -= step;
+  } else queue = 0;
+
+  /* Ortga qaytarish (dblclick) */
+  if (rig.resetting) {
+    rig.spin.quaternion.slerp(new THREE.Quaternion(), 1 - Math.exp(-dt * 6));
+    if (rig.spin.quaternion.angleTo(new THREE.Quaternion()) < 1e-3) rig.resetting = false;
+  }
+
+  /* Zoom */
+  zoom += (zoomT - zoom) * (1 - Math.exp(-dt * 6));
+
+  /* Tab animatsiyasi */
+  for (const r of rigs) {
+    if (r !== rigs[active] && !(anim && (anim.out === r))) {
+      r.pivot.visible = r === rigs[active];
+    }
+    r.extraYaw = 0;
+  }
+  if (anim) {
+    anim.t += dt / 0.78;
+    const slide = stage.clientWidth * 1.25 / camPX;
+    const { out, inn, dir, t } = anim;
+    const te = Math.min(t / 0.6, 1);
+    const eo = easeIn3(te);
+    out.pivot.scale.setScalar(Math.max(1 - eo, 0.001));
+    out.pivot.position.x = -dir * eo * slide;
+    out.extraYaw = -dir * eo * 1.4;
+    if (te >= 1) out.pivot.visible = false;
+    const ti = Math.min(t, 1);
+    const ei = easeOut3(ti);
+    const s = outBack(ti) * (0.25 + 0.75 * ei);
+    inn.pivot.scale.setScalar(Math.max(s, 0.001));
+    inn.pivot.position.x = dir * (1 - ei) * slide;
+    inn.extraYaw = dir * (1 - ei) * 1.6;
+    if (t >= 1) {
+      inn.pivot.scale.setScalar(1);
+      inn.pivot.position.x = 0;
+      inn.extraYaw = 0;
+      out.pivot.visible = false;
+      anim = null;
+    }
+  } else {
+    rig.pivot.scale.setScalar(1);
+    rig.pivot.position.x = 0;
+  }
+
+  /* Sichqoncha parallax: model sichqonchaga qarab biroz buriladi */
+  px_ += (ptx - px_) * (1 - Math.exp(-dt * 3));
+  py_ += (pty - py_) * (1 - Math.exp(-dt * 3));
+
+  /* Model harakati: sayr va suzish */
+  for (const r of rigs) {
+    const sway = r === rigs[active] ? idleAmt : 0;
+    r.pivot.rotation.y = Math.sin(swayClock * 0.55) * 0.16 * sway + r.extraYaw + px_ * 0.12;
+    r.pivot.rotation.x = Math.sin(swayClock * 0.9) * 0.03 * sway + py_ * 0.06;
+    r.pivot.position.y = reduce ? 0 : Math.sin(swayClock * 1.3 + r.idx) * 0.028;
+  }
+
+  /* Yorug'lik */
+  const L = LIGHTS[lightMode ? 'dusk' : 'day'];
+  const lf = 1 - Math.exp(-dt * 4);
+  lightCur.env += (L.env - lightCur.env) * lf;
+  lightCur.keyI += (L.keyI - lightCur.keyI) * lf;
+  lightCur.rimI += (L.rimI - lightCur.rimI) * lf;
+  lightCur.exp += (L.exp - lightCur.exp) * lf;
+  lightCur.k.lerp(new THREE.Color(L.keyC), lf);
+  scene.environmentIntensity = lightCur.env;
+  key.intensity = lightCur.keyI;
+  key.color.copy(lightCur.k);
+  rim.intensity = lightCur.rimI;
+  renderer.toneMappingExposure = lightCur.exp;
+
+  /* Kadrlash: markaz va masofa */
+  const hr = hero.getBoundingClientRect();
+  const sr = stage.getBoundingClientRect();
+  let tcx, tcy, tpx;
+  if (focusMode) {
+    tcx = hr.width / 2;
+    tcy = hr.height * 0.5;
+    tpx = Math.min(hr.width * 0.5, hr.height * 0.6) * 1.16;
+  } else {
+    tcx = sr.left - hr.left + sr.width / 2;
+    tcy = sr.top - hr.top + sr.height * 0.44;
+    tpx = Math.min(sr.width * 0.5, sr.height * 0.6) * 1.16;
+  }
+  const a = 1 - Math.exp(-dt * 7);
+  camCX += (tcx - camCX) * a;
+  camCY += (tcy - camCY) * a;
+  camPX += (tpx - camPX) * a;
+
+  const W = hr.width, H = hr.height;
+  camera.position.z = H / (2 * Math.tan(THREE.MathUtils.degToRad(FOV) / 2) * camPX * zoom);
+  camera.setViewOffset(W, H, W / 2 - camCX, H / 2 - camCY, W, H);
+  camera.updateProjectionMatrix();
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Ishga tushirish ---------- */
+function init() {
+  fillDetail(0, false);
+  syncNav();
+  refreshLoader();
+  loadModel(rigs[0], modelUrlFor(rigs[0]));
+  /* Qolgan mahsulotlarni fonda yuklash */
+  setTimeout(() => {
+    for (let i = 1; i < rigs.length; i++) {
+      if (!rigs[i].loaded && !rigs[i].failed) loadModel(rigs[i], modelUrlFor(rigs[i]));
+    }
+  }, 1500);
+  requestAnimationFrame(frame);
+}
+typeSpecs(0);
+init();
+<\/script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var glass = document.getElementById('glass');
+  var tx = -999, ty = -999, sx = -999, sy = -999, vx = 0, vy = 0, ang = 0;
+  addEventListener('pointermove', function (e) { tx = e.clientX; ty = e.clientY; });
+  function loop() {
+    if (sx < -900) { sx = tx; sy = ty; }
+    var px = sx, py = sy;
+    sx += (tx - sx) * 0.1; sy += (ty - sy) * 0.1;
+    root.style.setProperty('--mx', sx + 'px');
+    root.style.setProperty('--my', sy + 'px');
+    // Jiggle: tezlikka qarab cho'ziladi va buriladi, keyin asta qaytadi
+    vx += ((sx - px) - vx) * 0.25;
+    vy += ((sy - py) - vy) * 0.25;
+    var speed = Math.min(Math.hypot(vx, vy), 60);
+    var stretch = 1 + speed * 0.006;
+    var squeeze = 1 / stretch;
+    if (speed > 0.5) ang = Math.atan2(vy, vx) * 180 / Math.PI;
+    if (glass) {
+      glass.style.left = sx + 'px';
+      glass.style.top = sy + 'px';
+      glass.style.transform = 'translate(-50%,-50%) rotate(' + ang + 'deg) scale(' + stretch + ',' + squeeze + ') rotate(' + (-ang) + 'deg)';
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+<\/script>
+</body>
+</html>
+</script>
 </head>
 <body>
 <div class="bgflash" aria-hidden="true"></div>
@@ -1369,17 +2677,28 @@ function loadServer(){
   }).catch(function(e){toast("srverr","Server javobini o'qib bo'lmadi: "+(e&&e.message||e),"Qayta urinish",function(){loadServer()})})
 }
 var GLB_FILES=[]; /* ixtiyoriy: qo'lda yozish mumkin, masalan ["models/a.glb","models/b.glb","models/c.glb"] */
-var B3D=null;
+var HERO_W=1280,HERO_H=600,B3DMAP=null;
 function ghBase(){var p=location.pathname.split("/").filter(Boolean);return (p.length&&!/\./.test(p[0]))?"/"+p[0]+"/":"/"}
 function ghRepo(){var o=location.hostname.split(".")[0],p=location.pathname.split("/").filter(Boolean);return {o:o,r:(p.length&&!/\./.test(p[0]))?p[0]:o+".github.io"}}
-function mount3d(){var s=$("b3dslot");if(s&&B3D&&B3D.parentNode!==s)s.appendChild(B3D)}
-function build3d(files){if(!files.length){B3D=null;return}
-  var d=document.createElement("div");d.className="b3d-in glass";
-  files.slice(0,3).forEach(function(f){var m=document.createElement("model-viewer");m.setAttribute("src",f);m.setAttribute("alt","3D model");m.setAttribute("auto-rotate","");m.setAttribute("rotation-per-second","25deg");m.setAttribute("interaction-prompt","none");m.setAttribute("disable-zoom","");m.setAttribute("shadow-intensity","1");m.setAttribute("loading","eager");d.appendChild(m)});
-  B3D=d;mount3d()}
+function b3dHost(){var h=document.getElementById("b3dhost");if(!h){h=document.createElement("div");h.id="b3dhost";document.body.appendChild(h)}return h}
+function sync3d(){var h=b3dHost(),s=$("b3dslot");
+  if(!s||S.tab!=="home"){h.style.display="none";return}
+  var sr=s.getBoundingClientRect(),br=document.body.getBoundingClientRect(),w=Math.round(sr.width);if(w<50)return;
+  var sc=w/HERO_W,hh=Math.round(HERO_H*sc);
+  if(s.style.height!==hh+"px")s.style.height=hh+"px";
+  h.style.display="block";h.style.left=Math.round(sr.left-br.left)+"px";h.style.top=Math.round(sr.top-br.top)+"px";h.style.width=w+"px";h.style.height=hh+"px";
+  var f=h.firstChild;if(f)f.style.transform="scale("+sc+")"}
+function mount3d(){sync3d()}
+function heroHtml(map){var t=document.getElementById("hero3d-src").textContent.replace(/<\\\/script/g,"</script");
+  return t.replace("/*__MODELS__*/{}",function(){return JSON.stringify(map)})}
+function build3d(map){if(B3DMAP)return;B3DMAP=map;
+  var h=b3dHost(),f=document.createElement("iframe");f.setAttribute("title","3D mahsulotlar");f.setAttribute("scrolling","no");f.setAttribute("allow","fullscreen");f.srcdoc=heroHtml(map);
+  h.appendChild(f);sync3d()}
+function pickModels(paths){var map={},keys=[["models/macbook-pro-m3-16.glb","macbook"],["models/airpods-pro-3.glb","airpod"],["models/iphone-18-pro-max.glb","iphone"]];
+  keys.forEach(function(k){for(var i=0;i<paths.length;i++){if(paths[i].toLowerCase().indexOf(k[1])>-1){map[k[0]]=paths[i];break}}});return map}
 function find3d(){
-  if(GLB_FILES.length){build3d(GLB_FILES.map(function(f){return ghBase()+f.replace(/^\//,"")}));return}
-  try{var c=JSON.parse(localStorage.getItem("sarbon.glb")||"null");if(c&&Date.now()-c.t<600000&&c.f&&c.f.length){build3d(c.f);return}}catch(e){}
+  if(GLB_FILES.length){build3d(pickModels(GLB_FILES.map(function(f){return ghBase()+f.replace(/^\//,"")})));return}
+  try{var c=JSON.parse(localStorage.getItem("sarbon.glb2")||"null");if(c&&Date.now()-c.t<600000&&c.f&&c.f.length){build3d(pickModels(c.f));return}}catch(e){}
   var g=ghRepo(),api="https://api.github.com/repos/"+g.o+"/"+g.r+"/contents/";
   function ls(path){return fetch(api+path).then(function(r){if(!r.ok)throw 0;return r.json()}).catch(function(){return []})}
   function isG(x){return x.type==="file"&&/\.glb$/i.test(x.name)}
@@ -1387,10 +2706,11 @@ function find3d(){
     root.forEach(function(x){if(isG(x))out.push(x.path);else if(x.type==="dir"&&!/^(\.|node_modules)/.test(x.name))dirs.push(x.path)});
     return Promise.all(dirs.slice(0,6).map(ls)).then(function(r){r.forEach(function(a){a.forEach(function(x){if(isG(x))out.push(x.path)})});return out})
   }).then(function(out){
-    out=out.slice(0,3).map(function(p){return ghBase()+p.split("/").map(encodeURIComponent).join("/")});
-    if(out.length){try{localStorage.setItem("sarbon.glb",JSON.stringify({t:Date.now(),f:out}))}catch(e){}}
-    build3d(out)})
+    out=out.slice(0,12).map(function(p){return ghBase()+p.split("/").map(encodeURIComponent).join("/")});
+    if(out.length){try{localStorage.setItem("sarbon.glb2",JSON.stringify({t:Date.now(),f:out}))}catch(e){}}
+    build3d(pickModels(out))}).catch(function(){build3d({})})
 }
+window.addEventListener("resize",sync3d);window.addEventListener("load",sync3d);setInterval(sync3d,600);
 find3d();
 loadServer();setInterval(loadServer,15000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)loadServer()});
