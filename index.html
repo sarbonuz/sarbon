@@ -2500,7 +2500,10 @@ function kf(n){return n>=1000?(n/1000).toFixed(n>=10000?0:1)+" ming":String(n)}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return "&#"+c.charCodeAt(0)+";"})}
 var PROMOS={SARBON10:.1};
 function cartSub(){return S.cart.reduce(function(s,c){return s+goods(P[c.i])*c.q},0)}
-function cartDisc(){return S.promo&&PROMOS[S.promo]?Math.round(cartSub()*PROMOS[S.promo]/1000)*1000:0}
+function promoLeft(){var n=S.user?S.orders.filter(function(o){return o.ph===S.user.phone}).length:0;return Math.max(0,10-n)}
+function cartPct(){var m=(S.promo&&PROMOS[S.promo])?PROMOS[S.promo]:0;var a=(promoLeft()>0&&S.cart.length)?.1:0;return Math.max(m,a)}
+function cartPromoName(){return (S.promo&&PROMOS[S.promo]&&PROMOS[S.promo]>=.1)?S.promo:(promoLeft()>0?"BIRINCHI 10 BUYURTMA":(S.promo||""))}
+function cartDisc(){var p=cartPct();return p?Math.round(cartSub()*p/1000)*1000:0}
 function cartTotal(){return cartSub()-cartDisc()}
 function skOpts(p){if(p.olcham||p.rang)return{sz:(p.olcham&&p.olcham.length)?p.olcham:null,col:(p.rang&&p.rang.length)?p.rang:null};var o={sz:null,col:null},n=p.n;
  if(/Bolalar krossovka/i.test(n))o.sz=["28","30","32","34"];
@@ -2522,7 +2525,7 @@ function pfFilt(a){var f=S.pf;return f?a.filter(function(i){var g=goods(P[i]);re
 function pfBar(){return '<div class="sortbar">'+[["","Hammasi"],["lt","100 minggacha"],["mid","100–300 ming"],["gt","300 mingdan yuqori"],["top","Test o'tgan"]].map(function(x){return '<button data-a="pf" data-v="'+x[0]+'" class="'+((S.pf||"")===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("")+'</div>'}
 function simBox(i){var c=P[i].c,ids=idx(c).filter(function(x){return x!==i}).sort(function(a,b){return P[b].s-P[a].s}).slice(0,4);
  return ids.length?'<h3 style="margin:16px 0 8px;font-size:15px">O\'xshash tovarlar</h3><div class="hs" style="padding:0 0 6px">'+ids.map(card).join("")+'</div>':''}
-function promoBox(){return '<div class="form" style="margin-top:10px"><div style="display:flex;gap:8px"><input id="pc" placeholder="Promo-kod" value="'+esc(S.promo||"")+'" style="flex:1;min-width:0;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;font:inherit"><button class="btn" data-a="promo" style="width:auto;margin:0;padding:0 16px">Qo\'llash</button></div><div class="note" id="pm2" style="padding:6px 0 0">'+(S.orders.length?'':'Birinchi buyurtmaga: SARBON10 kodi tovar narxidan 10% chegirma beradi.')+'</div></div>'}
+function promoBox(){return '<div class="form" style="margin-top:10px"><div style="display:flex;gap:8px"><input id="pc" placeholder="Promo-kod" value="'+esc(S.promo||(promoLeft()>0?"SARBON10":""))+'" style="flex:1;min-width:0;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;font:inherit"><button class="btn" data-a="promo" style="width:auto;margin:0;padding:0 16px">Qo\'llash</button></div><div class="note" id="pm2" style="padding:6px 0 0">'+(promoLeft()>0?'✅ Birinchi 10 ta buyurtmangizga 10% chegirma avtomatik qo\'llanadi (qolgan: '+promoLeft()+' ta). Kod: SARBON10.':'')+'</div></div>'}
 function combineBox(){if(S.cart.length<2)return '';var sep=S.cart.reduce(function(s,c){return s+uzp(P[c.i].kg*c.q)},0),sv=sep-uzp(cartKg());return sv>0?'<div class="form" style="margin-top:6px"><div class="note" style="padding:0">Hamma tovarlar bitta cargo va bitta UzPost posilkasida keladi: UzPostda ~'+fmt(sv)+' tejaysiz.</div></div>':''}
 function cartCargo(){return S.cart.reduce(function(s,c){return s+cargo(P[c.i],c.m)*c.q},0)}
 function cartKg(){return S.cart.reduce(function(s,c){return s+P[c.i].kg*c.q},0)}
@@ -2562,7 +2565,7 @@ function cart(){
   var h='<h2 class="sec">Savat</h2>';
   if(!S.cart.length)return h+'<div class="mut">Savat bo\'sh. Tovarni tanlang.</div>';
   h+='<div class="list">'+S.cart.map(function(c,j){return '<div class="row">'+picC(P[c.i],c.col,"th")+'<div class="t">'+esc(P[c.i].n)+'<b>'+fmt(goods(P[c.i])*c.q)+'</b><span class="note" style="padding:0">'+(c.m==="auto"?"Avto":"Avia")+(c.sz?" · "+esc(c.sz):"")+(c.col?" · "+esc(c.col):"")+'</span></div><div class="q"><button data-a="qty" data-v="'+j+'" data-d="-1">−</button><span>'+c.q+'</span><button data-a="qty" data-v="'+j+'" data-d="1">+</button></div></div>'}).join("")+'</div>';
-  h+='<div class="sum"><div class="ln"><span>Tovarlar</span><span>'+fmt(cartSub())+'</span></div>'+(cartDisc()?'<div class="ln" style="color:var(--teal)"><span>Promo-kod ('+esc(S.promo)+')</span><span>−'+fmt(cartDisc())+'</span></div>':'')+'<div class="ln"><span>Hozir to\'lanadi</span><b>'+fmt(cartTotal())+'</b></div><div class="ln"><span>Cargo (taxminiy, '+cartKg().toFixed(1)+' kg)</span><span>~'+fmt(cartCargo())+'</span></div><div class="ln"><span>UzPost (filialda)</span><span>~'+fmt(uzp(cartKg()))+'</span></div><div class="note">Cargo va UzPost haqiqiy og\'irlik bo\'yicha keyin aniqlanadi.</div></div>';
+  h+='<div class="sum"><div class="ln"><span>Tovarlar</span><span>'+fmt(cartSub())+'</span></div>'+(cartDisc()?'<div class="ln" style="color:var(--teal)"><span>Chegirma ('+esc(cartPromoName())+' · '+Math.round(cartPct()*100)+'%)</span><span>−'+fmt(cartDisc())+'</span></div>':'')+'<div class="ln"><span>Hozir to\'lanadi</span><b>'+fmt(cartTotal())+'</b></div><div class="ln"><span>Cargo (taxminiy, '+cartKg().toFixed(1)+' kg)</span><span>~'+fmt(cartCargo())+'</span></div><div class="ln"><span>UzPost (filialda)</span><span>~'+fmt(uzp(cartKg()))+'</span></div><div class="note">Cargo va UzPost haqiqiy og\'irlik bo\'yicha keyin aniqlanadi.</div></div>';
   h+=promoBox()+combineBox();
   if(!S.user)return h+'<div class="form"><div class="warn">Buyurtma berish uchun avval kiring.</div><button class="btn" data-a="login">Kirish</button></div>';
   return h+'<div class="form"><div class="note">Buyurtma: <b>'+esc(S.user.name)+'</b>, '+esc(S.user.phone)+'</div><button class="pick" data-a="dl"><span>Yetkazish</span><b>'+(S.dl?esc(S.dl.r+", "+S.dl.b):"Filialni tanlang")+'</b></button><button class="pick" data-a="pm"><span>To\'lov</span><b>'+(S.pm==="card"?"Kartaga o\'tkazma":"Tez orada")+'</b></button><button class="btn" data-a="buy">Buyurtma berish</button><div class="err" id="er"></div></div>';
@@ -2573,10 +2576,13 @@ var ST3=['To\'lov tekshirilmoqda','Xitoyda','Cargo yo\'lda','O\'zbekistonga yetd
 function premSvg(o){var x=PREM_SRC.replace('#1008','#'+String(o.id));x=x.split("Cargo yo'lda").join(ST3[o.s]||ST3[0]);x=x.split('2 kun qoldi').join(ETA2[o.s]||ETA2[0]);
 x=x.replace(/<rect x="(\d+)" y="500" width="48" height="6" rx="3" fill="[^"]+"\/>/g,function(m,xx){var k=[36,90,144,198,252].indexOf(+xx);return '<rect x="'+xx+'" y="500" width="48" height="6" rx="3" fill="'+(k<=o.s?'#7F8BFF':'rgba(255,255,255,0.14)')+'"/>';});
 return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(x);}
+var MAPOPEN={};
+function mapSize(el){var w=el.parentNode.clientWidth*0.5;el.style.width=w+'px';el.style.margin='0 auto';el.style.height=(w*640/360)+'px';}
 function trackMap(o){
-  return '<div class="tmap2" onclick="mapT(this)"><img src="'+premSvg(o)+'" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 0%;display:block"></div>';
+  var op=MAPOPEN[o.id];if(op)setTimeout(function(){document.querySelectorAll('.tmap2.open').forEach(mapSize)},0);
+  return '<div class="tmap2'+(op?' open':'')+'" data-id="'+o.id+'" onclick="mapT(this)"><img src="'+premSvg(o)+'" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 0%;display:block"></div>';
 }
-function mapT(el){var o=el.classList.toggle('open');var w=el.parentNode.clientWidth*0.5;el.style.width=o?w+'px':'100%';el.style.margin=o?'0 auto':'0';el.style.height=o?(w*640/360)+'px':'150px';el.classList.remove('jig');void el.offsetWidth;el.classList.add('jig');}
+function mapT(el){var o=el.classList.toggle('open');MAPOPEN[el.getAttribute('data-id')]=o;var w=el.parentNode.clientWidth*0.5;el.style.width=o?w+'px':'100%';el.style.margin=o?'0 auto':'0';el.style.height=o?(w*640/360)+'px':'150px';el.classList.remove('jig');void el.offsetWidth;el.classList.add('jig');}
 function mapZ(d){var z=parseFloat(localStorage.getItem('sarbon.mz')||'1')+d*0.1;z=Math.max(0.6,Math.min(1.6,Math.round(z*10)/10));localStorage.setItem('sarbon.mz',String(z));document.documentElement.style.setProperty('--mz',String(z));render();}
 function orders(){
   var h='<h2 class="sec">Buyurtmalarim</h2><div class="mzr"><button onclick="mapZ(-1)">−</button><span>Xarita hajmi</span><button onclick="mapZ(1)">+</button></div>';
@@ -2744,7 +2750,7 @@ document.addEventListener("click",function(e){
     discount: cartDisc(),
     session: S.sess ? S.sess.token : "",
   chek: S.chekImg || "",
-  promo: S.promo || "",
+  promo: cartPromoName() || "",
     cargo: cartCargo(),
     total: cartTotal(),
     uzp: (S.dl ? S.dl.r + ", " + S.dl.b : "")
