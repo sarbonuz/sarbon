@@ -845,6 +845,12 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
 .nav{touch-action:none;-webkit-user-select:none;user-select:none}.nav button{-webkit-tap-highlight-color:transparent;outline:none}.nav button:active,.nav button:focus{transform:none!important;background:none!important}.nav button:active svg{transform:none}.nav button.on:active svg{transform:translateY(-1px) scale(1.06)}.nav button.pv{color:var(--brand);font-weight:700}html[data-theme="dark"] .nav button.pv{color:#C9CEEA}.pill{background:rgba(255,255,255,.34)!important;-webkit-backdrop-filter:blur(14px) saturate(190%) brightness(1.06)!important;backdrop-filter:blur(14px) saturate(190%) brightness(1.06)!important;border:1px solid rgba(255,255,255,.75);box-shadow:0 8px 20px rgba(37,48,143,.18),inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(37,48,143,.08),inset 0 0 14px rgba(255,255,255,.35)!important;transition:left .7s cubic-bezier(.25,.9,.3,1),width .7s cubic-bezier(.25,.9,.3,1),transform .4s cubic-bezier(.3,1.5,.5,1)!important}html[data-theme="dark"] .pill{background:rgba(110,122,220,.38)!important;border-color:rgba(190,198,255,.35)}.pill.drag{transform:scale(1.14,1.1);transition:width .2s ease,transform .25s cubic-bezier(.3,1.5,.5,1)!important}.pill.jig{animation:sbjig .7s cubic-bezier(.3,1.4,.5,1)}@keyframes sbjig{0%{transform:scale(1)}25%{transform:scale(1.1,.92)}50%{transform:scale(.96,1.06)}75%{transform:scale(1.03,.99)}100%{transform:scale(1)}}@media (prefers-reduced-motion:reduce){.pill.jig{animation:none}}
 
 
+.bellrow{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px}
+.bellb{position:relative;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-size:19px;line-height:1;cursor:pointer;padding:0}
+.bellb i{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;background:#C4336C;color:#fff;font:700 11px/18px system-ui;font-style:normal;text-align:center;padding:0 4px}
+.bellp{position:absolute;right:0;top:46px;width:min(300px,86vw);z-index:30;background:rgba(255,255,255,.97);color:#1B1D45;border-radius:16px;box-shadow:0 14px 36px rgba(37,48,143,.28);padding:6px;max-height:50vh;overflow:auto}
+.bellp .bi{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(37,48,143,.1)}.bellp .bi:last-child{border:0}
+html[data-theme="dark"] .bellp{background:rgba(26,30,72,.97);color:#ECEEFF}html[data-theme="dark"] .bellb{background:rgba(34,38,88,.78);border-color:rgba(255,255,255,.12)}
 .mzr{display:flex;align-items:center;justify-content:center;gap:12px;margin:4px 0 10px;color:#26215C;font-size:13px;font-weight:700}
 .mzr button{width:36px;height:36px;border-radius:50%;border:0;background:#25308F;color:#fff;font-size:20px;cursor:pointer}
 .mapw{zoom:var(--mz,1);margin:0 auto}
@@ -2585,10 +2591,10 @@ function trackMap(o){
 function mapT(el){var o=el.classList.toggle('open');MAPOPEN[el.getAttribute('data-id')]=o;var w=el.parentNode.clientWidth*0.5;el.style.width=o?w+'px':'100%';el.style.margin=o?'0 auto':'0';el.style.height=o?(w*640/360)+'px':'150px';el.classList.remove('jig');void el.offsetWidth;el.classList.add('jig');}
 function mapZ(d){var z=parseFloat(localStorage.getItem('sarbon.mz')||'1')+d*0.1;z=Math.max(0.6,Math.min(1.6,Math.round(z*10)/10));localStorage.setItem('sarbon.mz',String(z));document.documentElement.style.setProperty('--mz',String(z));render();}
 function orders(){
-  var h='<h2 class="sec">Buyurtmalarim</h2><div class="mzr"><button onclick="mapZ(-1)">−</button><span>Xarita hajmi</span><button onclick="mapZ(1)">+</button></div>';
+  var unread=Math.max(0,S.msgs.length-(S.seen||0));
+  var h='<div class="bellrow"><h2 class="sec" style="margin:0">Buyurtmalarim</h2><button class="bellb" data-a="bell" aria-label="Bildirishnomalar">🔔'+(unread&&!S.bell?'<i>'+unread+'</i>':'')+'</button>'+(S.bell?'<div class="bellp">'+(S.msgs.length?S.msgs.slice(0,8).map(function(m){return '<div class="bi">'+esc(m)+'</div>'}).join(""):'<div class="bi">Yangi xabar yo\'q</div>')+'</div>':'')+'</div><div class="mzr"><button onclick="mapZ(-1)">−</button><span>Xarita hajmi</span><button onclick="mapZ(1)">+</button></div>';
   if(!S.user)return h+'<div class="form"><div class="mut">Buyurtmalarni ko\'rish uchun kiring.</div><button class="btn" data-a="login">Kirish</button></div>';
   var mine=S.orders.filter(function(o){return o.ph===S.user.phone});
-  if(S.msgs.length)h+='<div class="list">'+S.msgs.slice(0,6).map(function(m){return '<div class="row" style="padding:10px 12px">🔔 <div class="t">'+esc(m)+'</div></div>'}).join("")+'</div>';
   if(!mine.length)return h+'<div class="mut">Hali buyurtma yo\'q.</div>';
   return h+'<div class="list">'+mine.map(function(o){
     var steps='<div class="steps">'+[0,1,2,3,4,5].map(function(j){return '<i class="'+(j<=o.s?'d':'')+'"></i>'}).join("")+'</div>';
@@ -2722,6 +2728,7 @@ document.addEventListener("click",function(e){
   if(a==="pf"){S.pf=v;render();return}
   if(a==="kt"){S.kt=v;render();return}
   if(a==="kb"){S.kb=v;render();return}
+  if(a==="bell"){S.bell=!S.bell;if(S.bell)S.seen=S.msgs.length;render();return}
   if(a==="promo"){var pcv=$("promoin").value.trim().toUpperCase();if(PROMOS[pcv]){S.promo=pcv;render()}else{S.promo="";$("pm2").textContent="Bunday promo-kod yo'q."}return}
   if(a==="fav2"){S.fav[v]=!S.fav[v];save();t.textContent=favTxt(v);render();return}
   if(a==="mode"){product(+t.dataset.i,v);return}
