@@ -114,6 +114,7 @@ button,input,select,textarea{font:inherit}
 .big{height:180px;border-radius:22px;display:grid;place-items:center;overflow:hidden}
 .big img{width:100%;height:100%;object-fit:cover}
 .big .ini{font-size:72px}
+.gal{position:relative;height:270px;border-radius:22px;overflow:hidden}.gs{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}.gs::-webkit-scrollbar{display:none}.gi{flex:0 0 100%;scroll-snap-align:center;display:grid;place-items:center;height:100%}.gi img,.gi video{width:100%;height:100%;object-fit:contain;background:transparent}.gd{position:absolute;left:0;right:0;bottom:8px;display:flex;justify-content:center;gap:5px;pointer-events:none}.gd i{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.8);box-shadow:0 0 0 1px rgba(37,48,143,.25);transition:width .25s}.gd i.on{width:16px;background:var(--brand)}.gc{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.45);color:#fff;font-size:11px;border-radius:10px;padding:2px 8px;pointer-events:none}.gb{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.8);color:var(--brand);font-size:20px;font-weight:800;cursor:pointer;display:none}.gb.l{left:8px}.gb.r{right:8px}@media(hover:hover) and (pointer:fine){.gb{display:block}}
 .copy{display:flex;justify-content:space-between;align-items:center;gap:8px;border-radius:16px;padding:12px 14px;margin-bottom:10px;font-weight:700;background:rgba(255,255,255,.6)}
 .copy button{border:1px solid var(--line);background:#fff;color:var(--brand);border-radius:12px;padding:8px 12px;font-weight:700;cursor:pointer}
 .catsec{margin-bottom:6px}
@@ -2482,7 +2483,7 @@ function save(){try{localStorage.setItem("sarbon.v3",JSON.stringify({user:S.user
 
 var $=function(i){return document.getElementById(i)};
 function r(n){return Math.round(n/1000)*1000}
-function goods(p){return r(p.y*RATE*MK)}
+function goods(p){return p.som>0?Math.round(p.som):r(p.y*RATE*MK)}
 function cargo(p,m){return r(p.kg*CG[m]*USD)}
 function uzp(kg){var k=Math.ceil(kg);return k<1?0:15000+(k-1)*3000}
 function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" so'm"}
@@ -2551,7 +2552,7 @@ function catalog(){
 function cart(){
   var h='<h2 class="sec">Savat</h2>';
   if(!S.cart.length)return h+'<div class="mut">Savat bo\'sh. Tovarni tanlang.</div>';
-  h+='<div class="list">'+S.cart.map(function(c,j){return '<div class="row">'+pic(P[c.i],"th")+'<div class="t">'+esc(P[c.i].n)+'<b>'+fmt(goods(P[c.i])*c.q)+'</b><span class="note" style="padding:0">'+(c.m==="auto"?"Avto":"Avia")+(c.sz?" · "+esc(c.sz):"")+(c.col?" · "+esc(c.col):"")+'</span></div><div class="q"><button data-a="qty" data-v="'+j+'" data-d="-1">−</button><span>'+c.q+'</span><button data-a="qty" data-v="'+j+'" data-d="1">+</button></div></div>'}).join("")+'</div>';
+  h+='<div class="list">'+S.cart.map(function(c,j){return '<div class="row">'+picC(P[c.i],c.col,"th")+'<div class="t">'+esc(P[c.i].n)+'<b>'+fmt(goods(P[c.i])*c.q)+'</b><span class="note" style="padding:0">'+(c.m==="auto"?"Avto":"Avia")+(c.sz?" · "+esc(c.sz):"")+(c.col?" · "+esc(c.col):"")+'</span></div><div class="q"><button data-a="qty" data-v="'+j+'" data-d="-1">−</button><span>'+c.q+'</span><button data-a="qty" data-v="'+j+'" data-d="1">+</button></div></div>'}).join("")+'</div>';
   h+='<div class="sum"><div class="ln"><span>Tovarlar</span><span>'+fmt(cartSub())+'</span></div>'+(cartDisc()?'<div class="ln" style="color:var(--teal)"><span>Promo-kod ('+esc(S.promo)+')</span><span>−'+fmt(cartDisc())+'</span></div>':'')+'<div class="ln"><span>Hozir to\'lanadi</span><b>'+fmt(cartTotal())+'</b></div><div class="ln"><span>Cargo (taxminiy, '+cartKg().toFixed(1)+' kg)</span><span>~'+fmt(cartCargo())+'</span></div><div class="ln"><span>UzPost (filialda)</span><span>~'+fmt(uzp(cartKg()))+'</span></div><div class="note">Cargo va UzPost haqiqiy og\'irlik bo\'yicha keyin aniqlanadi.</div></div>';
   h+=promoBox()+combineBox();
   if(!S.user)return h+'<div class="form"><div class="warn">Buyurtma berish uchun avval kiring.</div><button class="btn" data-a="login">Kirish</button></div>';
@@ -2626,7 +2627,7 @@ function closeSheet(){$("sh").classList.remove("open")}
 function favTxt(i){return S.fav[i]?'♥ Saqlangan':'♡ Saqlash'}
 function product(i,mode){
   var p=P[i];if(S.oi!==i){S.oi=i;S.osz="";S.ocol="";S.rv=[i].concat((S.rv||[]).filter(function(x){return x!==i})).slice(0,8)}if(!p.av&&mode==="avia")mode="auto";S.mode=mode;var m=mode;
-  openSheet(pic(p,"big")+'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h3 style="margin:12px 0 2px">'+esc(p.n)+'</h3><button class="svb" data-a="fav2" data-v="'+i+'" aria-label="Saqlash">'+favTxt(i)+'</button></div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan · ⭐ 4.8</div>'+
+  openSheet(galHtml(p,S.ocol)+'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h3 style="margin:12px 0 2px">'+esc(p.n)+'</h3><button class="svb" data-a="fav2" data-v="'+i+'" aria-label="Saqlash">'+favTxt(i)+'</button></div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan · ⭐ 4.8</div>'+
   '<div class="opt"><button data-a="mode" data-v="auto" data-i="'+i+'" class="'+(m==="auto"?"on":"")+'"><b>🚛 Avto</b><br>'+DAYS.auto+'<br>~'+fmt(cargo(p,"auto"))+'</button><button data-a="mode" data-v="avia" data-i="'+i+'" '+(p.av?"":"disabled")+' class="'+(m==="avia"?"on":"")+'"><b>✈️ Avia</b><br>'+DAYS.avia+'<br>~'+fmt(cargo(p,"avia"))+'</button></div>'+
   optBox(i)+(!p.av?'<div class="warn">Bu tovar avia cargoda taqiqlangan (batareya, elektronika yoki suyuqlik). Faqat avto mumkin.</div>':'')+
   '<details class="ban"'+(m==="avia"?' open':'')+'><summary>⚠️ Avia cargoda taqiqlangan tovarlar</summary><div class="note">Avia cargo qoidasi (06.12.2025). Bu turdagi buyumlarni avia kargoga buyurtma qilish taqiqlanadi:</div><ul>'+BU.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><div class="note">Заказывать такие товары через авиа-карго запрещено:</div><ul>'+BR.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul></details>'+
@@ -2634,26 +2635,39 @@ function product(i,mode){
   '<div class="ln"><span>Tovar narxi</span><b>'+fmt(goods(p))+'</b></div><div class="ln"><span>Cargo ~'+p.kg+' kg × $'+CG[m]+'</span><span>~'+fmt(cargo(p,m))+'</span></div><div class="note">Cargo alohida hisoblanadi: tovar omborga kelganda haqiqiy og\'irlik o\'lchanadi.</div>'+
   '<div class="err" id="pe"></div><button class="btn" data-a="add" data-v="'+i+'">Savatga qo\'shish</button>'+simBox(i));
 }
+var LTIMER=null;
+function finishLogin(x){
+  S.sess={token:x.token,name:x.name};
+  try{localStorage.setItem("sarbon.sess",JSON.stringify(S.sess));localStorage.removeItem("sarbon.lid")}catch(e){}
+  S.user={name:x.name,phone:""};
+  fetch(WORKER+"/me?token="+x.token).then(function(r){return r.json()}).then(function(me){if(me.ok){S.user={name:me.name,phone:me.phone};save();render()}}).catch(function(){});
+  save();closeSheet();render();loadMyOrders();
+}
+function pollLogin(id){
+  clearInterval(LTIMER);var tries=0;
+  LTIMER=setInterval(function(){
+    tries++;if(tries>200){clearInterval(LTIMER);try{localStorage.removeItem("sarbon.lid")}catch(e){}return}
+    fetch(WORKER+"/login-status?id="+id,{cache:"no-store"}).then(function(r){return r.json()}).then(function(x){
+      if(!x.ok)return;clearInterval(LTIMER);finishLogin(x);
+    }).catch(function(){});
+  },2000);
+}
+function resumeLogin(){
+  if(S.sess)return;
+  try{var l=JSON.parse(localStorage.getItem("sarbon.lid")||"null");
+    if(l&&l.id&&Date.now()-l.t<900000)pollLogin(l.id);else localStorage.removeItem("sarbon.lid")}catch(e){}
+}
 function login(){
   var id=Math.random().toString(36).slice(2,12)+Date.now().toString(36);
-  openSheet('<h3 style="margin:0 0 6px">Kirish</h3><div class="note">Telegram botimizda telefon raqamingizni yuboring. Bot tasdiqlagach, bu yerda avtomatik kirasiz.</div><a id="tgl" class="btn" href="#" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none">Telegram orqali kirish</a><div class="note" id="tgs">Tayyorlanmoqda...</div>');
-  fetch(WORKER+"/customer-bot").then(function(r){return r.json()}).then(function(d){
-    var l=$("tgl"); if(!l||!d.username){if($("tgs"))$("tgs").textContent="Xato: bot topilmadi";return}
-    l.href="https://t.me/"+d.username+"?start=s_"+id;
-    if($("tgs"))$("tgs").textContent="Botni oching, 'Start' bosing va raqamni yuboring.";
-    var tries=0, timer=setInterval(function(){
-      tries++; if(tries>90){clearInterval(timer);return}
-      fetch(WORKER+"/login-status?id="+id).then(function(r){return r.json()}).then(function(x){
-        if(!x.ok)return;
-        clearInterval(timer);
-        S.sess={token:x.token,name:x.name};
-        try{localStorage.setItem("sarbon.sess",JSON.stringify(S.sess))}catch(e){}
-        S.user={name:x.name,phone:""};
-        fetch(WORKER+"/me?token="+x.token).then(function(r){return r.json()}).then(function(me){if(me.ok){S.user={name:me.name,phone:me.phone};save();render()}});
-        save(); closeSheet(); render(); loadMyOrders();
-      }).catch(function(){});
-    },2000);
-  }).catch(function(){ if($("tgs"))$("tgs").textContent="Internet xatosi" });
+  try{localStorage.setItem("sarbon.lid",JSON.stringify({id:id,t:Date.now()}))}catch(e){}
+  openSheet('<h3 style="margin:0 0 6px">Kirish</h3><div class="note">Telegram botimizda telefon raqamingizni yuboring. Bot tasdiqlagach, bu yerga qaytsangiz avtomatik kirasiz.</div><a id="tgl" class="btn" href="#" target="_blank" rel="noopener" onclick="if(this.getAttribute(\'href\')===\'#\'){return false}" style="display:block;text-align:center;text-decoration:none;opacity:.6">Tayyorlanmoqda...</a><div class="note" id="tgs"></div>');
+  fetch(WORKER+"/customer-bot",{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
+    var l=$("tgl");if(!l)return;
+    if(!d.username){l.textContent="Bot topilmadi";if($("tgs"))$("tgs").textContent="Xato: mijoz boti sozlanmagan (admin: CUSTOMER_BOT_TOKEN va /setup-customer).";return}
+    l.href="https://t.me/"+d.username+"?start=s_"+id;l.textContent="Telegram orqali kirish";l.style.opacity="1";
+    if($("tgs"))$("tgs").textContent="Botni oching, Start bosing va raqamni yuboring. Keyin shu sahifaga qayting.";
+    pollLogin(id);
+  }).catch(function(){var l=$("tgl");if(l)l.textContent="Aloqa yo'q";if($("tgs"))$("tgs").textContent="Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring."});
 }
 function delivery(){
   openSheet('<h3 style="margin:0 0 6px">Yetkazish: UzPost filiali</h3><div class="note">1. Viloyatni tanlang</div><div class="tmap">'+REG.map(function(x){return '<button data-a="rg" data-v="'+esc(x)+'" class="'+(S.dr===x?"on":"")+'">'+esc(x)+'</button>'}).join("")+'</div><div class="note">2. Filial nomi va qayerda joylashgani</div><input id="bn" placeholder="Masalan: Chilonzor, 9-kvartal" value="'+esc(S.dl?S.dl.b:"")+'"><div class="err" id="de"></div><button class="btn" data-a="dsave">Saqlash</button><div class="note">Filial nomini uz.post/uz/map sahifasidan topishingiz mumkin.</div>');
@@ -2671,6 +2685,7 @@ document.addEventListener("click",function(e){
   if(e.target.id==="mv"){$("mv").classList.remove("open");return}
   var t=e.target.closest("[data-a]");if(!t)return;
   var a=t.dataset.a,v=t.dataset.v;
+  if(a==="gp"||a==="gn"){var gs=t.parentNode.querySelector(".gs");if(gs)gs.scrollBy({left:(a==="gn"?1:-1)*gs.clientWidth,behavior:"smooth"});return}
   if(a==="theme"){toggleTheme(t);return}
   if(a==="top"){window.scrollTo({top:0,behavior:"smooth"});return}
   if(a==="menu"){$("mv").classList.add("open");return}
@@ -2821,12 +2836,26 @@ try{var sv=JSON.parse(localStorage.getItem("sarbon.sess")||"null");if(sv&&sv.tok
 
 
 var STATIC_N=0,lastSig="",srvFails=0;
+resumeLogin();document.addEventListener("visibilitychange",function(){if(!document.hidden)resumeLogin()});window.addEventListener("focus",resumeLogin);
 setInterval(loadMyOrders,5000);
+function mdU(u){return /^(https?:|data:)/.test(u)?u:WORKER+u}
+function mdList(a){return (Array.isArray(a)?a:[]).map(function(m){var u=typeof m==="string"?m:(m&&(m.u||m.url));if(!u)return null;var t=(m&&(m.t||m.type))||"";var v=(t==="v"||t==="video")||(!t&&/\.(mp4|webm|mov|m4v)(\?|$)/i.test(u));return {u:mdU(u),t:v?"v":"i"}}).filter(Boolean)}
+function galList(p,col){var l=(col&&p.cm&&p.cm[col]&&p.cm[col].length)?p.cm[col]:(p.media||[]);if(!l.length&&p.cm){Object.keys(p.cm).forEach(function(k){l=l.concat(p.cm[k])})}if(!l.length&&p.img)l=[{u:p.img,t:"i"}];return l}
+function galHtml(p,col){var l=galList(p,col);if(!l.length)return pic(p,"big");
+  return '<div class="gal" style="background:'+p.b+'"><div class="gs">'+l.map(function(m){return '<div class="gi">'+(m.t==="v"?'<video src="'+esc(m.u)+'" controls playsinline preload="metadata"></video>':'<img src="'+esc(m.u)+'" alt="">')+'</div>'}).join("")+'</div>'+
+  (l.length>1?'<button class="gb l" data-a="gp">\u2039</button><button class="gb r" data-a="gn">\u203A</button><div class="gd">'+l.map(function(m,k){return '<i'+(k?'':' class="on"')+'></i>'}).join("")+'</div><div class="gc">1/'+l.length+'</div>':'')+'</div>'}
+function picC(p,col,cls){var f=galList(p,col).filter(function(m){return m.t==="i"})[0];if(!f)return pic(p,cls);var q={},k;for(k in p)q[k]=p[k];q.img=f.u;return pic(q,cls)}
+document.addEventListener("scroll",function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains("gs"))return;var n=Math.round(t.scrollLeft/(t.clientWidth||1)),g=t.parentNode;[].forEach.call(g.querySelectorAll(".gd i"),function(d,k){d.classList.toggle("on",k===n)});var c=g.querySelector(".gc");if(c)c.textContent=(n+1)+"/"+t.children.length;[].forEach.call(t.querySelectorAll("video"),function(v,k){if(k!==n)v.pause()})},true);
 function normP(x){if(!x||typeof x!=="object"||!x.n)return null;var o={},k;for(k in x)o[k]=x[k];
   var y=parseFloat(String(x.y).replace(",","."));
   o.n=String(x.n);o.y=isFinite(y)?y:0;o.c=x.c||"";o.b=x.b||"#E4E9F7";o.s=+x.s||0;o.kg=+x.kg>0?+x.kg:.5;o.av=!!x.av;
-  o.olcham=Array.isArray(x.olcham)?x.olcham:[];o.rang=Array.isArray(x.rang)?x.rang:[];
-  o.img=x.img?(/^(https?:|data:)/.test(x.img)?x.img:WORKER+x.img):"";return o}
+  o.olcham=Array.isArray(x.olcham)?x.olcham:[];
+  var rg=Array.isArray(x.rang)?x.rang:[];o.rang=[];o.cm={};
+  rg.forEach(function(r){if(r&&typeof r==="object"){var nm=String(r.n||r.name||"");if(!nm)return;o.rang.push(nm);o.cm[nm]=mdList(r.media||r.imgs||(r.img?[r.img]:[]))}else if(r!=null&&String(r)){o.rang.push(String(r))}});
+  o.media=mdList(x.media||x.imgs||[]);
+  var fm=o.media.filter(function(m){return m.t==="i"})[0];
+  if(!fm){Object.keys(o.cm).some(function(k){fm=o.cm[k].filter(function(m){return m.t==="i"})[0];return !!fm})}
+  o.img=x.img?mdU(x.img):(fm?fm.u:"");return o}
 function getJ(path){return fetch(WORKER+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error(path+" "+r.status);return r.json()})}
 function busy(){var a=document.activeElement,sh=$("sh");return !!((a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))||(sh&&sh.classList.contains("open")))}
 function loadServer(){
