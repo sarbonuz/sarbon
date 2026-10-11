@@ -843,9 +843,10 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
 @keyframes sbdrift{0%{background-position:0% 50%}100%{background-position:100% 50%}}@media (prefers-reduced-motion:reduce){html{animation:none}}
 .nav{touch-action:none;-webkit-user-select:none;user-select:none}.nav button{-webkit-tap-highlight-color:transparent;outline:none}.nav button:active,.nav button:focus{transform:none!important;background:none!important}.nav button:active svg{transform:none}.nav button.on:active svg{transform:translateY(-1px) scale(1.06)}.nav button.pv{color:var(--brand);font-weight:700}html[data-theme="dark"] .nav button.pv{color:#C9CEEA}.pill{background:rgba(255,255,255,.34)!important;-webkit-backdrop-filter:blur(14px) saturate(190%) brightness(1.06)!important;backdrop-filter:blur(14px) saturate(190%) brightness(1.06)!important;border:1px solid rgba(255,255,255,.75);box-shadow:0 8px 20px rgba(37,48,143,.18),inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(37,48,143,.08),inset 0 0 14px rgba(255,255,255,.35)!important;transition:left .7s cubic-bezier(.25,.9,.3,1),width .7s cubic-bezier(.25,.9,.3,1),transform .4s cubic-bezier(.3,1.5,.5,1)!important}html[data-theme="dark"] .pill{background:rgba(110,122,220,.38)!important;border-color:rgba(190,198,255,.35)}.pill.drag{transform:scale(1.14,1.1);transition:width .2s ease,transform .25s cubic-bezier(.3,1.5,.5,1)!important}.pill.jig{animation:sbjig .7s cubic-bezier(.3,1.4,.5,1)}@keyframes sbjig{0%{transform:scale(1)}25%{transform:scale(1.1,.92)}50%{transform:scale(.96,1.06)}75%{transform:scale(1.03,.99)}100%{transform:scale(1)}}@media (prefers-reduced-motion:reduce){.pill.jig{animation:none}}
 
-.v3slot{margin:14px 14px 0;height:clamp(540px,76vh,700px);border-radius:22px}
-#v3f{position:absolute;border:0;border-radius:22px;z-index:2;display:none;background:#14170f;box-shadow:0 10px 30px rgba(37,48,143,.22)}
+
 </style>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<style>.b3d{margin:14px 0}.b3d:empty{display:none}.b3d-in{display:flex;border-radius:22px;overflow:hidden;height:190px;padding:4px}.b3d-in model-viewer{flex:1 1 0;min-width:0;height:100%;background:transparent;--poster-color:transparent;touch-action:pan-y}</style>
 </head>
 <body>
 <div class="bgflash" aria-hidden="true"></div>
@@ -1042,8 +1043,8 @@ function bannersHtml(){var h="";
   return h}
 function home(){var deals=P.map(function(_,i){return i}).filter(function(i){return P[i].y<=25}).sort(function(a,b){return P[a].y-P[b].y}).slice(0,8);
   var h='<div class="search glass"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Tovar qidirish" value="'+esc(S.term)+'"></div>';
-  h+='<div class="v3slot" id="v3slot"></div>';
   h+='<button class="ai glass" data-a="tab" data-v="support"><span class="bo">'+svg("<path d='M4 5h16v11H9l-5 4z'/>",22)+'</span><span><b>AI yordamchi</b><small>Savol bering, buyurtma va to\'lov bo\'yicha javob oling</small></span></button>';
+  h+='<div class="b3d" id="b3dslot"></div>';
   var top=P.map(function(_,i){return i}).sort(function(a,b){return P[b].s-P[a].s}).slice(0,8);
   h+='<h2 class="sec">Arzon topilmalar <small>o\'ngga suring</small></h2><div class="hs">'+deals.map(dealCard).join("")+'</div>';h+='<h2 class="sec">Tavsiya etamiz <small>o\'ngga suring</small></h2><div class="hs">'+top.map(card).join("")+'</div>'+(S.rv&&S.rv.length?'<h2 class="sec">Yaqinda ko\'rilganlar</h2><div class="hs">'+S.rv.map(card).join("")+'</div>':'');
   var list=pfFilt(sortList(P.map(function(_,i){return i}).filter(function(i){return P[i].n.toLowerCase().indexOf(S.term.toLowerCase())>-1})));
@@ -1117,14 +1118,14 @@ function toggleTheme(btn){
 function applyTheme(){document.documentElement.setAttribute("data-theme",S.night?"dark":"light")}
 function render(){
   var h=S.tab==="home"?home():S.tab==="catalog"?catalog():S.tab==="cart"?cart():S.tab==="orders"?orders():support();
-  $("app").innerHTML=S.anim?'<div class="fu">'+h+'</div>':h;S.anim=false;
+  $("app").innerHTML=S.anim?'<div class="fu">'+h+'</div>':h;S.anim=false;mount3d();
   var n=cartN();
   var tabs=[["home","<path d='M3 11l9-7 9 7v9h-6v-6H9v6H3z'/>","Bosh"],["catalog","<rect x='3' y='3' width='7' height='7' rx='2'/><rect x='14' y='3' width='7' height='7' rx='2'/><rect x='3' y='14' width='7' height='7' rx='2'/><rect x='14' y='14' width='7' height='7' rx='2'/>","Katalog"],["cart","<path d='M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM3 3h3l3 12h10l2-8H7'/>","Savat"],["orders","<rect x='4' y='4' width='16' height='16' rx='3'/><path d='M8 9h8M8 13h8M8 17h5'/>","Buyurtma"],["support","<path d='M4 5h16v11H9l-5 4z'/>","Yordam"]];
   $("navb").innerHTML=tabs.map(function(t){return '<button class="'+(S.tab===t[0]?'on':'')+'" data-a="tab" data-v="'+t[0]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+t[1]+'</svg>'+t[2]+(t[0]==="cart"&&n?'<i>'+n+'</i>':'')+'</button>'}).join("");
   placePill();$("mh").innerHTML=S.user?'<div class="me"><h3>Salom, '+esc(S.user.name)+'</h3><p>'+esc(S.user.phone)+'</p><button data-a="logout">Chiqish</button></div>':'<div class="me"><h3>Sarbonga xush kelibsiz</h3><p>Kiring va buyurtmalaringizni kuzating</p><button data-a="login">Kirish / Ro\'yxatdan o\'tish</button></div>';
   if(S.tab==="home"||(S.tab==="catalog"&&!S.sub))startBanners();document.querySelectorAll(".mk").forEach(function(m){var f=m.dataset.from,t=m.dataset.to;if(f&&t&&f!==t){m.style.transform="translate("+f+")";requestAnimationFrame(function(){requestAnimationFrame(function(){m.style.transform="translate("+t+")"})})}});
 $("ap").innerHTML=aiChat(false);$("ap").classList.toggle("open",!!S.ai);$("fab").classList.toggle("hid",!!S.ai);document.querySelectorAll(".ailog").forEach(function(l){l.scrollTo({top:l.scrollHeight,behavior:"smooth"})});S.fresh=S.chat.length;
-  place3d();keep3d();
+  
 }
 
 var bnT=0;
@@ -1332,15 +1333,6 @@ function loadMyOrders(){
 try{var sv=JSON.parse(localStorage.getItem("sarbon.sess")||"null");if(sv&&sv.token){S.sess=sv;fetch(WORKER+"/me?token="+sv.token).then(function(r){return r.json()}).then(function(me){if(me.ok){S.user={name:me.name,phone:me.phone};render();loadMyOrders()}else{S.sess=null;localStorage.removeItem("sarbon.sess")}}).catch(function(){})}}catch(e){}
 
 
-function place3d(){var f=document.getElementById("v3f"),sl=document.getElementById("v3slot");
-  if(!sl||S.tab!=="home"){if(f)f.style.display="none";return}
-  if(!f){f=document.createElement("iframe");f.id="v3f";f.title="Sarbon 3D mahsulotlar";f.setAttribute("allowfullscreen","");f.src="sarbon-product-3d.html";document.body.appendChild(f)}
-  var b=document.body.getBoundingClientRect(),r=sl.getBoundingClientRect();
-  f.style.display="block";f.style.left=(r.left-b.left)+"px";f.style.top=(r.top-b.top)+"px";f.style.width=r.width+"px";f.style.height=r.height+"px"}
-var v3t=0;
-function keep3d(){var k=++v3t,n=0;(function t(){if(k!==v3t)return;place3d();if(++n<45)requestAnimationFrame(t)})()}
-window.addEventListener("resize",place3d);
-window.addEventListener("message",function(e){var f=document.getElementById("v3f");if(!f||e.source!==f.contentWindow)return;var d=e.data;if(d&&d.sarbon==="add-to-cart")toast("cart3d","Savatga qo'shish hali ulanmagan. 3D mahsulotlar uchun narx va buyurtmani keyin ulaymiz.","OK")});
 var STATIC_N=0,lastSig="",srvFails=0;
 setInterval(loadMyOrders,5000);
 function normP(x){if(!x||typeof x!=="object"||!x.n)return null;var o={},k;for(k in x)o[k]=x[k];
@@ -1353,9 +1345,10 @@ function busy(){var a=document.activeElement,sh=$("sh");return !!((a&&/^(INPUT|T
 function loadServer(){
   return Promise.all([getJ("/settings").catch(function(e){return {__e:e.message||"xato"}}),getJ("/products").catch(function(e){return {__e:e.message||"xato"}})]).then(function(res){
     var st=res[0],list=res[1],errs=[];
-    if(!(st&&!st.__e&&+st.rate>0))errs.push("sozlamalar");
-    if(!Array.isArray(list))errs.push("mahsulotlar");
-    if(errs.length){srvFails++;if(srvFails>=2||!P.length)toast("srverr","Serverdan "+errs.join(" va ")+" olinmadi. Internetni tekshiring.","Qayta urinish",function(){loadServer()});return}
+    var why=[];
+    if(!(st&&!st.__e&&+st.rate>0)){errs.push("sozlamalar");why.push(st&&st.__e?st.__e:"bo'sh javob")}
+    if(!Array.isArray(list)){errs.push("mahsulotlar");why.push(list&&list.__e?list.__e:"bo'sh javob")}
+    if(errs.length){srvFails++;if(srvFails<3){setTimeout(loadServer,2000*srvFails);return}toast("srverr","Serverdan "+errs.join(" va ")+" olinmadi ("+why[0]+"). Internetni tekshiring.","Qayta urinish",function(){srvFails=0;loadServer()});return}
     srvFails=0;toast("srverr","");
     var np=list.map(normP).filter(Boolean);
     var sig=JSON.stringify(st)+JSON.stringify(np);
@@ -1375,10 +1368,33 @@ function loadServer(){
     lastSig=sig;LOADED=true;render()
   }).catch(function(e){toast("srverr","Server javobini o'qib bo'lmadi: "+(e&&e.message||e),"Qayta urinish",function(){loadServer()})})
 }
+var GLB_FILES=[]; /* ixtiyoriy: qo'lda yozish mumkin, masalan ["models/a.glb","models/b.glb","models/c.glb"] */
+var B3D=null;
+function ghBase(){var p=location.pathname.split("/").filter(Boolean);return (p.length&&!/\./.test(p[0]))?"/"+p[0]+"/":"/"}
+function ghRepo(){var o=location.hostname.split(".")[0],p=location.pathname.split("/").filter(Boolean);return {o:o,r:(p.length&&!/\./.test(p[0]))?p[0]:o+".github.io"}}
+function mount3d(){var s=$("b3dslot");if(s&&B3D&&B3D.parentNode!==s)s.appendChild(B3D)}
+function build3d(files){if(!files.length){B3D=null;return}
+  var d=document.createElement("div");d.className="b3d-in glass";
+  files.slice(0,3).forEach(function(f){var m=document.createElement("model-viewer");m.setAttribute("src",f);m.setAttribute("alt","3D model");m.setAttribute("auto-rotate","");m.setAttribute("rotation-per-second","25deg");m.setAttribute("interaction-prompt","none");m.setAttribute("disable-zoom","");m.setAttribute("shadow-intensity","1");m.setAttribute("loading","eager");d.appendChild(m)});
+  B3D=d;mount3d()}
+function find3d(){
+  if(GLB_FILES.length){build3d(GLB_FILES.map(function(f){return ghBase()+f.replace(/^\//,"")}));return}
+  try{var c=JSON.parse(localStorage.getItem("sarbon.glb")||"null");if(c&&Date.now()-c.t<600000&&c.f&&c.f.length){build3d(c.f);return}}catch(e){}
+  var g=ghRepo(),api="https://api.github.com/repos/"+g.o+"/"+g.r+"/contents/";
+  function ls(path){return fetch(api+path).then(function(r){if(!r.ok)throw 0;return r.json()}).catch(function(){return []})}
+  function isG(x){return x.type==="file"&&/\.glb$/i.test(x.name)}
+  ls("").then(function(root){var out=[],dirs=[];
+    root.forEach(function(x){if(isG(x))out.push(x.path);else if(x.type==="dir"&&!/^(\.|node_modules)/.test(x.name))dirs.push(x.path)});
+    return Promise.all(dirs.slice(0,6).map(ls)).then(function(r){r.forEach(function(a){a.forEach(function(x){if(isG(x))out.push(x.path)})});return out})
+  }).then(function(out){
+    out=out.slice(0,3).map(function(p){return ghBase()+p.split("/").map(encodeURIComponent).join("/")});
+    if(out.length){try{localStorage.setItem("sarbon.glb",JSON.stringify({t:Date.now(),f:out}))}catch(e){}}
+    build3d(out)})
+}
+find3d();
 loadServer();setInterval(loadServer,15000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)loadServer()});
 window.addEventListener("online",loadServer);
 </script>
-  <a href="./sarbon-product-3d.html">3D mahsulotlarni ko‘rish</a>
 </body>
 </html>
