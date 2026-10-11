@@ -1034,7 +1034,7 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
     background: var(--sage-tint); border-color: color-mix(in srgb, var(--sage) 45%, transparent);
   }
   .stage {
-    position: relative; min-height: 0; touch-action: pan-y; cursor: grab; user-select: none;
+    position: relative; min-height: 0; touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; cursor: grab; user-select: none;
     outline: none;
   }
   .stage.drag { cursor: grabbing; }
@@ -1069,36 +1069,6 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
   }
   .hint .ic { width: 16px; height: 16px; }
   .hint.gone { opacity: 0; }
-  .pnav {
-    position: absolute; top: 50%; transform: translateY(-50%); z-index: 6;
-    width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
-    border: 1px solid rgba(255,255,255,.22); background: rgba(10,12,20,.25);
-    color: var(--ink); opacity: .7; transition: opacity .2s, border-color .2s, background .2s;
-  }
-  .pnav:hover { opacity: 1; border-color: var(--sage); background: rgba(10,12,20,.45); }
-  .pnav .ic { width: 16px; height: 16px; }
-  .pnav.prev { left: 8px; }
-  .pnav.next { right: 8px; }
-  .rail {
-    position: absolute; left: 0; top: 0; z-index: 6;
-    display: grid; gap: 9px;
-  }
-  .rail button {
-    width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
-    background: var(--panel); border: 1px solid var(--line); transition: border-color .2s, transform .15s, background .2s;
-  }
-  .rail button:hover { border-color: var(--sage); }
-  .rail button:active { transform: scale(.92); }
-  .rail button[aria-pressed="true"] { background: var(--sage); color: var(--sage-ink); border-color: var(--sage); }
-  .rail .ic { width: 17px; height: 17px; }
-  .turn {
-    position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); z-index: 6;
-    display: flex; align-items: center; gap: 4px; padding: 3px 6px; border-radius: 999px;
-    background: var(--panel); border: 1px solid var(--line); font-size: 13px;
-  }
-  .turn button { padding: 6px 10px; border-radius: 999px; display: grid; place-items: center; }
-  .turn button:hover { background: var(--chip); }
-  .turn .ic { width: 16px; height: 16px; }
   .caption {
     position: absolute; left: 0; right: 0; bottom: 0; text-align: center; z-index: 6;
     font-family: var(--serif); font-style: italic; font-size: clamp(16px,1.55vw,20px);
@@ -1232,9 +1202,6 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
     .tab .pic { width: 44px; height: 40px; grid-row: span 2; }
     .tab .n { font-size: 15px; }
     .tab .l { font-size: 12px; }
-    .rail { gap: 7px; }
-    .rail button { width: 34px; height: 34px; }
-    .turn { bottom: 30px; }
     .caption { font-size: 15px; }
     .hint { display: none; }
     .shadow { bottom: 17%; height: 30px; }
@@ -1274,10 +1241,15 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
     .info { left: 12px; right: 12px; bottom: 26px; }
     .card { border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; max-height: 38dvh; }
     h1 { font-size: 30px; }
-    .rail { top: 4px; }
     .caption { display: none; }
   }
   @media (pointer: coarse) { .lx-reveal, .lx-ring, .glass { display: none !important; } }
+  /* ===== IXCHAM OYNA (telefon): tepa va past bo'shliq kichik ===== */
+  @media (max-height: 520px) and (min-width: 761px) {
+    .main { padding: 14px 12px 8px 24px; }
+    .info { padding: 14px 24px 8px 0; gap: 8px; }
+    .spec-float { left: 6px; bottom: 4px; }
+  }
 </style>
 </head>
 <body class="dusk">
@@ -1376,25 +1348,10 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
 
     <div class="stage" id="stage" tabindex="0" role="application"
          aria-label="3D ko'rinish. Aylantirish uchun suring, yaqinlashtirish uchun g'ildiraging, asl holatga qaytarish uchun ikki marta bosing.">
-      <button class="pnav prev" type="button" id="prevP" aria-label="Oldingi mahsulot"><svg class="ic"><use href="#i-arrow-l"/></svg></button>
-      <button class="pnav next" type="button" id="nextP" aria-label="Keyingi mahsulot"><svg class="ic"><use href="#i-arrow-r"/></svg></button>
       <div class="shadow"></div>
       <div class="loader" id="loader">Model yuklanmoqda…</div>
       <div class="fallback" id="fallback"><img alt=""></div>
       <div class="hint" id="hint"><svg class="ic"><use href="#i-hand"/></svg>Aylantirish uchun suring · yaqinlashtirish uchun g'ildiraging</div>
-
-      <div class="rail" role="group" aria-label="Boshqaruv">
-        <button type="button" id="zin" aria-label="Yaqinlashtirish"><svg class="ic"><use href="#i-zoom-in"/></svg></button>
-        <button type="button" id="zout" aria-label="Uzoqlashtirish"><svg class="ic"><use href="#i-zoom-out"/></svg></button>
-        <button type="button" id="expand" aria-label="To'liq ekran ko'rinish" aria-pressed="false"><svg class="ic"><use href="#i-expand"/></svg></button>
-        <button type="button" id="light" aria-label="Yorug'lik rejimi" aria-pressed="false"><svg class="ic"><use href="#i-sun"/></svg></button>
-      </div>
-
-      <div class="turn" role="group" aria-label="Aylantirish">
-        <button type="button" id="tl" aria-label="Chapga 90°"><svg class="ic"><use href="#i-ccw"/></svg></button>
-        <button type="button" id="t360" aria-label="360°">360°</button>
-        <button type="button" id="tr" aria-label="O'ngga 90°"><svg class="ic"><use href="#i-cw"/></svg></button>
-      </div>
 
       <div class="caption" id="caption"></div>
       <div class="spec-float" id="specFloat" aria-live="polite"></div>
@@ -1813,29 +1770,13 @@ stage.addEventListener('keydown', e => {
 
 /* ---------- Boshqaruv tugmalari ---------- */
 const hint = $('#hint');
-$('#zin').addEventListener('click', () => { zoomT = clamp(zoomT * 1.35, 0.55, 3.4); markInteract(); });
-$('#zout').addEventListener('click', () => { zoomT = clamp(zoomT / 1.35, 0.55, 3.4); markInteract(); });
-$('#tl').addEventListener('click', () => { queue -= Math.PI / 2; markInteract(); });
-$('#tr').addEventListener('click', () => { queue += Math.PI / 2; markInteract(); });
-$('#t360').addEventListener('click', () => { queue += Math.PI * 2; markInteract(); });
 
-const expandBtn = $('#expand');
-expandBtn.addEventListener('click', () => setFocus(!focusMode));
 function setFocus(on) {
   focusMode = on;
   hero.classList.toggle('focus', on);
-  expandBtn.setAttribute('aria-pressed', String(on));
   markInteract();
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && focusMode) setFocus(false); });
-
-const lightBtn = $('#light');
-lightBtn.addEventListener('click', () => {
-  lightMode = lightMode ? 0 : 1;
-  hero.dataset.light = lightMode ? 'dusk' : 'day';
-  document.body.classList.toggle('dusk', !!lightMode);
-  lightBtn.setAttribute('aria-pressed', String(!!lightMode));
-});
 
 const lensBtn = $('#lensBtn');
 lensBtn.addEventListener('click', () => {
@@ -1996,8 +1937,6 @@ function selectProduct(i) {
 }
 
 tabs.forEach((t, i) => t.addEventListener('click', () => selectProduct(i)));
-$('#prevP').addEventListener('click', () => selectProduct((active - 1 + PRODUCTS.length) % PRODUCTS.length));
-$('#nextP').addEventListener('click', () => selectProduct((active + 1) % PRODUCTS.length));
 navBtns.forEach((b, i) => b.addEventListener('click', () => selectProduct(i)));
 
 $('#featLink').addEventListener('click', e => e.preventDefault());
@@ -2736,7 +2675,7 @@ function b3dHost(){var h=document.getElementById("b3dhost");if(!h){h=document.cr
 function sync3d(){var h=b3dHost(),s=$("b3dslot");
   if(!s||S.tab!=="home"){h.style.display="none";return}
   var sr=s.getBoundingClientRect(),br=document.body.getBoundingClientRect(),w=Math.round(sr.width);if(w<50)return;
-  var W=w<=760?w:1040,H=w<=760?Math.min(720,Math.max(600,Math.round(innerHeight*0.8))):640,sc=w/W,hh=Math.round(H*sc);
+  var W=1040,H=w<=760?490:640,sc=w/W,hh=Math.round(H*sc);
   if(s.style.height!==hh+"px")s.style.height=hh+"px";
   h.style.display="block";h.style.left=Math.round(sr.left-br.left)+"px";h.style.top=Math.round(sr.top-br.top)+"px";h.style.width=w+"px";h.style.height=hh+"px";
   var f=h.firstChild;if(f){if(f.style.width!==W+"px")f.style.width=W+"px";if(f.style.height!==H+"px")f.style.height=H+"px";f.style.transform=sc===1?"none":"scale("+sc+")"}watch3d()}
