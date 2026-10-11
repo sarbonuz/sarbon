@@ -2525,7 +2525,7 @@ function pfFilt(a){var f=S.pf;return f?a.filter(function(i){var g=goods(P[i]);re
 function pfBar(){return '<div class="sortbar">'+[["","Hammasi"],["lt","100 minggacha"],["mid","100–300 ming"],["gt","300 mingdan yuqori"],["top","Test o'tgan"]].map(function(x){return '<button data-a="pf" data-v="'+x[0]+'" class="'+((S.pf||"")===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("")+'</div>'}
 function simBox(i){var c=P[i].c,ids=idx(c).filter(function(x){return x!==i}).sort(function(a,b){return P[b].s-P[a].s}).slice(0,4);
  return ids.length?'<h3 style="margin:16px 0 8px;font-size:15px">O\'xshash tovarlar</h3><div class="hs" style="padding:0 0 6px">'+ids.map(card).join("")+'</div>':''}
-function promoBox(){return '<div class="form" style="margin-top:10px"><div style="display:flex;gap:8px"><input id="pc" placeholder="Promo-kod" value="'+esc(S.promo||(promoLeft()>0?"SARBON10":""))+'" style="flex:1;min-width:0;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;font:inherit"><button class="btn" data-a="promo" style="width:auto;margin:0;padding:0 16px">Qo\'llash</button></div><div class="note" id="pm2" style="padding:6px 0 0">'+(promoLeft()>0?'✅ Birinchi 10 ta buyurtmangizga 10% chegirma avtomatik qo\'llanadi (qolgan: '+promoLeft()+' ta). Kod: SARBON10.':'')+'</div></div>'}
+function promoBox(){return '<div class="form" style="margin-top:10px"><div style="display:flex;gap:8px"><input id="promoin" placeholder="Promo-kod" value="'+esc(S.promo||(promoLeft()>0?"SARBON10":""))+'" style="flex:1;min-width:0;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;font:inherit"><button class="btn" data-a="promo" style="width:auto;margin:0;padding:0 16px">Qo\'llash</button></div><div class="note" id="pm2" style="padding:6px 0 0">'+(promoLeft()>0?'✅ Birinchi 10 ta buyurtmangizga 10% chegirma avtomatik qo\'llanadi (qolgan: '+promoLeft()+' ta). Kod: SARBON10.':'')+'</div></div>'}
 function combineBox(){if(S.cart.length<2)return '';var sep=S.cart.reduce(function(s,c){return s+uzp(P[c.i].kg*c.q)},0),sv=sep-uzp(cartKg());return sv>0?'<div class="form" style="margin-top:6px"><div class="note" style="padding:0">Hamma tovarlar bitta cargo va bitta UzPost posilkasida keladi: UzPostda ~'+fmt(sv)+' tejaysiz.</div></div>':''}
 function cartCargo(){return S.cart.reduce(function(s,c){return s+cargo(P[c.i],c.m)*c.q},0)}
 function cartKg(){return S.cart.reduce(function(s,c){return s+P[c.i].kg*c.q},0)}
@@ -2722,7 +2722,7 @@ document.addEventListener("click",function(e){
   if(a==="pf"){S.pf=v;render();return}
   if(a==="kt"){S.kt=v;render();return}
   if(a==="kb"){S.kb=v;render();return}
-  if(a==="promo"){var pcv=$("pc").value.trim().toUpperCase();if(PROMOS[pcv]){S.promo=pcv;render()}else{S.promo="";$("pm2").textContent="Bunday promo-kod yo'q."}return}
+  if(a==="promo"){var pcv=$("promoin").value.trim().toUpperCase();if(PROMOS[pcv]){S.promo=pcv;render()}else{S.promo="";$("pm2").textContent="Bunday promo-kod yo'q."}return}
   if(a==="fav2"){S.fav[v]=!S.fav[v];save();t.textContent=favTxt(v);render();return}
   if(a==="mode"){product(+t.dataset.i,v);return}
   if(a==="add"){var i=+v;var oo=skOpts(P[i]);if(oo.sz&&!S.osz){$("pe").textContent="O'lchamni tanlang.";return}if(oo.col&&!S.ocol){$("pe").textContent="Rangni tanlang.";return}if(S.mode==="avia"){var ck=$("ok");if(!ck||!ck.checked){$("pe").textContent="Avia uchun ro'yxatni tasdiqlang.";return}}
