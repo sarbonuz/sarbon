@@ -1248,7 +1248,15 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
   @media (max-height: 520px) and (min-width: 761px) {
     .main { padding: 14px 12px 8px 24px; }
     .info { padding: 14px 24px 8px 0; gap: 8px; }
-    .spec-float { left: 6px; bottom: 4px; }
+    .spec-float { left: 6px; bottom: 4px; text-shadow: 0 1px 6px rgba(0,0,0,.85); }
+  }
+  /* ===== SAYT BILAN QO'SHILIB KETISH: fon qatlamlari chetlarda yo'qoladi ===== */
+  body.dusk, body { background: transparent !important; }
+  .lx-base, .lx-shade {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(180deg, transparent 0, #000 24%, #000 76%, transparent 100%);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(180deg, transparent 0, #000 24%, #000 76%, transparent 100%);
+            mask-composite: intersect;
   }
 </style>
 </head>
@@ -2072,7 +2080,7 @@ function frame(now) {
   } else {
     tcx = sr.left - hr.left + sr.width / 2;
     tcy = hr.height * 0.5;
-    tpx = Math.min(sr.width * 0.5, sr.height * 0.6) * 1.16;
+    tpx = Math.min(sr.width * 0.5, sr.height * 0.6) * (hr.height <= 520 ? 1.42 : 1.16);
     if (hr.width <= 760) {
       const ir = document.querySelector('.info').getBoundingClientRect();
       const top = sr.top - hr.top;
