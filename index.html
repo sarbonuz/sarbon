@@ -879,8 +879,6 @@ html[data-day] .csun::before,html[data-day] .csun::after{opacity:1}
 html[data-day] .cmoon{opacity:0;transform:scale(.6) rotate(-35deg)}
 .sbbg{position:fixed;inset:0;z-index:-2;background:#000;overflow:hidden;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .8s,visibility .8s}
 html[data-day] .sbbg{opacity:1;visibility:visible}
-.sbbg video{position:absolute;left:-4%;top:-4%;width:108%;height:108%;object-fit:cover;filter:blur(3px) brightness(.8);transform:translateZ(0)}
-.sbbg::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.5)}
 .sbst{position:absolute;inset:0;z-index:1;animation:sbtw 6s ease-in-out infinite alternate}
 .sbst.s1{background-image:radial-gradient(1.2px 1.2px at 24px 38px,#fff,transparent),radial-gradient(1px 1px at 96px 120px,rgba(255,255,255,.9),transparent),radial-gradient(1.4px 1.4px at 160px 62px,#fff,transparent),radial-gradient(1px 1px at 210px 170px,rgba(255,255,255,.8),transparent),radial-gradient(1px 1px at 60px 190px,rgba(255,255,255,.85),transparent);background-size:240px 220px}
 .sbst.s2{background-image:radial-gradient(1px 1px at 40px 70px,rgba(255,255,255,.9),transparent),radial-gradient(1.6px 1.6px at 130px 30px,#fff,transparent),radial-gradient(1px 1px at 200px 140px,rgba(255,255,255,.8),transparent),radial-gradient(1.2px 1.2px at 90px 200px,#fff,transparent);background-size:310px 270px;animation-delay:-3s;animation-direction:alternate-reverse}
@@ -2428,7 +2426,7 @@ init();
 </script>
 </head>
 <body>
-<div class="sbbg" aria-hidden="true"><video id="sbvid" muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback tabindex="-1"><source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260818_072341_50851634-bbc3-4c33-9acc-7647d4db44aa.mp4" type="video/mp4"></video><div class="sbst s1"></div><div class="sbst s2"></div></div>
+<div class="sbbg" aria-hidden="true"><div class="sbst s1"></div><div class="sbst s2"></div></div>
 <div class="bgflash" aria-hidden="true"></div>
 <canvas id="snow" aria-hidden="true"></canvas>
 <svg class="land" viewBox="0 0 560 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
@@ -2693,10 +2691,7 @@ function toggleTheme(btn){
 }
 function applyTheme(){var de=document.documentElement;
   de.setAttribute("data-theme","dark");
-  if(S.night)de.removeAttribute("data-day");else de.setAttribute("data-day","1");
-  var v=document.getElementById("sbvid");if(!v)return;
-  if(!S.night){if(!v.dataset.i){v.dataset.i="1";try{var so=document.createElement("source");so.src=ghBase()+"vesper-bg.mp4";so.type="video/mp4";v.insertBefore(so,v.firstChild);v.load()}catch(e){}}
-    var p=v.play();if(p&&p.catch)p.catch(function(){})}else{try{v.pause()}catch(e){}}}
+  if(S.night)de.removeAttribute("data-day");else de.setAttribute("data-day","1")}
 function render(){
   var h=S.tab==="home"?home():S.tab==="catalog"?catalog():S.tab==="cart"?cart():S.tab==="orders"?orders():support();
   $("app").innerHTML=S.anim?'<div class="fu">'+h+'</div>':h;S.anim=false;mount3d();
