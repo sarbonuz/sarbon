@@ -2568,7 +2568,7 @@ function cargo(p,m){return r(p.kg*CG[m]*USD)}
 function uzp(kg){var k=Math.ceil(kg);return k<1?0:15000+(k-1)*3000}
 function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" so'm"}
 function kf(n){return n>=1000?(n/1000).toFixed(n>=10000?0:1)+" ming":String(n)}
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return "&#"+c.charCodeAt(0)+";"})}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return "&#"+c.charCodeAt(0)+";"})}
 var PROMOS={SARBON10:.1};
 function cartSub(){return S.cart.reduce(function(s,c){return s+goods(P[c.i])*c.q},0)}
 function promoLeft(){var n=S.user?S.orders.filter(function(o){return o.ph===S.user.phone}).length:0;return Math.max(0,10-n)}
@@ -2746,12 +2746,17 @@ function finishLogin(x){
 }
 function pollLogin(id){
   clearInterval(LTIMER);var tries=0;
+  function hint(t){var e=$("tgs");if(e)e.textContent=t}
   LTIMER=setInterval(function(){
-    tries++;if(tries>200){clearInterval(LTIMER);try{localStorage.removeItem("sarbon.lid")}catch(e){}return}
-    fetch(WORKER+"/login-status?id="+id,{cache:"no-store"}).then(function(r){return r.json()}).then(function(x){
-      if(!x.ok)return;clearInterval(LTIMER);finishLogin(x);
+    tries++;
+    if(tries>100){clearInterval(LTIMER);try{localStorage.removeItem("sarbon.lid")}catch(e){}hint("Vaqt tugadi. Oynani yopib, \"Kirish\" ni qaytadan bosing.");return}
+    if(tries===20)hint("Hali tasdiqlanmadi. Botda Start bosib, telefon raqamingizni yuborganingizni tekshiring.");
+    fetch(WORKER+"/login-status?id="+encodeURIComponent(id),{cache:"no-store"}).then(function(r){return r.json()}).then(function(x){
+      if(!x||!x.ok)return;
+      if(!x.token){clearInterval(LTIMER);hint("Server kirish tokenini bermadi (Worker xatosi). Admin bilan bog'laning.");return}
+      clearInterval(LTIMER);finishLogin(x);
     }).catch(function(){});
-  },2000);
+  },3000);
 }
 function resumeLogin(){
   if(S.sess)return;
@@ -2759,7 +2764,7 @@ function resumeLogin(){
     if(l&&l.id&&Date.now()-l.t<900000)pollLogin(l.id);else localStorage.removeItem("sarbon.lid")}catch(e){}
 }
 function login(){
-  var id=Math.random().toString(36).slice(2,12)+Date.now().toString(36);
+  var id=(function(){var a=new Uint8Array(12);try{crypto.getRandomValues(a)}catch(e){for(var i=0;i<12;i++)a[i]=Math.floor(Math.random()*256)}return Array.prototype.map.call(a,function(b){return("0"+b.toString(16)).slice(-2)}).join("")})();
   try{localStorage.setItem("sarbon.lid",JSON.stringify({id:id,t:Date.now()}))}catch(e){}
   openSheet('<h3 style="margin:0 0 6px">Kirish</h3><div class="note">Telegram botimizda telefon raqamingizni yuboring. Bot tasdiqlagach, bu yerga qaytsangiz avtomatik kirasiz.</div><a id="tgl" class="btn" href="#" target="_blank" rel="noopener" onclick="if(this.getAttribute(\'href\')===\'#\'){return false}" style="display:block;text-align:center;text-decoration:none;opacity:.6">Tayyorlanmoqda...</a><div class="note" id="tgs"></div>');
   fetch(WORKER+"/customer-bot",{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
@@ -2813,7 +2818,7 @@ document.addEventListener("click",function(e){
   if(a==="login"){$("mv").classList.remove("open");login(1);return}
   if(a==="sendcode"){var ph=$("lp").value.replace(/\D/g,"");if(ph.length<9){$("le").textContent="Telefon raqamini to'liq kiriting.";return}login(2,"+"+(ph.length===9?"998"+ph:ph));return}
   if(a==="verify"){var code=$("lc").value.trim(),nm=$("ln").value.trim();if(code!=="1234"){$("le").textContent="Kod noto'g'ri. Demo kod: 1234";return}if(nm.length<2){$("le").textContent="Ismingizni yozing.";return}S.user={name:nm,phone:v};save();closeSheet();render();return}
-  if(a==="logout"){S.user=null;save();$("mv").classList.remove("open");render();return}
+  if(a==="logout"){S.user=null;S.sess=null;S.orders=[];try{localStorage.removeItem("sarbon.sess");localStorage.removeItem("sarbon.lid")}catch(e){}save();$("mv").classList.remove("open");render();return}
   if(a==="dl"){delivery();return}
   if(a==="rg"){S.dr=v;document.querySelectorAll("[data-a=rg]").forEach(function(b){b.classList.toggle("on",b.dataset.v===v)});return}
   if(a==="dsave"){var b=$("bn").value.trim();if(!S.dr||b.length<3){$("de").textContent="Viloyatni tanlang va filial nomini yozing.";return}S.dl={r:S.dr,b:b};save();closeSheet();render();return}
@@ -2862,7 +2867,7 @@ document.addEventListener("click",function(e){
   if(a==="tk"){var u=$("tg").value.trim(),tx=$("tx").value.trim();if(!/^@?[A-Za-z0-9_]{4,}$/.test(u)||tx.length<3){$("er2").textContent="Telegram username va savolni yozing.";return}S.tg=u;save();$("er2").textContent="Savol qabul qilindi. Operator Telegram orqali yozadi.";return}
 });
 document.addEventListener("input",function(e){if(e.target.id==="q"){S.term=e.target.value;var pos=e.target.selectionStart;render();var q=$("q");if(q){q.focus();q.setSelectionRange(pos,pos)}}});
-document.addEventListener("change",function(e){if(e.target.id!=="chek")return;var f=e.target.files[0];if(!f)return;$("cname").textContent=f.name;var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var c=document.createElement("canvas");var k=Math.min(1,1024/Math.max(img.width,img.height));c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);S.chekImg=c.toDataURL("image/jpeg",0.8);var im=$("cprev");im.src=S.chekImg;im.style.display="block";$("ce").textContent=""};img.src=r.result};r.readAsDataURL(f)});
+document.addEventListener("change",function(e){if(e.target.id!=="chek")return;var f=e.target.files[0];if(!f)return;if(!/^image\//.test(f.type)){$("ce").textContent="Faqat rasm tanlang.";e.target.value="";return}if(f.size>15*1024*1024){$("ce").textContent="Rasm juda katta (15 MB dan oshmasin).";e.target.value="";return}$("cname").textContent=f.name;var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var c=document.createElement("canvas");var k=Math.min(1,1024/Math.max(img.width,img.height));c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);S.chekImg=c.toDataURL("image/jpeg",0.8);var im=$("cprev");im.src=S.chekImg;im.style.display="block";$("ce").textContent=""};img.onerror=function(){S.chekImg=null;$("ce").textContent="Rasmni o'qib bo'lmadi."};img.src=r.result};r.readAsDataURL(f)});
 document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.tagName==="INPUT"&&e.target.closest(".aibox")){e.target.closest(".aibox").querySelector("[data-a=ask]").click()}});var lastY=0;
 window.addEventListener("scroll",function(){var y=window.scrollY,hd=document.querySelector(".top"),at=document.querySelector(".atlas");
   if(y>lastY+6&&y>90){hd.classList.add("up");at.classList.add("up")}else if(y<lastY-6||y<=90){hd.classList.remove("up");at.classList.remove("up")}
