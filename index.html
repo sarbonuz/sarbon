@@ -845,7 +845,7 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
 
 
 </style>
-<style>.b3d{margin:14px 0}#b3dhost{position:absolute;z-index:1;left:0;top:0;width:100%;height:0;overflow:hidden;border-radius:22px;clip-path:inset(0 round 22px);background:#14170f;isolation:isolate;display:none}#b3dhost iframe{position:absolute;left:0;top:0;border:0;width:1280px;height:600px;transform-origin:0 0;background:transparent}</style>
+<style>.b3d{margin:0}#b3dhost{position:absolute;z-index:1;left:0;top:0;width:100%;height:0;overflow:hidden;background:transparent;isolation:isolate;display:none;pointer-events:auto;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);mask-composite:intersect}#b3dhost iframe{position:absolute;left:0;top:0;border:0;width:1040px;height:640px;transform-origin:0 0;background:transparent;will-change:transform}</style>
 <script type="text/plain" id="hero3d-src"><!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -874,7 +874,7 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
     --ease: cubic-bezier(.22,.8,.24,1);
   }
   .hero[data-light="dusk"] {
-    --bg: transparent; --panel: rgba(27,31,21,.55); --line: rgba(45,51,36,.8); --ink: #f2ecdf; --muted: #a8a392;
+    --bg: transparent; --panel: rgba(27,31,21,.7); --line: rgba(45,51,36,.8); --ink: #f2ecdf; --muted: #a8a392;
     --sage: #a9b98a; --sage-ink: #14170f; --sage-tint: #283020; --chip: #262b1d; --shadow: 0,0,0;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -909,7 +909,7 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
   .lx-base, .lx-reveal {
     position: fixed; inset: 0; background-position: center; background-size: cover; background-repeat: no-repeat;
   }
-  .lx-base { z-index: 0; inset: -24px; filter: blur(2.5px); background-image: url("https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85"); animation: lxZoom 1.8s cubic-bezier(.16,1,.3,1) both; }
+  .lx-base { z-index: 0; inset: -24px; background-image: url("https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85"); animation: lxZoom 1.8s cubic-bezier(.16,1,.3,1) both; }
   .lx-shade { position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.6)); }
   .lx-reveal {
@@ -959,7 +959,7 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
   @media (max-width: 760px) { .spec-float { display: none; } .glass { width: 96px; height: 96px; } }
 
 
-  .side, .card { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  /* backdrop-filter olib tashlandi: telefonda qotishning asosiy sababi edi */
   #gl {
     position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;
   }
@@ -1255,6 +1255,29 @@ html{background:linear-gradient(120deg,#A9CCD2,#B2C0E0,#C2B2DE) 0% 50%/300% 300%
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
+  /* ===== SARBON: chap panelsiz tor ko'rinish + tezlik ===== */
+  .side { display: none !important; }
+  .stage { contain: layout; }
+  @media (min-width: 761px) {
+    .hero { grid-template-columns: minmax(0,1fr) clamp(280px,33vw,330px); }
+    .main { padding: 56px 16px 64px 44px; }
+    .info { padding: 56px 44px 64px 0; gap: 12px; }
+  }
+  @media (max-width: 760px) {
+    .phonebar { height: 0; padding: 0 !important; overflow: hidden; visibility: hidden; }
+    .main { padding: 26px 12px 8px; }
+    .tabs { gap: 8px; }
+    .tab { grid-template-columns: 32px minmax(0,1fr); column-gap: 6px; padding: 6px 7px; }
+    .tab .pic { width: 32px; height: 30px; }
+    .tab .n { font-size: 12px; line-height: 1.15; overflow-wrap: anywhere; }
+    .tab .l { font-size: 10.5px; }
+    .info { left: 12px; right: 12px; bottom: 26px; }
+    .card { border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; max-height: 38dvh; }
+    h1 { font-size: 30px; }
+    .rail { top: 4px; }
+    .caption { display: none; }
+  }
+  @media (pointer: coarse) { .lx-reveal, .lx-ring, .glass { display: none !important; } }
 </style>
 </head>
 <body class="dusk">
@@ -1550,7 +1573,7 @@ const stage = $('#stage');
 const canvas = $('#gl');
 const loaderEl = $('#loader');
 const fallbackEl = $('#fallback');
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(1);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
@@ -1574,7 +1597,7 @@ scene.add(key, rim);
 
 const dracoLoader = new DRACOLoader().setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
 const gltfLoader = new GLTFLoader().setDRACOLoader(dracoLoader).setMeshoptDecoder(MeshoptDecoder);
-const maxAniso = renderer.capabilities.getMaxAnisotropy();
+const maxAniso = Math.min(4, renderer.capabilities.getMaxAnisotropy());
 
 /* Har bir mahsulot uchun: pivot > spin > holder > GLB */
 const HOME_EULER = new THREE.Euler(0.12, 0.75, 0, 'YXZ');
@@ -1637,10 +1660,15 @@ function loadModel(rig, url) {
       }
     });
     enhanceMaterials(obj);
-    rig.holder.add(obj);
+    /* Markazlash: aylanish/masshtabsiz, toza lokal fazoda hisoblanadi */
+    const tmp = new THREE.Group();
+    tmp.add(obj);
+    tmp.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(obj);
     const sphere = box.getBoundingSphere(new THREE.Sphere());
-    obj.position.sub(sphere.center);
+    obj.position.sub(box.getCenter(new THREE.Vector3()));
+    tmp.remove(obj);
+    rig.holder.add(obj);
     rig.holder.scale.setScalar(0.7 / Math.max(sphere.radius, 1e-6));
     rig.loaded = true;
     refreshLoader();
@@ -1985,8 +2013,23 @@ $('.tabs').addEventListener('keydown', e => {
 /* ---------- Kadr sikli ---------- */
 let prev = performance.now();
 let swayClock = 0;
+let paused = false, rafOn = false, lastDraw = 0;
+const COARSE = matchMedia('(pointer: coarse)').matches || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+const MIN_DT = COARSE ? 24 : 0;
+function wake() {
+  if (rafOn || paused || document.hidden) return;
+  rafOn = true; prev = performance.now(); requestAnimationFrame(frame);
+}
+addEventListener('message', e => {
+  const d = e.data;
+  if (d && d.b3d === 'vis') { paused = !d.v; if (!paused) wake(); }
+});
+document.addEventListener('visibilitychange', wake);
 
 function frame(now) {
+  if (paused || document.hidden) { rafOn = false; return; }
+  if (MIN_DT && now - lastDraw < MIN_DT) { requestAnimationFrame(frame); return; }
+  lastDraw = now;
   const dt = Math.min(0.05, (now - prev) / 1000);
   prev = now;
   swayClock += dt;
@@ -2089,8 +2132,15 @@ function frame(now) {
     tpx = Math.min(hr.width * 0.5, hr.height * 0.6) * 1.16;
   } else {
     tcx = sr.left - hr.left + sr.width / 2;
-    tcy = sr.top - hr.top + sr.height * 0.44;
+    tcy = hr.height * 0.5;
     tpx = Math.min(sr.width * 0.5, sr.height * 0.6) * 1.16;
+    if (hr.width <= 760) {
+      const ir = document.querySelector('.info').getBoundingClientRect();
+      const top = sr.top - hr.top;
+      const avail = Math.max(140, ir.top - hr.top - top);
+      tcy = top + avail * 0.5;
+      tpx = Math.min(sr.width * 0.5, avail * 0.6) * 1.16;
+    }
   }
   const a = 1 - Math.exp(-dt * 7);
   camCX += (tcx - camCX) * a;
@@ -2118,6 +2168,7 @@ function init() {
       if (!rigs[i].loaded && !rigs[i].failed) loadModel(rigs[i], modelUrlFor(rigs[i]));
     }
   }, 1500);
+  rafOn = true;
   requestAnimationFrame(frame);
 }
 typeSpecs(0);
@@ -2127,8 +2178,10 @@ init();
 (function () {
   var root = document.documentElement;
   var glass = document.getElementById('glass');
-  var tx = -999, ty = -999, sx = -999, sy = -999, vx = 0, vy = 0, ang = 0;
-  addEventListener('pointermove', function (e) { tx = e.clientX; ty = e.clientY; });
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  var tx = -999, ty = -999, sx = -999, sy = -999, vx = 0, vy = 0, ang = 0, running = false;
+  function kick() { if (!running) { running = true; requestAnimationFrame(loop); } }
+  addEventListener('pointermove', function (e) { tx = e.clientX; ty = e.clientY; kick(); });
   function loop() {
     if (sx < -900) { sx = tx; sy = ty; }
     var px = sx, py = sy;
@@ -2147,9 +2200,9 @@ init();
       glass.style.top = sy + 'px';
       glass.style.transform = 'translate(-50%,-50%) rotate(' + ang + 'deg) scale(' + stretch + ',' + squeeze + ') rotate(' + (-ang) + 'deg)';
     }
+    if (Math.abs(tx - sx) < 0.4 && Math.abs(ty - sy) < 0.4 && speed < 0.4) { running = false; return; }
     requestAnimationFrame(loop);
   }
-  requestAnimationFrame(loop);
 })();
 <\/script>
 </body>
@@ -2351,8 +2404,7 @@ function bannersHtml(){var h="";
   return h}
 function home(){var deals=P.map(function(_,i){return i}).filter(function(i){return P[i].y<=25}).sort(function(a,b){return P[a].y-P[b].y}).slice(0,8);
   var h='<div class="search glass"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Tovar qidirish" value="'+esc(S.term)+'"></div>';
-  h+='<button class="ai glass" data-a="tab" data-v="support"><span class="bo">'+svg("<path d='M4 5h16v11H9l-5 4z'/>",22)+'</span><span><b>AI yordamchi</b><small>Savol bering, buyurtma va to\'lov bo\'yicha javob oling</small></span></button>';
-  h+='<div class="b3d" id="b3dslot"></div>';
+    h+='<div class="b3d" id="b3dslot"></div>';
   var top=P.map(function(_,i){return i}).sort(function(a,b){return P[b].s-P[a].s}).slice(0,8);
   h+='<h2 class="sec">Arzon topilmalar <small>o\'ngga suring</small></h2><div class="hs">'+deals.map(dealCard).join("")+'</div>';h+='<h2 class="sec">Tavsiya etamiz <small>o\'ngga suring</small></h2><div class="hs">'+top.map(card).join("")+'</div>'+(S.rv&&S.rv.length?'<h2 class="sec">Yaqinda ko\'rilganlar</h2><div class="hs">'+S.rv.map(card).join("")+'</div>':'');
   var list=pfFilt(sortList(P.map(function(_,i){return i}).filter(function(i){return P[i].n.toLowerCase().indexOf(S.term.toLowerCase())>-1})));
@@ -2677,17 +2729,20 @@ function loadServer(){
   }).catch(function(e){toast("srverr","Server javobini o'qib bo'lmadi: "+(e&&e.message||e),"Qayta urinish",function(){loadServer()})})
 }
 var GLB_FILES=[]; /* ixtiyoriy: qo'lda yozish mumkin, masalan ["models/a.glb","models/b.glb","models/c.glb"] */
-var HERO_W=1280,HERO_H=600,B3DMAP=null;
+var HERO_W=1040,HERO_H=640,B3DMAP=null,B3DIO=null,B3DVIS=true;
 function ghBase(){var p=location.pathname.split("/").filter(Boolean);return (p.length&&!/\./.test(p[0]))?"/"+p[0]+"/":"/"}
 function ghRepo(){var o=location.hostname.split(".")[0],p=location.pathname.split("/").filter(Boolean);return {o:o,r:(p.length&&!/\./.test(p[0]))?p[0]:o+".github.io"}}
 function b3dHost(){var h=document.getElementById("b3dhost");if(!h){h=document.createElement("div");h.id="b3dhost";document.body.appendChild(h)}return h}
 function sync3d(){var h=b3dHost(),s=$("b3dslot");
   if(!s||S.tab!=="home"){h.style.display="none";return}
   var sr=s.getBoundingClientRect(),br=document.body.getBoundingClientRect(),w=Math.round(sr.width);if(w<50)return;
-  var sc=w/HERO_W,hh=Math.round(HERO_H*sc);
+  var W=w<=760?w:1040,H=w<=760?Math.min(720,Math.max(600,Math.round(innerHeight*0.8))):640,sc=w/W,hh=Math.round(H*sc);
   if(s.style.height!==hh+"px")s.style.height=hh+"px";
   h.style.display="block";h.style.left=Math.round(sr.left-br.left)+"px";h.style.top=Math.round(sr.top-br.top)+"px";h.style.width=w+"px";h.style.height=hh+"px";
-  var f=h.firstChild;if(f)f.style.transform="scale("+sc+")"}
+  var f=h.firstChild;if(f){if(f.style.width!==W+"px")f.style.width=W+"px";if(f.style.height!==H+"px")f.style.height=H+"px";f.style.transform=sc===1?"none":"scale("+sc+")"}watch3d()}
+function post3d(v){var f=b3dHost().firstChild;if(f&&f.contentWindow){try{f.contentWindow.postMessage({b3d:"vis",v:v},"*")}catch(e){}}}
+function watch3d(){var s=$("b3dslot");if(!s||!("IntersectionObserver" in window))return;if(B3DIO&&B3DIO._s===s)return;if(B3DIO)B3DIO.disconnect();
+  B3DIO=new IntersectionObserver(function(es){var v=es[es.length-1].isIntersecting;if(v!==B3DVIS){B3DVIS=v;post3d(v)}},{rootMargin:"60px"});B3DIO._s=s;B3DIO.observe(s)}
 function mount3d(){sync3d()}
 function heroHtml(map){var t=document.getElementById("hero3d-src").textContent.replace(/<\\\/script/g,"</script");
   return t.replace("/*__MODELS__*/{}",function(){return JSON.stringify(map)})}
@@ -2710,7 +2765,7 @@ function find3d(){
     if(out.length){try{localStorage.setItem("sarbon.glb2",JSON.stringify({t:Date.now(),f:out}))}catch(e){}}
     build3d(pickModels(out))}).catch(function(){build3d({})})
 }
-window.addEventListener("resize",sync3d);window.addEventListener("load",sync3d);setInterval(sync3d,600);
+window.addEventListener("resize",sync3d);window.addEventListener("load",sync3d);setInterval(sync3d,900);
 find3d();
 loadServer();setInterval(loadServer,15000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)loadServer()});
