@@ -903,6 +903,45 @@ html[data-theme="dark"] .bgstars{display:none}
 .hs .card{flex:0 0 150px!important}
 .grid{align-items:stretch}
 </style>
+<style>
+/* ===== YON MENYU: oval chetlar + gradient ===== */
+.menu{border-radius:0 34px 34px 0!important;display:flex!important;flex-direction:column;gap:10px;padding-bottom:56px!important}
+.me{border-radius:26px!important;margin-bottom:2px!important}
+.me button{border-radius:999px!important}
+.menu button.li{border:1px solid rgba(160,170,255,.18)!important;border-radius:999px!important;padding:14px 18px!important;box-shadow:0 4px 14px rgba(8,10,40,.28)}
+.menu button.li b{border-radius:50%!important;width:11px;height:11px}
+html[data-theme="dark"] .menu{background:linear-gradient(180deg,rgba(18,21,62,.97) 0%,rgba(34,28,96,.97) 40%,rgba(62,34,124,.97) 72%,rgba(40,26,104,.98) 100%)!important}
+html[data-theme="dark"] .menu button.li{background:linear-gradient(120deg,rgba(40,48,116,.9),rgba(66,42,132,.85))!important}
+html:not([data-theme="dark"]) .menu{background:linear-gradient(180deg,rgba(255,255,255,.85) 0%,rgba(226,228,255,.9) 55%,rgba(196,190,250,.94) 100%)!important}
+html:not([data-theme="dark"]) .menu button.li{background:rgba(255,255,255,.72)!important;border-color:rgba(37,48,143,.12)!important}
+.menu .ver{position:absolute;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));text-align:center;font-size:10px;letter-spacing:.06em;color:var(--muted);opacity:.75;pointer-events:none;margin:0;padding:0}
+html[data-theme="dark"] .menu button.li:nth-of-type(1){background:linear-gradient(120deg,rgb(36,64,170),rgb(50,78,184))!important}
+html[data-theme="dark"] .menu button.li:nth-of-type(2){background:linear-gradient(120deg,rgb(52,60,168),rgb(66,74,182))!important}
+html[data-theme="dark"] .menu button.li:nth-of-type(3){background:linear-gradient(120deg,rgb(68,56,166),rgb(82,70,180))!important}
+html[data-theme="dark"] .menu button.li:nth-of-type(4){background:linear-gradient(120deg,rgb(84,52,164),rgb(98,66,178))!important}
+html[data-theme="dark"] .menu button.li:nth-of-type(5){background:linear-gradient(120deg,rgb(100,48,162),rgb(114,62,176))!important}
+html:not([data-theme="dark"]) .menu button.li:nth-of-type(1){background:linear-gradient(120deg,rgb(188,206,255),rgb(188,206,255))!important}
+html:not([data-theme="dark"]) .menu button.li:nth-of-type(2){background:linear-gradient(120deg,rgb(197,202,255),rgb(197,202,255))!important}
+html:not([data-theme="dark"]) .menu button.li:nth-of-type(3){background:linear-gradient(120deg,rgb(206,198,254),rgb(206,198,254))!important}
+html:not([data-theme="dark"]) .menu button.li:nth-of-type(4){background:linear-gradient(120deg,rgb(215,194,253),rgb(215,194,253))!important}
+html:not([data-theme="dark"]) .menu button.li:nth-of-type(5){background:linear-gradient(120deg,rgb(224,190,252),rgb(224,190,252))!important}
+.menu .mi{width:28px;height:28px;flex:none;display:inline-flex;align-items:center;justify-content:center;font-style:normal;margin-left:-2px}
+.menu .mi svg{width:22px;height:22px;overflow:visible;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))}
+.mi .rays{transform-box:fill-box;transform-origin:center;animation:miSpin 7s linear infinite}
+.a-box svg{animation:miBounce 1.8s ease-in-out infinite}
+.a-cart svg{animation:miSway 2s ease-in-out infinite}
+.a-bot .eye{transform-box:fill-box;transform-origin:center;animation:miBlink 3.2s infinite}
+.a-plane svg{animation:miFly 2.2s ease-in-out infinite}
+@keyframes miSpin{to{transform:rotate(360deg)}}
+@keyframes miBounce{0%,100%{transform:translateY(1px)}50%{transform:translateY(-3px)}}
+@keyframes miSway{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}
+@keyframes miBlink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes miFly{0%,100%{transform:translate(-1px,1px)}50%{transform:translate(2px,-2px)}}
+@media (prefers-reduced-motion:reduce){.mi *,.mi svg{animation:none!important}}
+/* ===== BANNER: bulut "drift" animatsiyasi bannerni siljitib yuborardi, alohida nom berildi ===== */
+@keyframes bndrift{from{background-position:0% 50%}to{background-position:100% 50%}}
+.bn{animation:bndrift 9s ease-in-out infinite alternate!important}
+</style>
 <style>.b3d{margin:0}#b3dhost{position:absolute;z-index:1;left:0;top:0;width:100%;height:0;overflow:hidden;background:transparent;isolation:isolate;display:none;pointer-events:auto;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);mask-composite:intersect}#b3dhost iframe{position:absolute;left:0;top:0;border:0;width:1040px;height:640px;transform-origin:0 0;background:transparent;will-change:transform}</style>
 <script type="text/plain" id="hero3d-src"><!DOCTYPE html>
 <html lang="uz">
@@ -1362,18 +1401,6 @@ html[data-theme="dark"] .bgstars{display:none}
     border-color: rgba(255,255,255,.5) !important;
   }
 
-/* ===== YON MENYU: oval chetlar + gradient ===== */
-.menu{border-radius:0 34px 34px 0!important;display:flex;flex-direction:column;gap:10px}
-.menu #mh{margin-bottom:2px}
-.me{border-radius:26px!important}
-.me button{border-radius:999px!important}
-.menu button.li{border:1px solid rgba(160,170,255,.16)!important;border-bottom:1px solid rgba(160,170,255,.16)!important;border-radius:999px!important;padding:14px 18px!important;box-shadow:0 4px 14px rgba(8,10,40,.28)}
-.menu button.li b{border-radius:50%!important;width:11px;height:11px}
-html[data-theme="dark"] .menu{background:linear-gradient(180deg,rgba(18,21,58,.97) 0%,rgba(30,26,86,.97) 45%,rgba(52,30,108,.97) 75%,rgba(36,24,92,.98) 100%)!important}
-html[data-theme="dark"] .menu button.li{background:linear-gradient(120deg,rgba(40,46,110,.85),rgba(58,40,120,.8))!important}
-html:not([data-theme="dark"]) .menu{background:linear-gradient(180deg,rgba(255,255,255,.82) 0%,rgba(226,228,255,.88) 55%,rgba(200,196,250,.92) 100%)!important}
-html:not([data-theme="dark"]) .menu button.li{background:rgba(255,255,255,.7)!important;border-color:rgba(37,48,143,.12)!important}
-.menu .ver{position:fixed;left:0;bottom:calc(46px + env(safe-area-inset-bottom,0px));width:min(300px,84%);text-align:center;font-size:10px;letter-spacing:.06em;color:var(--muted);opacity:.75;pointer-events:none;margin:0;padding:0}
 </style>
 </head>
 <body class="dusk">
@@ -2483,11 +2510,11 @@ init();
 <div class="ov" id="mv">
   <aside class="menu" id="mn">
     <div id="mh"></div>
-    <button class="li" data-a="theme"><b style="background:linear-gradient(135deg,#FFB020,#25308F)"></b>Kunduzgi / tungi rejim</button>
-    <button class="li" data-a="tab" data-v="orders"><b style="background:var(--teal)"></b>Buyurtmalarim</button>
-    <button class="li" data-a="tab" data-v="cart"><b style="background:var(--gold)"></b>Savat</button>
-    <button class="li" data-a="tab" data-v="support"><b style="background:var(--pink)"></b>Yordam va AI bot</button>
-    <button class="li" data-a="tab" data-v="support"><b style="background:#2E9E5B"></b>Aloqa (Telegram, telefon)</button>
+    <button class="li" data-a="theme"><i class="mi a-sun"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC247" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" fill="#FFC247"/><g class="rays"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg></i>Kunduzgi / tungi rejim</button>
+    <button class="li" data-a="tab" data-v="orders"><i class="mi a-box"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg></i>Buyurtmalarim</button>
+    <button class="li" data-a="tab" data-v="cart"><i class="mi a-cart"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC247" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H6.5"/><circle cx="9.5" cy="19.5" r="1.3" fill="#FFC247"/><circle cx="17" cy="19.5" r="1.3" fill="#FFC247"/></svg></i>Savat</button>
+    <button class="li" data-a="tab" data-v="support"><i class="mi a-bot"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6FAE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 3.5V8"/><circle cx="12" cy="3" r="1" fill="#FF6FAE"/><circle class="eye" cx="9" cy="13.5" r="1.2" fill="#FF6FAE"/><circle class="eye" cx="15" cy="13.5" r="1.2" fill="#FF6FAE"/></svg></i>Yordam va AI bot</button>
+    <button class="li" data-a="tab" data-v="support"><i class="mi a-plane"><svg viewBox="0 0 24 24" fill="none" stroke="#46E08F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></i>Aloqa (Telegram, telefon)</button>
     <div class="ver">version 0.1.0</div>
   </aside>
 </div>
@@ -2732,8 +2759,8 @@ $("ap").innerHTML=aiChat(false);$("ap").classList.toggle("open",!!S.ai);$("fab")
 }
 
 var bnT=0;
-function goB(k){var t=$("btr");if(!t)return;var n=k%6;if(n===0&&S.bi===5){S.bi=0;t.style.transition="none";t.style.transform="translateX(0)";void t.offsetWidth;t.style.transition="";}else{S.bi=n;t.style.transform="translateX(-"+S.bi*100+"%)"}document.querySelectorAll("#dots i").forEach(function(d,j){d.classList.toggle("on",j===(S.bi%5))})}
-function startBanners(){clearInterval(bnT);var t=$("btr");if(!t)return;var sx=0;t.parentNode.ontouchstart=function(e){sx=e.touches[0].clientX};t.parentNode.ontouchend=function(e){var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40){goB(S.bi+(dx<0?1:-1));clearInterval(bnT);bnT=setInterval(function(){goB(S.bi+1)},3000)}};goB(S.bi);bnT=setInterval(function(){goB(S.bi+1)},3000)}
+function goB(k){var t=$("btr");if(!t)return;var n=k<0?4:k%6;if(n===0&&S.bi===5){S.bi=0;t.style.transition="none";t.style.transform="translateX(0)";void t.offsetWidth;t.style.transition="";}else{S.bi=n;t.style.transform="translateX(-"+S.bi*100+"%)"}document.querySelectorAll("#dots i").forEach(function(d,j){d.classList.toggle("on",j===(S.bi%5))})}
+function startBanners(){clearInterval(bnT);var t=$("btr");if(!t)return;var sx=0;t.parentNode.ontouchstart=function(e){sx=e.touches[0].clientX};t.parentNode.ontouchend=function(e){var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40){goB(S.bi+(dx<0?1:-1));clearInterval(bnT);bnT=setInterval(function(){goB(S.bi+1)},4000)}};goB(S.bi);bnT=setInterval(function(){goB(S.bi+1)},4000)}
 document.addEventListener("scroll",function(){},{passive:true});
 
 function openSheet(html){$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;$("sh").classList.add("open")}
