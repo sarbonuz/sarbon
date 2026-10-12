@@ -977,6 +977,11 @@ html[data-theme] .nav button.flash svg{stroke:#fff;filter:drop-shadow(0 0 6px rg
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
 <script>window.SARBON_MODELS=/*__MODELS__*/{};<\/script>
 <script>
+(function(){var d;function box(){if(d)return d;d=document.createElement("div");d.id="dbg";d.style.cssText="position:fixed;left:8px;top:34px;z-index:99;font:11px/1.35 monospace;color:#8f8;background:rgba(0,0,0,.6);padding:4px 6px;border-radius:6px;max-width:92%;pointer-events:none;white-space:pre-wrap";document.body.appendChild(d);return d}
+window.__dbg=function(t){try{box().textContent+=t+"\n"}catch(e){}};
+window.addEventListener("error",function(e){window.__dbg("ERR: "+(e.message||"")+" "+(e.filename||"").slice(-40)+":"+(e.lineno||""))});
+window.addEventListener("unhandledrejection",function(e){window.__dbg("REJ: "+(e.reason&&e.reason.message||e.reason))});
+document.addEventListener("DOMContentLoaded",function(){window.__dbg("v2 boot ok")})})();
 document.addEventListener("DOMContentLoaded",function(){
   var V="three@0.170.0/",C=[
     ["three/","build/three.module.js","examples/jsm/"],
@@ -990,6 +995,7 @@ document.addEventListener("DOMContentLoaded",function(){
   function go(i){
     if(i>=C.length){if(ld)ld.textContent="3D kutubxona yuklanmadi (internet yoki CDN bloklangan).";return}
     probe(C[i]).then(function(ok){
+      window.__dbg("CDN "+C[i][0].slice(0,32)+" "+(ok?"OK":"fail"));
       if(!ok)return go(i+1);
       var im=document.createElement("script");im.type="importmap";
       im.textContent=JSON.stringify({imports:{"three":C[i][0]+C[i][1],"three/addons/":C[i][0]+C[i][2]}});
@@ -1727,6 +1733,7 @@ function setPic(el, src) {
 /* ---------- Sahna ---------- */
 const hero = $('#hero');
 const stage = $('#stage');
+window.__dbg('module ok');
 const canvas = $('#gl');
 canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); setTimeout(() => location.reload(), 400); }, false);
 const loaderEl = $('#loader');
@@ -1806,7 +1813,9 @@ function loadModel(rig, url) {
   }
   rig.failed = false;
   const src = (window.SARBON_MODELS && window.SARBON_MODELS[url]) || url;
+  window.__dbg('GLB -> '+src);
   gltfLoader.load(src, gltf => {
+    window.__dbg('GLB OK '+src);
     if (token !== rig.loadToken) return;
     clearHolder(rig);
     const obj = gltf.scene;
@@ -1830,7 +1839,8 @@ function loadModel(rig, url) {
     rig.holder.scale.setScalar(0.7 / Math.max(sphere.radius, 1e-6));
     rig.loaded = true;
     refreshLoader();
-  }, undefined, () => {
+  }, undefined, (err) => {
+    window.__dbg('GLB FAIL '+src+' '+(err&&err.message||''));
     if (token !== rig.loadToken) return;
     rig.failed = true; rig.loaded = false;
     rig.errMsg = 'Model yuklanmadi. GitHub papkasidagi .glb fayl nomini tekshiring.';
