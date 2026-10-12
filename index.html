@@ -1563,6 +1563,46 @@ document.addEventListener("DOMContentLoaded",function(){
   }
 
 </style>
+<style id="sb-pop-test">
+/* ===== TEST: vidjetlar fondan ajralib turishi (o'chirish uchun shu blokni o'chiring) ===== */
+/* --- Tun rejimi (qora fon) --- */
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .row,
+html[data-theme="dark"] .glass:not(.top){
+  background:linear-gradient(160deg,rgba(62,72,160,.62) 0%,rgba(30,35,88,.88) 100%)!important;
+  border:1px solid rgba(170,182,255,.42)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.7),0 0 24px rgba(110,124,255,.20),inset 0 1px 0 rgba(255,255,255,.22)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);
+}
+html[data-theme="dark"] .card .in{background:transparent!important}
+html[data-theme="dark"] .nav{
+  background:rgba(34,40,100,.72)!important;
+  border:1px solid rgba(175,186,255,.50)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.75),0 0 28px rgba(110,124,255,.28),inset 0 1px 0 rgba(255,255,255,.28)!important;
+}
+html[data-theme="dark"] .search{
+  background:rgba(34,40,100,.72)!important;
+  border:1px solid rgba(175,186,255,.50)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.6),0 0 18px rgba(110,124,255,.22),inset 0 1px 0 rgba(255,255,255,.22)!important;
+}
+html[data-theme="dark"] .ib{
+  background:rgba(40,46,112,.85)!important;
+  border:1px solid rgba(175,186,255,.50)!important;
+  box-shadow:0 6px 16px rgba(0,0,0,.6),0 0 14px rgba(110,124,255,.22)!important;
+}
+/* --- Kunduzgi rejim --- */
+html:not([data-theme="dark"]) .card,
+html:not([data-theme="dark"]) .row{
+  background:rgba(255,255,255,.78)!important;
+  border:1px solid rgba(255,255,255,.98)!important;
+  box-shadow:0 14px 32px rgba(37,48,143,.24),0 2px 6px rgba(37,48,143,.12)!important;
+}
+html:not([data-theme="dark"]) .nav,
+html:not([data-theme="dark"]) .search{
+  border:1px solid rgba(255,255,255,.95)!important;
+  box-shadow:0 14px 34px rgba(37,48,143,.28),inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+</style>
 </head>
 <body class="dusk">
 <div class="lx-base" aria-hidden="true">
