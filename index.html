@@ -2490,11 +2490,15 @@ function init() {
   refreshLoader();
   loadModel(rigs[0], modelUrlFor(rigs[0]));
   /* Qolgan mahsulotlarni fonda yuklash */
-  setTimeout(() => {
-    for (let i = 1; i < rigs.length; i++) {
-      if (!rigs[i].loaded && !rigs[i].failed) loadModel(rigs[i], modelUrlFor(rigs[i]));
-    }
-  }, 1500);
+  /* Ketma-ket yuklash: avval 1-model tugasin, keyin keyingisi (sekin tarmoqda uzilmasligi uchun) */
+  let qi = 1;
+  const qt = setInterval(() => {
+    if (qi >= rigs.length) { clearInterval(qt); return; }
+    const prev = rigs[qi - 1];
+    if (!prev.loaded && !prev.failed) return;
+    if (!rigs[qi].loaded && !rigs[qi].failed) loadModel(rigs[qi], modelUrlFor(rigs[qi]));
+    qi++;
+  }, 700);
   rafOn = true;
   requestAnimationFrame(frame);
 }
