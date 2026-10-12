@@ -2870,6 +2870,17 @@ function pollLogin(id){
   LTIMER=setInterval(check,1500);
   check();
 }
+function pollLoginLater(id){
+  /* Server (KV) hali yozilmagan kalitni so'rab "yo'q" javobini keshlab qo'ymasligi uchun:
+     so'rovni foydalanuvchi Telegramdan qaytgandan keyin boshlaymiz (yoki 30 soniyadan keyin) */
+  clearInterval(LTIMER);window._deferLogin=true;var started=false,wasHidden=false,tm=null;
+  function go(){if(started)return;started=true;window._deferLogin=false;clearTimeout(tm);
+    document.removeEventListener("visibilitychange",vis);window.removeEventListener("focus",foc);window.removeEventListener("pageshow",foc);pollLogin(id)}
+  function vis(){if(document.hidden){wasHidden=true;return}if(wasHidden)go()}
+  function foc(){if(wasHidden)go()}
+  document.addEventListener("visibilitychange",vis);window.addEventListener("focus",foc);window.addEventListener("pageshow",foc);
+  tm=setTimeout(go,30000);
+}
 function resumeLogin(){
   if(S.sess)return;
   try{var l=JSON.parse(localStorage.getItem("sarbon.lid")||"null");
@@ -2884,7 +2895,7 @@ function login(){
     if(!d.username){l.textContent="Bot topilmadi";if($("tgs"))$("tgs").textContent="Xato: mijoz boti sozlanmagan (admin: CUSTOMER_BOT_TOKEN va /setup-customer).";return}
     l.href="https://t.me/"+d.username+"?start=s_"+id;l.textContent="Telegram orqali kirish";l.style.opacity="1";
     if($("tgs"))$("tgs").textContent="Botni oching, Start bosing va raqamni yuboring. Keyin shu sahifaga qayting.";
-    pollLogin(id);
+    pollLoginLater(id);
   }).catch(function(){var l=$("tgl");if(l)l.textContent="Aloqa yo'q";if($("tgs"))$("tgs").textContent="Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring."});
 }
 function delivery(){
@@ -3060,7 +3071,7 @@ var STATIC_N=0,lastSig="",srvFails=0;
   fetch(WORKER+"/me?token="+encodeURIComponent(lt),{cache:"no-store"}).then(function(r){return r.json()}).then(function(me){
     if(me&&me.ok){finishLogin({token:lt,name:me.name})}
   }).catch(function(){})}catch(e){}})();
-resumeLogin();function _ln(){if(S.sess)return;if(window._loginNow&&LTIMER){window._loginNow()}else resumeLogin()}document.addEventListener("visibilitychange",function(){if(!document.hidden)_ln()});window.addEventListener("focus",_ln);window.addEventListener("pageshow",_ln);
+resumeLogin();function _ln(){if(S.sess||window._deferLogin)return;if(window._loginNow&&LTIMER){window._loginNow()}else resumeLogin()}document.addEventListener("visibilitychange",function(){if(!document.hidden)_ln()});window.addEventListener("focus",_ln);window.addEventListener("pageshow",_ln);
 setInterval(loadMyOrders,5000);
 function mdU(u){return /^(https?:|data:)/.test(u)?u:WORKER+u}
 function mdList(a){return (Array.isArray(a)?a:[]).map(function(m){var u=typeof m==="string"?m:(m&&(m.u||m.url));if(!u)return null;var t=(m&&(m.t||m.type))||"";var v=(t==="v"||t==="video")||(!t&&/\.(mp4|webm|mov|m4v)(\?|$)/i.test(u));return {u:mdU(u),t:v?"v":"i"}}).filter(Boolean)}
