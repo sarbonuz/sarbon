@@ -1837,7 +1837,7 @@ const stage = $('#stage');
 window.__dbg('module ok');
 fetch('https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_wasm_wrapper.js').then(r=>window.__dbg('draco '+(r.ok?'OK':'HTTP '+r.status))).catch(()=>window.__dbg('draco BLOCKED'));
 const canvas = $('#gl');
-canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); setTimeout(() => location.reload(), 400); }, false);
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); }, false);
 const loaderEl = $('#loader');
 const fallbackEl = $('#fallback');
 /* Qurilma kuchini aniqlash: zaif bo'lsa effektlar saqlanadi, faqat og'ir qismlari yengillashadi */
@@ -3411,7 +3411,7 @@ function mount3d(){sync3d()}
 function heroHtml(map){var t=document.getElementById("hero3d-src").textContent.replace(/<\\\/script/g,"</script");
   var loc="";try{loc=ghBase()+"vesper-bg.mp4"}catch(e){}
   return t.replace("/*__MODELS__*/{}",function(){return JSON.stringify(map)}).replace("__VSPLOCAL__",loc)}
-function build3d(map){if(B3DMAP)return;B3DMAP=map;
+function build3d(map){if(/iPhone|iPad|iPod/.test(navigator.userAgent)&&!/[?&]3d=1/.test(location.search))return;if(B3DMAP)return;B3DMAP=map;
   var h=b3dHost(),f=document.createElement("iframe");f.setAttribute("title","3D mahsulotlar");f.setAttribute("scrolling","no");f.setAttribute("allow","autoplay; fullscreen");f.srcdoc=heroHtml(map);
   h.appendChild(f);sync3d()}
 function pickModels(paths){var map={},keys=[["models/macbook-pro-m3-16.glb","macbook"],["models/airpods-pro-3.glb","airpod"],["models/iphone-18-pro-max.glb","iphone"]];
