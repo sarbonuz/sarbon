@@ -2813,6 +2813,17 @@ init();
 @keyframes hubIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .pay1{display:inline-block;margin-top:6px;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(120deg,#7B5CF0,#D6246E);cursor:pointer}
 .hubw .btn{width:100%}
+/* Viloyat tugmalari: gradient */
+html body .tmap button{position:relative;color:#fff!important;font-weight:700;border:1px solid rgba(255,255,255,.28)!important;border-radius:14px;padding:12px 4px;text-shadow:0 1px 2px rgba(0,0,0,.35);background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 55%),linear-gradient(135deg,var(--g1,#7B5CF0),var(--g2,#25308F))!important;box-shadow:0 8px 18px var(--g3,rgba(37,48,143,.4)),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,filter .25s}
+html body .tmap button:active{transform:scale(.94)}
+html body .tmap button:nth-child(5n+1){--g1:#7B5CF0;--g2:#25308F;--g3:rgba(123,92,240,.38)}
+html body .tmap button:nth-child(5n+2){--g1:#2FD0DA;--g2:#1E5BB8;--g3:rgba(47,208,218,.34)}
+html body .tmap button:nth-child(5n+3){--g1:#FF6FAE;--g2:#D6246E;--g3:rgba(214,36,110,.36)}
+html body .tmap button:nth-child(5n+4){--g1:#FFC247;--g2:#E0662B;--g3:rgba(240,140,30,.34)}
+html body .tmap button:nth-child(5n+5){--g1:#5BE08A;--g2:#16A3AE;--g3:rgba(40,190,130,.34)}
+html body .tmap button.on{filter:brightness(1.12) saturate(1.15);transform:translateY(-2px) scale(1.04);border-color:#fff!important;box-shadow:0 0 0 2px rgba(255,255,255,.9),0 10px 24px var(--g3)}
+html body .tmap{padding:12px 10px;border-radius:20px;background:rgba(10,12,40,.45);border:1px solid rgba(160,170,255,.18);box-shadow:inset 0 2px 12px rgba(0,0,0,.35)}
+html:not([data-theme="dark"]) body .tmap{background:rgba(37,48,143,.07);border-color:rgba(37,48,143,.14);box-shadow:inset 0 2px 10px rgba(37,48,143,.08)}
 </style>
 </head>
 <body>
@@ -3096,7 +3107,7 @@ function mapZ(d){var z=parseFloat(localStorage.getItem('sarbon.mz')||'1')+d*0.1;
 /* ===== BUYURTMALARIM: Saqlanganlar · Savat · To'lov kutilmoqda · Yuborildi ===== */
 function hubFav(){return Object.keys(S.fav).filter(function(i){return S.fav[i]&&P[i]})}
 function hubWait(o){return o.srv?o.st==="yangi":o.s===0}
-function hubSent(o){return o.srv?(o.st==="uzb"||o.st==="uzpost"||o.st==="yetkazildi"):o.s>=3}
+function hubSent(o){return o.srv?(["yolda","uzb","uzpost","yetkazildi"].indexOf(o.st)>-1):o.s>=2}
 function hubMine(){return S.user?S.orders.filter(function(o){return o.ph===S.user.phone}):[]}
 function hubPayPanel(){
   var h='<h2 class="sec">To\'lov kutilmoqda</h2>';
