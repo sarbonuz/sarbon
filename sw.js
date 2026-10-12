@@ -1,5 +1,5 @@
-const CACHE = "sarbon-v2";
-const FILES = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
+const CACHE = "sarbon-v3";
+const FILES = ["./", "./index.html", "./manifest.json", "./logo-180.png", "./logo-192.png", "./logo-512.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
@@ -18,7 +18,6 @@ self.addEventListener("activate", (e) => {
   );
 });
 
-// Faqat o'z saytingiz fayllari. Worker, Telegram, xarita va boshqa tashqi so'rovlar tegilmaydi.
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
