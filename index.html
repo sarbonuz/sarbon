@@ -1816,7 +1816,7 @@ function loadModel(rig, url) {
   const src = (window.SARBON_MODELS && window.SARBON_MODELS[url]) || url;
   window.__dbg('GLB -> '+src);
   gltfLoader.load(src, gltf => {
-    window.__dbg('GLB OK '+src);
+    window.__dbg('GLB OK '+src); rig._try = 0;
     if (token !== rig.loadToken) return;
     clearHolder(rig);
     const obj = gltf.scene;
@@ -1847,6 +1847,8 @@ function loadModel(rig, url) {
   }, (err) => {
     window.__dbg('GLB FAIL '+src+' '+(err&&err.message||''));
     if (token !== rig.loadToken) return;
+    rig._try = (rig._try || 0) + 1;
+    if (rig._try <= 4) { window.__dbg('retry '+rig._try); setTimeout(() => loadModel(rig, url), 2000 * rig._try); return; }
     rig.failed = true; rig.loaded = false;
     rig.errMsg = 'Model yuklanmadi. GitHub papkasidagi .glb fayl nomini tekshiring.';
     refreshLoader();
