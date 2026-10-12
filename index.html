@@ -2813,6 +2813,18 @@ init();
 @keyframes hubIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .pay1{display:inline-block;margin-top:6px;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(120deg,#7B5CF0,#D6246E);cursor:pointer}
 .hubw .btn{width:100%}
+/* Buyurtma kartalari: 1 qatorda 2 ta, xarita doim ochiq */
+.mzr{display:none!important}
+.mapw{zoom:1!important}
+.olist2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 10px}
+.olist2 .row{margin:0;padding:10px 8px;font-size:12px;min-width:0;overflow:hidden;line-height:1.3}
+.olist2 .row>b:first-child{display:block;word-break:break-all;font-size:12.5px}
+.olist2 .mapw{margin:8px 0}
+.olist2 .tmap2{width:100%!important;height:auto!important;aspect-ratio:360/640;margin:0!important;cursor:default;transition:none!important}
+.olist2 .trkbox{flex-wrap:wrap;gap:6px;padding:8px;font-size:11px}
+.olist2 .trkbox button{padding:6px 8px;font-size:11px}
+.olist2 .btn.ghost{font-size:11px;padding:8px 6px;line-height:1.25}
+.olist2 .note{font-size:11.5px}
 /* Viloyat tugmalari: gradient */
 html body .tmap button{position:relative;color:#fff!important;font-weight:700;border:1px solid rgba(255,255,255,.28)!important;border-radius:14px;padding:12px 4px;text-shadow:0 1px 2px rgba(0,0,0,.35);background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 55%),linear-gradient(135deg,var(--g1,#7B5CF0),var(--g2,#25308F))!important;box-shadow:0 8px 18px var(--g3,rgba(37,48,143,.4)),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,filter .25s}
 html body .tmap button:active{transform:scale(.94)}
@@ -3098,8 +3110,7 @@ var u;try{u=URL.createObjectURL(new Blob([x],{type:'image/svg+xml'}))}catch(e){u
 var MAPOPEN={};
 function mapSize(el){var w=el.parentNode.clientWidth*0.5;el.style.width=w+'px';el.style.margin='0 auto';el.style.height=(w*640/360)+'px';}
 function trackMap(o){
-  var op=MAPOPEN[o.id];if(op)setTimeout(function(){document.querySelectorAll('.tmap2.open').forEach(mapSize)},0);
-  return '<div class="tmap2'+(op?' open':'')+'" data-id="'+o.id+'" onclick="mapT(this)"><img src="'+premSvg(o)+'" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 0%;display:block"></div>';
+  return '<div class="tmap2 open" data-id="'+o.id+'"><img src="'+premSvg(o)+'" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 0%;display:block"></div>';
 }
 function mapT(el){var o=el.classList.toggle('open');MAPOPEN[el.getAttribute('data-id')]=o;var w=el.parentNode.clientWidth*0.5;el.style.width=o?w+'px':'100%';el.style.margin=o?'0 auto':'0';el.style.height=o?(w*640/360)+'px':'150px';el.classList.remove('jig');void el.offsetWidth;el.classList.add('jig');}
 function mapZ(d){var z=parseFloat(localStorage.getItem('sarbon.mz')||'1')+d*0.1;z=Math.max(0.6,Math.min(1.6,Math.round(z*10)/10));localStorage.setItem('sarbon.mz',String(z));document.documentElement.style.setProperty('--mz',String(z));render();}
@@ -3140,7 +3151,7 @@ function orders(ttl,flt){
   if(!S.user)return h+'<div class="form"><div class="mut">Buyurtmalarni ko\'rish uchun kiring.</div><button class="btn" data-a="login">Kirish</button></div>';
   var mine=S.orders.filter(function(o){return o.ph===S.user.phone&&(!flt||flt(o))});
   if(!mine.length)return h+'<div class="mut">'+(flt?"O\'zbekistonga yuborilgan buyurtma hali yo\'q.":"Hali buyurtma yo\'q.")+'</div>';
-  return h+'<div class="list">'+mine.map(function(o){
+  return h+'<div class="list olist2">'+mine.map(function(o){
     var steps='<div class="steps">'+[0,1,2,3,4,5].map(function(j){return '<i class="'+(j<=o.s?'d':'')+'"></i>'}).join("")+'</div>';
     var tr=o.srv?'':o.s>=2?'<div class="note">Trek: <b>'+o.tk+'</b> · Og\'irlik: '+o.kg+' kg · Cargo: <b>'+fmt(o.cf)+'</b></div>':'<div class="note">Cargo: ~'+fmt(o.c)+' (og\'irlik o\'lchangach)</div>';
     var ut=o.s>=4&&o.ut?'<div class="note">UzPost trek: <b>'+o.ut+'</b></div>':'';var trkb=o.trk?'<div class="trkbox"><span>📦 Trek kod</span><b>'+esc(o.trk)+'</b><button data-x="cpy" data-v="'+esc(o.trk)+'">Nusxalash</button></div>':'';var chatb=o.srv?'<button class="btn ghost" data-x="achat" data-v="'+esc(o.id)+'" style="margin-top:8px">💬 Shu buyurtma bo\'yicha admin bilan yozish</button>':'';
