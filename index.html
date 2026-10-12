@@ -991,6 +991,11 @@ html body .form>.pick[data-a="dl"].wdgo,html body .form>.pick[data-a="pm"].wdgo{
 @keyframes wdjelly{0%{transform:scale(1,1)}22%{transform:scale(.955,.9)}50%{transform:scale(1.025,1.07)}74%{transform:scale(.992,.985)}100%{transform:scale(1,1)}}
 @media (prefers-reduced-motion:reduce){html body .form>.pick.wdgo{animation:none}.wdrip{display:none}}
 </style>
+<style>
+html.lowfx .glass,html.lowfx .sp,html.lowfx .nav,html.lowfx .top{-webkit-backdrop-filter:blur(9px) saturate(1.3)!important;backdrop-filter:blur(9px) saturate(1.3)!important}
+html.lowfx body::before,html.lowfx body::after{filter:blur(24px)}
+</style>
+<script>(function(){try{var n=navigator,c=n.connection||{},w=c.saveData||/(^|-)2g$|3g/.test(c.effectiveType||"")||(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4&&!/iPhone|iPad|Macintosh/.test(n.userAgent));if(w)document.documentElement.classList.add("lowfx")}catch(e){}})();</script>
 <style>.b3d{margin:0}#b3dhost{position:absolute;z-index:1;left:0;top:0;width:100%;height:0;overflow:hidden;background:transparent;isolation:isolate;display:none;pointer-events:auto;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);mask-composite:intersect}#b3dhost iframe{position:absolute;left:0;top:0;border:0;width:1040px;height:640px;transform-origin:0 0;background:transparent;will-change:transform}</style>
 <script type="text/plain" id="hero3d-src"><!DOCTYPE html>
 <html lang="uz">
@@ -1764,7 +1769,12 @@ const canvas = $('#gl');
 canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); setTimeout(() => location.reload(), 400); }, false);
 const loaderEl = $('#loader');
 const fallbackEl = $('#fallback');
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+/* Qurilma kuchini aniqlash: zaif bo'lsa effektlar saqlanadi, faqat og'ir qismlari yengillashadi */
+const NET = navigator.connection || {};
+const SLOWNET = !!(NET.saveData || /(^|-)2g$|3g/.test(NET.effectiveType || ''));
+const WEAK = SLOWNET || !!(navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+  !!(navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4 && !/iPhone|iPad|Macintosh/.test(navigator.userAgent));
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !WEAK, powerPreference: 'high-performance' });
 renderer.setPixelRatio(1);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NeutralToneMapping;
@@ -1824,6 +1834,35 @@ function enhanceMaterials(obj) {
   });
 }
 
+/* Teksturalarni qurilmaga mos o'lchamga kichraytirish (xotira va yuklanish yengillashadi, ko'rinish deyarli o'zgarmaydi) */
+const TEX_MAX = WEAK ? 1024 : (matchMedia('(pointer: coarse)').matches ? 2048 : 4096);
+function capTextures(obj) {
+  if (TEX_MAX >= 4096) return;
+  const seen = new Set();
+  obj.traverse(o => {
+    if (!o.isMesh) return;
+    (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => {
+      if (!m) return;
+      ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap', 'aoMap'].forEach(k => {
+        const t = m[k];
+        if (!t || seen.has(t)) return;
+        seen.add(t);
+        const im = t.image;
+        if (!im || !im.width) return;
+        const s = TEX_MAX / Math.max(im.width, im.height);
+        if (s >= 1) return;
+        try {
+          const c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(im.width * s));
+          c.height = Math.max(1, Math.round(im.height * s));
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          t.image = c; t.needsUpdate = true;
+        } catch (e) {}
+      });
+    });
+  });
+}
+
 function clearHolder(rig) {
   while (rig.holder.children.length) rig.holder.remove(rig.holder.children[0]);
 }
@@ -1853,6 +1892,7 @@ function loadModel(rig, url) {
       }
     });
     enhanceMaterials(obj);
+    capTextures(obj);
     /* Markazlash: aylanish/masshtabsiz, toza lokal fazoda hisoblanadi */
     const tmp = new THREE.Group();
     tmp.add(obj);
@@ -2313,7 +2353,7 @@ let prev = performance.now();
 let swayClock = 0;
 let paused = false, rafOn = false, lastDraw = 0;
 const COARSE = matchMedia('(pointer: coarse)').matches || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-const MIN_DT = COARSE ? 14 : 0;   /* ~60 fps (120Hz ekranda 60 bilan cheklanadi) */
+let MIN_DT = COARSE ? 14 : 0;   /* ~60 fps (120Hz ekranda 60 bilan cheklanadi) */
 function wake() {
   if (rafOn || paused || document.hidden) return;
   rafOn = true; prev = performance.now(); requestAnimationFrame(frame);
@@ -2338,12 +2378,37 @@ addEventListener('message', e => {
 });
 document.addEventListener('visibilitychange', () => { wake(); vspSync(); });
 
+/* Moslashuvchan sifat: kadr sekinlashsa avval aniqlik biroz tushadi, keyin 30 fps ga o'tadi. Tezlashsa aniqlik qaytadi. */
+let qCapDt = 0, qIdleDt = 0, qEma = 16.7, qSlow = 0, qFast = 0, qPR = 1, qHold = 0;
+const PR_STEPS = [1, 0.85, 0.72, 0.6];
+function setPR(i) { qPR = i; renderer.setPixelRatio(PR_STEPS[i]); resize(); }
+let qI = 0;
+function adaptQuality(now, dt) {
+  if (now < qHold) return;
+  const ms = dt * 1000;
+  if (ms > 45) return;                                  /* tab almashganda sakrashlarni hisobga olmaymiz */
+  qEma += (ms - qEma) * 0.06;
+  const target = (qCapDt || qIdleDt) ? 33.3 : 16.7;
+  if (qEma > target * 1.45) { qSlow++; qFast = 0; } else if (qEma < target * 1.15) { qFast++; qSlow = 0; } else { qSlow = 0; qFast = 0; }
+  if (qSlow > 50) {
+    qSlow = 0; qHold = now + 3000;
+    if (qI < PR_STEPS.length - 1) { qI++; setPR(qI); }
+    else if (!qCapDt) { qCapDt = 28; }
+    qEma = target;
+  } else if (qFast > 400 && qI > 0 && !qCapDt) {
+    qFast = 0; qHold = now + 6000; qI--; setPR(qI); qEma = target;
+  }
+}
+
 function frame(now) {
   if (paused || document.hidden) { rafOn = false; return; }
-  if (MIN_DT && now - lastDraw < MIN_DT) { requestAnimationFrame(frame); return; }
+  qIdleDt = (COARSE && !anim && now - lastInteract > 5000) ? 28 : 0;   /* harakatsiz turganda 30 fps: CPU/batareya tejaladi */
+  const _md = Math.max(MIN_DT, qCapDt, qIdleDt);
+  if (_md && now - lastDraw < _md) { requestAnimationFrame(frame); return; }
   lastDraw = now;
   const dt = Math.min(0.05, (now - prev) / 1000);
   prev = now;
+  adaptQuality(now, dt);
   swayClock += dt;
 
   /* Idle */
@@ -2518,7 +2583,7 @@ function init() {
   /* Ketma-ket yuklash: avval 1-model tugasin, keyin keyingisi (sekin tarmoqda uzilmasligi uchun) */
   let qi = 1;
   const qt = setInterval(() => {
-    if (qi >= rigs.length) { clearInterval(qt); return; }
+    if (qi >= rigs.length || SLOWNET) { clearInterval(qt); return; }
     const prev = rigs[qi - 1];
     if (!prev.loaded && !prev.failed) return;
     if (!rigs[qi].loaded && !rigs[qi].failed) loadModel(rigs[qi], modelUrlFor(rigs[qi]));
