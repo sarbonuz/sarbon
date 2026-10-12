@@ -3044,6 +3044,7 @@ function pollLogin(id){
   clearInterval(LTIMER);var tries=0,busyF=false,done=false;
   function hint(t){var e=$("tgs");if(e)e.textContent=t}
   function check(){
+    if(S.sess){done=true;clearInterval(LTIMER);return}
     if(done||busyF)return;
     tries++;
     if(tries>200){done=true;clearInterval(LTIMER);try{localStorage.removeItem("sarbon.lid")}catch(e){}hint("Vaqt tugadi. Oynani yopib, \"Kirish\" ni qaytadan bosing.");return}
@@ -3079,7 +3080,8 @@ function resumeLogin(){
 function login(){
   var id=(function(){var a=new Uint8Array(12);try{crypto.getRandomValues(a)}catch(e){for(var i=0;i<12;i++)a[i]=Math.floor(Math.random()*256)}return Array.prototype.map.call(a,function(b){return("0"+b.toString(16)).slice(-2)}).join("")})();
   try{localStorage.setItem("sarbon.lid",JSON.stringify({id:id,t:Date.now()}))}catch(e){}
-  openSheet('<h3 style="margin:0 0 6px">Kirish</h3><div class="note">Telegram botimizda telefon raqamingizni yuboring. Bot tasdiqlagach, bu yerga qaytsangiz avtomatik kirasiz.</div><a id="tgl" class="btn" href="#" target="_blank" rel="noopener" onclick="if(this.getAttribute(\'href\')===\'#\'){return false}" style="display:block;text-align:center;text-decoration:none;opacity:.6">Tayyorlanmoqda...</a><div class="note" id="tgs"></div>');
+  openSheet('<h3 style="margin:0 0 6px">Kirish</h3><div class="note">Telegram botimizda telefon raqamingizni yuboring. Bot tasdiqlagach, bu yerga qaytsangiz avtomatik kirasiz.</div><a id="tgl" class="btn" href="#" target="_blank" rel="noopener" onclick="if(this.getAttribute(\'href\')===\'#\'){return false}" style="display:block;text-align:center;text-decoration:none;opacity:.6">Tayyorlanmoqda...</a><div class="note" id="tgs"></div><div class="note" style="text-align:center;margin:14px 0 8px">yoki</div><div id="gbtn" style="display:flex;justify-content:center;min-height:44px"></div><div class="note" id="gs" style="text-align:center">Telegram ichidagi brauzerda Google ishlamasa, Telegram orqali kiring.</div>');
+  gInit();
   fetch(WORKER+"/customer-bot",{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
     var l=$("tgl");if(!l)return;
     if(!d.username){l.textContent="Bot topilmadi";if($("tgs"))$("tgs").textContent="Xato: mijoz boti sozlanmagan (admin: CUSTOMER_BOT_TOKEN va /setup-customer).";return}
@@ -3087,6 +3089,49 @@ function login(){
     if($("tgs"))$("tgs").textContent="Botni oching, Start bosing va raqamni yuboring. Keyin shu sahifaga qayting.";
     pollLoginLater(id);
   }).catch(function(){var l=$("tgl");if(l)l.textContent="Aloqa yo'q";if($("tgs"))$("tgs").textContent="Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring."});
+}
+
+/* ---------- Google bilan kirish ---------- */
+var GCID="241259146600-hjd3c7cq0m4op3rtg0emh9tpv8cn19l9.apps.googleusercontent.com",GREADY=false;
+function gMsg(t){var e=$("gs");if(e)e.textContent=t}
+function gLoad(cb){
+  if(window.google&&google.accounts&&google.accounts.id){cb();return}
+  var s=document.getElementById("gsi");
+  if(!s){s=document.createElement("script");s.id="gsi";s.src="https://accounts.google.com/gsi/client";s.async=true;document.head.appendChild(s)}
+  s.addEventListener("load",function(){cb()});
+  s.addEventListener("error",function(){try{s.remove()}catch(e){}cb(1)});
+}
+function gInit(){
+  gLoad(function(err){
+    var b=$("gbtn");if(!b)return;
+    if(err||!window.google||!google.accounts||!google.accounts.id){b.style.display="none";gMsg("Google yuklanmadi. Telegram orqali kiring.");return}
+    if(!GREADY){google.accounts.id.initialize({client_id:GCID,callback:gCb,ux_mode:"popup"});GREADY=true}
+    google.accounts.id.renderButton(b,{type:"standard",theme:"outline",size:"large",text:"signin_with",shape:"pill",width:280});
+  });
+}
+function gPost(path,data){return fetch(WORKER+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(function(r){return r.json()})}
+function gCb(resp){
+  if(!resp||!resp.credential)return;
+  gMsg("Tekshirilmoqda...");
+  gPost("/google-login",{credential:resp.credential}).then(function(x){
+    if(x&&x.ok&&x.token){clearInterval(LTIMER);finishLogin(x);return}
+    if(x&&x.ok&&x.needPhone){gPhone(x);return}
+    gMsg("Google orqali kirib bo'lmadi. Qayta urinib ko'ring.");
+  }).catch(function(){gMsg("Serverga ulanib bo'lmadi. Qayta urinib ko'ring.")});
+}
+function gPhone(x){
+  openSheet('<h3 style="margin:0 0 6px">Telefon raqamingiz</h3><div class="note">Salom, '+esc(x.name)+'! Buyurtma uchun telefon raqamingizni bir marta kiriting.</div><input id="gph" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998 90 123 45 67"><div class="err" id="gpe"></div><button class="btn" id="gpb">Davom etish</button>');
+  var b=$("gpb");
+  b.onclick=function(){
+    var v=$("gph").value.trim(),d=v.replace(/\D/g,"");
+    if(d.length<9||d.length>15){$("gpe").textContent="Telefon raqamni to'g'ri kiriting.";return}
+    b.disabled=true;$("gpe").textContent="";
+    gPost("/google-phone",{ptoken:x.ptoken,phone:v}).then(function(r){
+      if(r&&r.ok&&r.token){clearInterval(LTIMER);finishLogin(r);return}
+      b.disabled=false;
+      $("gpe").textContent=(r&&r.error==="expired")?"Vaqt tugadi. Qaytadan kiring.":"Xatolik. Raqamni tekshirib, qayta urinib ko'ring.";
+    }).catch(function(){b.disabled=false;$("gpe").textContent="Serverga ulanib bo'lmadi."});
+  };
 }
 var UZP={items:null,map:null,layer:null,mk:{},sel:null,cur:null,ri:-1,user:null,um:null};
 function loadLeaflet(cb){
