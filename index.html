@@ -90,6 +90,16 @@ button,input,select,textarea{font:inherit}
 .tmap{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .tmap button{border:1px solid var(--line);background:rgba(255,255,255,.7);color:var(--ink);border-radius:12px;padding:10px 4px;font-size:12px;cursor:pointer}
 .tmap button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.umap{height:260px;border-radius:16px;overflow:hidden;margin:0 0 10px;background:#dfe4f5;position:relative;z-index:0}
+.umsg{padding:20px;font-size:13px;color:var(--mute);text-align:center}
+.ubar{display:flex;gap:8px;margin:6px 0}.ubar input{flex:1;min-width:0}
+.ugeo{border:1px solid var(--line);background:rgba(255,255,255,.7);color:var(--ink);border-radius:12px;padding:0 12px;font-size:12px;cursor:pointer;white-space:nowrap}
+.ulist{max-height:170px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.ulist button{text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.7);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:12px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.ulist button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.ulist .note{grid-column:1/-1}
+html[data-theme="dark"] .ulist button,html[data-theme="dark"] .ugeo{background:rgba(26,30,72,.6);color:#ECEEFF}
+html[data-theme="dark"] .ulist button.on{background:var(--teal);color:#fff}
 .qs{display:flex;flex-wrap:wrap;gap:8px;padding:0 14px 10px}
 .qs button{border:1px solid var(--line);background:rgba(255,255,255,.7);color:var(--ink);border-radius:14px;padding:8px 12px;font-size:13px;cursor:pointer}
 .bub{border-radius:18px;padding:10px 13px;margin:0 14px 8px;font-size:14px;max-width:86%}
@@ -2606,7 +2616,7 @@ var QA=[
 [["avto","sekin"],"Avto — 15–25 kun, 1 kg $6. Og'ir va batareyali tovarlar uchun ham mos."],
 [["to'lov","tolov","karta","pul","payme","click"],"Hozir kartaga o'tkazma. 15 daqiqa ichida summani o'tkazib, \"To'lov qildim\" tugmasini bosing. Payme va Click tez orada qo'shiladi."],
 [["cargo","og'irlik","ogirlik","kilo"],"Cargo tovar omborga kelib, haqiqiy og'irlik bo'yicha hisoblanadi. Trek raqami va summa xabar bo'lib keladi."],
-[["uzpost","filial","pochta","yetkaz","olib ket"],"UzPost: 1-kg 15 000 so'm, keyingi har kg 3 000 so'm. Viloyatni tanlab filial nomini yozasiz. Filial ro'yxatini uz.post/uz/map sahifasidan topasiz."],
+[["uzpost","filial","pochta","yetkaz","olib ket"],"UzPost: 1-kg 15 000 so'm, keyingi har kg 3 000 so'm. Viloyatni tanlab, xaritadan o'zingizga qulay filialni tanlaysiz."],
 [["qancha kun","qachon","muddat","kutaman","necha kun"],"Avto 15–25 kun, avia 7–12 kun. Muddat Xitoydagi sotuvchi jo'natishiga ham bog'liq."],
 [["qaytar","almash","kafolat","buzilgan","singan"],"Qaytarish va almashtirish tovar turiga bog'liq. Aniq shartni operator bilan tekshirib beramiz. Operatorga yozish uchun \"operator\" deb yozing."],
 [["narx","qimmat","arzon","chegirma","foiz","ustama"],"Narx so\u02bcmda ko\u2019rsatiladi. Cargo va UzPost alohida, ular tovar kelgach aniqlanadi."],
@@ -2898,9 +2908,83 @@ function login(){
     pollLoginLater(id);
   }).catch(function(){var l=$("tgl");if(l)l.textContent="Aloqa yo'q";if($("tgs"))$("tgs").textContent="Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring."});
 }
-function delivery(){
-  openSheet('<h3 style="margin:0 0 6px">Yetkazish: UzPost filiali</h3><div class="note">1. Viloyatni tanlang</div><div class="tmap">'+REG.map(function(x){return '<button data-a="rg" data-v="'+esc(x)+'" class="'+(S.dr===x?"on":"")+'">'+esc(x)+'</button>'}).join("")+'</div><div class="note">2. Filial nomi va qayerda joylashgani</div><input id="bn" placeholder="Masalan: Chilonzor, 9-kvartal" value="'+esc(S.dl?S.dl.b:"")+'"><div class="err" id="de"></div><button class="btn" data-a="dsave">Saqlash</button><div class="note">Filial nomini uz.post/uz/map sahifasidan topishingiz mumkin.</div>');
+var UZP={items:null,map:null,layer:null,mk:{},sel:null,cur:null,ri:-1,user:null,um:null};
+function loadLeaflet(cb){
+  if(window.L){cb();return}
+  if(!document.getElementById("lfcss")){var l=document.createElement("link");l.id="lfcss";l.rel="stylesheet";l.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css";document.head.appendChild(l)}
+  var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js";s.onload=function(){cb()};s.onerror=function(){cb(1)};document.head.appendChild(s)
 }
+function uzpMsg(t){var b=$("umap");if(b)b.innerHTML='<div class="umsg">'+t+'</div>'}
+function uzpData(cb){
+  if(UZP.items){cb();return}
+  fetch(WORKER+"/uzpost-offices").then(function(r){return r.json()}).then(function(d){if(!d.ok||!d.items)throw 0;UZP.items=d.items;cb()}).catch(function(){uzpMsg("Filiallar ro'yxati yuklanmadi. Filial nomini pastda qo'lda yozing.")})
+}
+function uzpInit(){
+  loadLeaflet(function(fail){
+    var box=$("umap");if(!box)return;
+    if(fail||!window.L){uzpMsg("Xarita yuklanmadi. Filial nomini pastda qo'lda yozing.");return}
+    box.innerHTML="";
+    if(UZP.map){try{UZP.map.remove()}catch(e){}}
+    UZP.user=null;UZP.um=null;
+    var m=L.map(box,{preferCanvas:true,renderer:L.canvas({tolerance:10})}).setView([41.3,64.6],5);
+    UZP.map=m;
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(m);
+    UZP.layer=L.layerGroup().addTo(m);
+    setTimeout(function(){m.invalidateSize()},400);setTimeout(function(){m.invalidateSize()},900);
+    uzpData(function(){uzpDraw(S.dr?REG.indexOf(S.dr):-1,true)});
+  });
+}
+function uzpStyle(id,on){var c=UZP.mk[id];if(!c)return;c.setStyle({fillColor:on?"#16A3AE":"#D6246E",radius:on?10:(UZP.ri>=0?7:4)});if(on)c.bringToFront()}
+function uzpDraw(ri,fit){
+  var m=UZP.map;if(!m||!UZP.items)return;
+  UZP.ri=ri;UZP.layer.clearLayers();UZP.mk={};
+  var pts=[];
+  UZP.items.forEach(function(it){
+    if(ri>=0&&it[4]!==ri)return;
+    var c=L.circleMarker([it[2],it[3]],{radius:ri>=0?7:4,weight:2,color:"#fff",fillColor:"#D6246E",fillOpacity:.9});
+    c.on("click",function(){uzpPick(it[0])});
+    c.addTo(UZP.layer);UZP.mk[it[0]]=c;pts.push([it[2],it[3]]);
+  });
+  if(UZP.sel)uzpStyle(UZP.sel,true);
+  if(fit){if(ri>=0&&pts.length)m.fitBounds(pts,{padding:[24,24],maxZoom:13});else if(ri<0)m.setView([41.3,64.6],5)}
+  uzpList();
+}
+function uzpDist(it){var p=UZP.user,k=Math.cos(p[0]*Math.PI/180);return Math.sqrt(Math.pow(it[2]-p[0],2)+Math.pow((it[3]-p[1])*k,2))*111}
+function uzpList(){
+  var el=$("ulist");if(!el||!UZP.items)return;
+  var ri=S.dr?REG.indexOf(S.dr):-1,q=($("usq")?$("usq").value:"").replace(/\D/g,"");
+  var a=UZP.items.filter(function(it){if(q)return String(it[1]).indexOf(q)===0;return ri<0||it[4]===ri});
+  if(UZP.user)a.sort(function(x,y){return uzpDist(x)-uzpDist(y)});else a.sort(function(x,y){return x[1]-y[1]});
+  var n=a.length;a=a.slice(0,60);
+  el.innerHTML=(n?'':'<div class="note">Filial topilmadi.</div>')+a.map(function(it){return '<button data-a="bsel" data-v="'+it[0]+'" class="'+(UZP.sel===it[0]?"on":"")+'"><b>'+it[1]+'</b><span>'+esc(REG[it[4]])+(UZP.user?' · '+Math.round(uzpDist(it))+' km':'')+'</span></button>'}).join("")+(n>60?'<div class="note">Yana '+(n-60)+' ta bor. Indeks yozib qidiring yoki xaritani yaqinlashtiring.</div>':'');
+}
+function uzpPick(id){
+  var it=null;for(var i=0;i<UZP.items.length;i++)if(UZP.items[i][0]===id){it=UZP.items[i];break}
+  if(!it)return;
+  S.dr=REG[it[4]];
+  document.querySelectorAll("[data-a=rg]").forEach(function(b){b.classList.toggle("on",b.dataset.v===S.dr)});
+  if(UZP.sel)uzpStyle(UZP.sel,false);
+  UZP.sel=id;
+  if(UZP.ri>=0&&UZP.ri!==it[4])uzpDraw(it[4],false);
+  uzpStyle(id,true);
+  if(UZP.map)UZP.map.setView([it[2],it[3]],Math.max(UZP.map.getZoom(),14));
+  UZP.cur={id:id,idx:it[1],lat:it[2],lng:it[3],r:REG[it[4]]};
+  uzpList();
+  var inp=$("bn");if(!inp)return;
+  var pre="Indeks "+it[1];
+  inp.value=pre+" · manzil aniqlanmoqda...";inp.dataset.auto=String(id);
+  var done=function(txt){if(inp.dataset.auto!==String(id))return;inp.value=txt};
+  fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&addressdetails=1&accept-language=uz,ru,en&lat="+it[2]+"&lon="+it[3]).then(function(r){return r.json()}).then(function(d){
+    var a=d.address||{},p=[a.road||a.pedestrian,a.house_number,a.suburb||a.neighbourhood,a.city_district,a.city||a.town||a.village||a.county].filter(function(x,i,arr){return x&&arr.indexOf(x)===i});
+    if(!p.length&&d.display_name)p=d.display_name.split(",").slice(0,3).map(function(x){return x.trim()});
+    done(p.length?pre+" · "+p.join(", "):pre+" (xaritadan tanlandi)");
+  }).catch(function(){done(pre+" (xaritadan tanlandi)")});
+}
+function delivery(){
+  openSheet('<h3 style="margin:0 0 6px">Yetkazish: UzPost filiali</h3><div class="umap" id="umap"><div class="umsg">Xarita yuklanmoqda...</div></div><div class="note">1. Viloyatni tanlang (xarita yaqinlashadi)</div><div class="tmap">'+REG.map(function(x){return '<button data-a="rg" data-v="'+esc(x)+'" class="'+(S.dr===x?"on":"")+'">'+esc(x)+'</button>'}).join("")+'</div><div class="note">2. Filialni xaritadan yoki ro\'yxatdan tanlang</div><div class="ubar"><input id="usq" placeholder="Indeks bo\'yicha qidirish" inputmode="numeric"><button class="ugeo" data-a="bgeo">📍 Menga yaqin</button></div><div class="ulist" id="ulist"></div><div class="note">3. Tanlangan filial (kerak bo\'lsa tahrirlang)</div><input id="bn" placeholder="Filial xaritadan tanlanadi" value="'+esc(S.dl?S.dl.b:"")+'"><div class="err" id="de"></div><button class="btn" data-a="dsave">Saqlash</button>');
+  uzpInit();
+}
+document.addEventListener("input",function(e){if(e.target.id==="usq")uzpList();if(e.target.id==="bn")delete e.target.dataset.auto});
 function payMethod(){openSheet('<h3 style="margin:0 0 8px">To\'lov usuli</h3><button class="pick" data-a="pmset" data-v="card"><span>✔</span><b>Kartaga o\'tkazma</b></button><button class="pick" disabled style="opacity:.5"><span>Payme</span><b>tez orada</b></button><button class="pick" disabled style="opacity:.5"><span>Click</span><b>tez orada</b></button>')}
 function payment(){
   var tot=cartTotal();S.due=Date.now()+900000;
@@ -2943,8 +3027,10 @@ document.addEventListener("click",function(e){
   if(a==="verify"){var code=$("lc").value.trim(),nm=$("ln").value.trim();if(code!=="1234"){$("le").textContent="Kod noto'g'ri. Demo kod: 1234";return}if(nm.length<2){$("le").textContent="Ismingizni yozing.";return}S.user={name:nm,phone:v};save();closeSheet();render();return}
   if(a==="logout"){S.user=null;S.sess=null;S.orders=[];try{localStorage.removeItem("sarbon.sess");localStorage.removeItem("sarbon.lid")}catch(e){}save();$("mv").classList.remove("open");render();return}
   if(a==="dl"){delivery();return}
-  if(a==="rg"){S.dr=v;document.querySelectorAll("[data-a=rg]").forEach(function(b){b.classList.toggle("on",b.dataset.v===v)});return}
-  if(a==="dsave"){var b=$("bn").value.trim();if(!S.dr||b.length<3){$("de").textContent="Viloyatni tanlang va filial nomini yozing.";return}S.dl={r:S.dr,b:b};save();closeSheet();render();return}
+  if(a==="rg"){S.dr=v;UZP.user=null;document.querySelectorAll("[data-a=rg]").forEach(function(b){b.classList.toggle("on",b.dataset.v===v)});if(UZP.cur&&UZP.cur.r!==v)UZP.cur=null;uzpDraw(REG.indexOf(v),true);return}
+  if(a==="bsel"){uzpPick(+v);return}
+  if(a==="bgeo"){if(!navigator.geolocation){$("de").textContent="Joylashuv qo'llab-quvvatlanmaydi.";return}navigator.geolocation.getCurrentPosition(function(p){UZP.user=[p.coords.latitude,p.coords.longitude];S.dr="";document.querySelectorAll("[data-a=rg]").forEach(function(b){b.classList.remove("on")});if(UZP.map){if(UZP.um)UZP.map.removeLayer(UZP.um);UZP.um=L.circleMarker(UZP.user,{radius:7,weight:3,color:"#fff",fillColor:"#25308F",fillOpacity:1}).addTo(UZP.map);uzpDraw(-1,false);UZP.map.setView(UZP.user,12)}else uzpList()},function(){$("de").textContent="Joylashuvga ruxsat berilmadi."},{timeout:8000});return}
+  if(a==="dsave"){var b=$("bn").value.trim();if(!S.dr||b.length<3){$("de").textContent="Viloyatni tanlang va filialni xaritadan tanlang.";return}S.dl={r:S.dr,b:b};if(UZP.cur&&UZP.cur.r===S.dr){S.dl.i=UZP.cur.idx;S.dl.lat=UZP.cur.lat;S.dl.lng=UZP.cur.lng}save();closeSheet();render();return}
   if(a==="pm"){payMethod();return}
   if(a==="pmset"){S.pm=v;closeSheet();render();return}
   if(a==="buy"){if(!S.dl){$("er").textContent="Avval yetkazish filialini tanlang.";return}if(!S.cart.length)return;payment();return}
