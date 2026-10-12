@@ -3055,6 +3055,11 @@ try{var sv=JSON.parse(localStorage.getItem("sarbon.sess")||"null");if(sv&&sv.tok
 
 
 var STATIC_N=0,lastSig="",srvFails=0;
+(function(){try{var q=new URLSearchParams(location.search),lt=q.get("lt");if(!lt||!/^[a-z0-9]{20,80}$/.test(lt))return;
+  try{history.replaceState(null,"",location.pathname)}catch(e){}
+  fetch(WORKER+"/me?token="+encodeURIComponent(lt),{cache:"no-store"}).then(function(r){return r.json()}).then(function(me){
+    if(me&&me.ok){finishLogin({token:lt,name:me.name})}
+  }).catch(function(){})}catch(e){}})();
 resumeLogin();function _ln(){if(S.sess)return;if(window._loginNow&&LTIMER){window._loginNow()}else resumeLogin()}document.addEventListener("visibilitychange",function(){if(!document.hidden)_ln()});window.addEventListener("focus",_ln);window.addEventListener("pageshow",_ln);
 setInterval(loadMyOrders,5000);
 function mdU(u){return /^(https?:|data:)/.test(u)?u:WORKER+u}
