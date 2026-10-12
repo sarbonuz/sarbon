@@ -141,6 +141,7 @@ html[data-theme="dark"] .ulist button.on{background:var(--teal);color:#fff}
 .me{border-radius:20px;padding:16px;margin-bottom:12px;color:#fff;background:linear-gradient(120deg,#25308F,#16A3AE)}
 .me h3{margin:0 0 4px;font-size:17px}
 .me p{margin:0;font-size:13px;opacity:.9}
+.me button+button{margin-left:8px}
 .me button{margin-top:10px;background:#fff;color:var(--brand);border:0;border-radius:12px;padding:9px 14px;font-weight:800;cursor:pointer}
 .menu button.li{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;color:var(--ink);padding:13px 4px;font-size:15px;border-bottom:1px solid var(--line);cursor:pointer;text-align:left}
 .menu button.li b{width:10px;height:10px;border-radius:4px;display:inline-block}
@@ -2823,7 +2824,7 @@ var QA=[
 [["kurs","dollar","yuan","valyuta"],"Narx so'm kursiga bog'liq. Buyurtma paytidagi narx saqlanadi, cargo esa tovar kelgach aniqlanadi."],
 [["hamkor","sotuvchi bo'l","biznes","reklama"],"Hamkorlik va reklama bo'yicha operatorga Telegram orqali yozing. Shartlar alohida kelishiladi."],
 [["sevimli","saqla","yurak"],"Tovar kartochkasidagi yurakcha belgisini bossangiz, tovar sevimlilarga saqlanadi."],
-[["chiqish","ism o'zgar","telefon o'zgar","profil"],"Chiqish profil kartasida, menyuning tepasida. Ism yoki telefonni o'zgartirish uchun operatorga yozing."],
+[["chiqish","ism o'zgar","telefon o'zgar","profil"],"Chiqish profil kartasida, menyuning tepasida. Ism, familya yoki telefonni o'zgartirish uchun menyudagi Profilni tahrirlash tugmasini bosing."],
 [["xato","ishlamay","bug","muammo","yomon"],"Sahifani yangilab qayta urinib ko'ring. Hal bo'lmasa, muammo tavsifi va skrinshotni operatorga yuboring."],
 [["nega","sabab","nima uchun"],"Aniqroq yozing, masalan: narx nega qimmat, avia nega qimmat yoki buyurtma nega kechikdi."],
 [["qancha","necha pul","necha so'm","narxi nech"],"Tovar narxi tovar sahifasida, ustama bilan. Cargo va UzPost alohida hisoblanadi. Tovarni tanlab aniq hisobni ko'ring."],
@@ -3005,7 +3006,7 @@ function render(){
   var n=cartN();
   var tabs=[["home","<path d='M3 11l9-7 9 7v9h-6v-6H9v6H3z'/>","Bosh"],["catalog","<rect x='3' y='3' width='7' height='7' rx='2'/><rect x='14' y='3' width='7' height='7' rx='2'/><rect x='3' y='14' width='7' height='7' rx='2'/><rect x='14' y='14' width='7' height='7' rx='2'/>","Katalog"],["cart","<path d='M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM3 3h3l3 12h10l2-8H7'/>","Savat"],["orders","<rect x='4' y='4' width='16' height='16' rx='3'/><path d='M8 9h8M8 13h8M8 17h5'/>","Buyurtma"],["support","<path d='M4 5h16v11H9l-5 4z'/>","Yordam"]];
   $("navb").innerHTML=tabs.map(function(t){return '<button class="'+(S.tab===t[0]?'on':'')+'" data-a="tab" data-v="'+t[0]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+t[1]+'</svg>'+t[2]+(t[0]==="cart"&&n?'<i>'+n+'</i>':'')+'</button>'}).join("");
-  placePill();$("mh").innerHTML=S.user?'<div class="me"><h3>Salom, '+esc(S.user.name)+'</h3><p>'+esc(S.user.phone)+'</p><button data-a="logout">Chiqish</button></div>':'<div class="me"><h3>Sarbonga xush kelibsiz</h3><p>Kiring va buyurtmalaringizni kuzating</p><button data-a="login">Kirish / Ro\'yxatdan o\'tish</button></div>';
+  placePill();$("mh").innerHTML=S.user?'<div class="me"><h3>Salom, '+esc(S.user.name)+'</h3><p>'+esc(S.user.phone)+'</p><button data-a="editprof">Profilni tahrirlash</button><button data-a="logout">Chiqish</button></div>':'<div class="me"><h3>Sarbonga xush kelibsiz</h3><p>Kiring va buyurtmalaringizni kuzating</p><button data-a="login">Kirish / Ro\'yxatdan o\'tish</button></div>';
   if(S.tab==="home"||(S.tab==="catalog"&&!S.sub))startBanners();document.querySelectorAll(".mk").forEach(function(m){var f=m.dataset.from,t=m.dataset.to;if(f&&t&&f!==t){m.style.transform="translate("+f+")";requestAnimationFrame(function(){requestAnimationFrame(function(){m.style.transform="translate("+t+")"})})}});
 $("ap").innerHTML=aiChat(false);$("ap").classList.toggle("open",!!S.ai);$("fab").classList.toggle("hid",!!S.ai);document.querySelectorAll(".ailog").forEach(function(l){l.scrollTo({top:l.scrollHeight,behavior:"smooth"})});S.fresh=S.chat.length;
   
@@ -3037,7 +3038,7 @@ function finishLogin(x){
   S.sess={token:x.token,name:x.name};
   try{localStorage.setItem("sarbon.sess",JSON.stringify(S.sess));localStorage.removeItem("sarbon.lid")}catch(e){}
   S.user={name:x.name,phone:""};
-  fetch(WORKER+"/me?token="+x.token).then(function(r){return r.json()}).then(function(me){if(me.ok){S.user={name:me.name,phone:me.phone};save();render()}}).catch(function(){});
+  fetch(WORKER+"/me?token="+x.token).then(function(r){return r.json()}).then(function(me){if(me.ok){S.user={name:me.name,phone:me.phone,first:me.first,last:me.last,email:me.email};save();render()}}).catch(function(){});
   save();closeSheet();render();loadMyOrders();
 }
 function pollLogin(id){
@@ -3257,6 +3258,34 @@ document.addEventListener("click",function(e){
   if(a==="login"){$("mv").classList.remove("open");login(1);return}
   if(a==="sendcode"){var ph=$("lp").value.replace(/\D/g,"");if(ph.length<9){$("le").textContent="Telefon raqamini to'liq kiriting.";return}login(2,"+"+(ph.length===9?"998"+ph:ph));return}
   if(a==="verify"){var code=$("lc").value.trim(),nm=$("ln").value.trim();if(code!=="1234"){$("le").textContent="Kod noto'g'ri. Demo kod: 1234";return}if(nm.length<2){$("le").textContent="Ismingizni yozing.";return}S.user={name:nm,phone:v};save();closeSheet();render();return}
+  if(a==="editprof"){
+    $("mv").classList.remove("open");
+    var u0=S.user||{},sp0=String(u0.name||"").split(" ");
+    var fv=u0.first!==undefined?u0.first:(sp0[0]||""),lv=u0.last!==undefined?u0.last:sp0.slice(1).join(" ");
+    openSheet('<h3 style="margin:6px 0 12px">Profil</h3>'
+      +'<input id="pf1" placeholder="Ism" autocomplete="given-name" maxlength="30" value="'+esc(fv)+'">'
+      +'<input id="pf2" placeholder="Familya" autocomplete="family-name" maxlength="30" value="'+esc(lv)+'">'
+      +'<input id="pf3" type="tel" inputmode="tel" placeholder="Telefon (+998...)" autocomplete="tel" maxlength="20" value="'+esc(u0.phone||"")+'">'
+      +(u0.email?'<div class="mut" style="margin:0 0 10px">Akkaunt: '+esc(u0.email)+'</div>':'')
+      +'<div id="pfe" style="color:#D6246E;font-size:13px;min-height:18px;margin-bottom:6px"></div>'
+      +'<button class="btn" data-a="profsave">Saqlash</button>');
+    return}
+  if(a==="profsave"){
+    var f1=$("pf1").value.trim(),l1=$("pf2").value.trim(),p1=$("pf3").value.replace(/\D/g,""),pe=$("pfe");
+    if(f1.length<2){pe.textContent="Ismingizni yozing.";return}
+    if(p1.length<9){pe.textContent="Telefon raqamini to'liq kiriting.";return}
+    if(!S.sess||!S.sess.token){pe.textContent="Sessiya topilmadi. Chiqib, qaytadan kiring.";return}
+    t.disabled=true;pe.textContent="Saqlanmoqda...";
+    fetch(WORKER+"/profile",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:S.sess.token,first:f1,last:l1,phone:p1})})
+    .then(function(r){return r.json()}).then(function(d){
+      t.disabled=false;
+      if(!d.ok){pe.textContent=d.error==="auth"?"Sessiya tugagan. Chiqib, qaytadan kiring.":d.error==="phone"?"Telefon raqami noto'g'ri.":d.error==="name"?"Ismingizni yozing.":"Saqlanmadi. Qayta urinib ko'ring.";return}
+      var old=S.user&&S.user.phone,em=S.user&&S.user.email;
+      S.user={name:d.name,phone:d.phone,first:d.first,last:d.last,email:em};
+      S.orders.forEach(function(o){if(o.ph===old)o.ph=d.phone});
+      save();closeSheet();render();
+    }).catch(function(){t.disabled=false;pe.textContent="Internet xatosi. Qayta urinib ko'ring."});
+    return}
   if(a==="logout"){S.user=null;S.sess=null;S.orders=[];try{localStorage.removeItem("sarbon.sess");localStorage.removeItem("sarbon.lid")}catch(e){}save();$("mv").classList.remove("open");render();return}
   if(a==="dl"){delivery();return}
   if(a==="rg"){S.dr=v;UZP.user=null;document.querySelectorAll("[data-a=rg]").forEach(function(b){b.classList.toggle("on",b.dataset.v===v)});if(UZP.cur&&UZP.cur.r!==v)UZP.cur=null;uzpDraw(REG.indexOf(v),true);return}
@@ -3380,7 +3409,7 @@ function loadMyOrders(){
   }).catch(function(){});
 }
 
-try{var sv=JSON.parse(localStorage.getItem("sarbon.sess")||"null");if(sv&&sv.token){S.sess=sv;fetch(WORKER+"/me?token="+sv.token).then(function(r){return r.json()}).then(function(me){if(me.ok){S.user={name:me.name,phone:me.phone};render();loadMyOrders()}else{S.sess=null;localStorage.removeItem("sarbon.sess")}}).catch(function(){})}}catch(e){}
+try{var sv=JSON.parse(localStorage.getItem("sarbon.sess")||"null");if(sv&&sv.token){S.sess=sv;fetch(WORKER+"/me?token="+sv.token).then(function(r){return r.json()}).then(function(me){if(me.ok){S.user={name:me.name,phone:me.phone,first:me.first,last:me.last,email:me.email};render();loadMyOrders()}else{S.sess=null;localStorage.removeItem("sarbon.sess")}}).catch(function(){})}}catch(e){}
 
 
 var STATIC_N=0,lastSig="",srvFails=0;
