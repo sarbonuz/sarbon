@@ -2782,6 +2782,22 @@ init();
 </body>
 </html>
 </script>
+<style id="hero-card-dark">
+/* O'ng info kartasi har doim to'q (MacBook'dagidek) bo'lib tursin, orqa fon o'tib ko'rinmasin */
+html .hero .info .card,
+html[data-theme] .hero .info .card,
+html:not([data-theme="dark"]) .hero .info .card,
+html[data-theme="dark"] .hero .info .card{
+  background:linear-gradient(160deg,rgba(24,26,34,.94) 0%,rgba(10,11,16,.97) 100%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(120%)!important;
+  backdrop-filter:blur(18px) saturate(120%)!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.10)!important;
+  --ink:#f2ecdf;--muted:#a8a392;--line:rgba(255,255,255,.14);
+  --sage:#a9b98a;--sage-ink:#14170f;--sage-tint:#283020;--chip:#262b1d;
+  color:#f2ecdf;
+}
+</style>
 </head>
 <body>
 <div class="sbbg" aria-hidden="true"><div class="sbst s1"></div><div class="sbst s2"></div></div>
