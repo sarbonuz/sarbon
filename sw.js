@@ -1,4 +1,4 @@
-const CACHE = "sarbon-v1";
+const CACHE = "sarbon-v2";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {

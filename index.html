@@ -3332,7 +3332,7 @@ document.addEventListener("click",function(e){
   }).then(function(r){ return r.json() }).then(function(d){
     if (!d.ok) S.msgs.unshift("Buyurtma yuborilmadi, qayta urinib ko'ring.");
   }).catch(function(){
-    S.msgs.unshift("Internet xatosi: buyurtma yuborilmadi.");
+    if(window.qAdd&&window.qAdd(snap)){S.msgs.unshift("Internet yo'q: buyurtma saqlandi, internet kelganda avtomatik yuboriladi.");try{save()}catch(e){}}else S.msgs.unshift("Internet xatosi: buyurtma yuborilmadi.");
   });
   
   S.msgs.unshift("Buyurtma #"+id+": chek qabul qilindi. Tekshirilgach xabar beramiz.");S.cart=[];S.promo="";S.chekImg=null;save();closeSheet();S.tab="orders";render();return}
@@ -3535,6 +3535,31 @@ find3d();
 loadServer();setInterval(loadServer,15000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)loadServer()});
 window.addEventListener("online",loadServer);
+/* Offline buyurtmalar navbati: internet kelganda avtomatik yuboriladi */
+(function(){
+var busy=false,URL_=WORKER;
+function qGet(){try{return JSON.parse(localStorage.getItem("sarbon.q")||"[]")}catch(e){return[]}}
+function qSet(a){try{localStorage.setItem("sarbon.q",JSON.stringify(a));return true}catch(e){return false}}
+window.qAdd=function(snap){var q=qGet();q.push(snap);return qSet(q)};
+function qFlush(){
+  if(busy||!navigator.onLine)return;
+  var q=qGet();if(!q.length)return;
+  busy=true;
+  fetch(URL_,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(q[0])})
+  .then(function(r){return r.json()})
+  .then(function(d){
+    busy=false;
+    var q2=qGet();q2.shift();qSet(q2);
+    try{S.msgs.unshift(d&&d.ok?"Saqlangan buyurtma yuborildi ✓":"Saqlangan buyurtma yuborilmadi, qayta urinib ko'ring.");save()}catch(e){}
+    if(q2.length)qFlush();
+  })
+  .catch(function(){busy=false});
+}
+window.addEventListener("online",qFlush);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)qFlush()});
+setInterval(qFlush,20000);
+setTimeout(qFlush,3000);
+})();
 (function(){var r0=render;render=function(){r0.apply(this,arguments);if(Date.now()<(window._cfUntil||0)){var b=document.querySelector('#navb button[data-v="cart"]');if(b&&!b.classList.contains("flash"))b.classList.add("flash")}}})();
 </script>
 <script>
