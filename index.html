@@ -1008,6 +1008,71 @@ html.lowfx body::before,html.lowfx body::after{filter:blur(24px)}
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
 <script>window.SARBON_MODELS=/*__MODELS__*/{};<\/script>
 <script>
+/* ===== GLB tez yuklovchi: parallel bo'laklar + brauzer keshi + foiz =====
+   Modellarni o'zgartirsangiz (fayl nomi bir xil bo'lsa ham) GLB_VER ni oshiring: '1' -> '2' */
+(function(){
+var GLB_VER='1',CACHE='sarbon-glb-'+GLB_VER,CH=524288,PAR=5,S={};
+function magic(b){try{var d=new DataView(b);return b.byteLength>12&&d.getUint32(0,true)===0x46546C67}catch(x){return false}}
+function emit(e,done){var p=done?100:(e.t?Math.min(99,Math.floor(e.l*100/e.t)):0);
+  if(!done&&p===e.pct)return;e.pct=p;e.cbs.forEach(function(f){try{f(p,e.l,e.t)}catch(x){}})}
+function readInto(r,out,off,e){var got=0;
+  if(!r.body||!r.body.getReader)return r.arrayBuffer().then(function(b){out.set(new Uint8Array(b),off);e.l+=b.byteLength;emit(e);return b.byteLength});
+  var rd=r.body.getReader(),pos=off;
+  return (function pump(){return rd.read().then(function(x){if(x.done)return pos-off;
+    out.set(x.value,pos);pos+=x.value.length;got+=x.value.length;e.l+=x.value.length;emit(e);return pump()})})()
+    .catch(function(err){e.l-=got;throw err})}
+function collect(r,e){
+  if(!r.body||!r.body.getReader)return r.arrayBuffer().then(function(b){e.l+=b.byteLength;emit(e);return b});
+  var rd=r.body.getReader(),parts=[],n=0;
+  return (function pump(){return rd.read().then(function(x){
+    if(x.done){var o=new Uint8Array(n),q=0;parts.forEach(function(a){o.set(a,q);q+=a.length});return o.buffer}
+    parts.push(x.value);n+=x.value.length;e.l+=x.value.length;emit(e);return pump()})})()}
+function fetchPlain(url,e){e.l=0;return fetch(url).then(function(r){
+  if(!r.ok)throw new Error('HTTP '+r.status);var len=+r.headers.get('content-length')||0;if(len)e.t=len;
+  return collect(r,e)}).then(function(b){if(!magic(b))throw new Error('GLB emas ('+b.byteLength+' bayt) - Git LFS bo\'lishi mumkin');return b})}
+function fetchRanged(url,e){
+  return fetch(url,{headers:{Range:'bytes=0-'+(CH-1)}}).then(function(r){
+    var ce=(r.headers.get('content-encoding')||'').toLowerCase();
+    var m=/\/(\d+)\s*$/.exec(r.headers.get('content-range')||'');
+    if(r.status!==206||!m||(ce&&ce!=='identity')){
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      var len=+r.headers.get('content-length')||0;if(len)e.t=len;
+      return collect(r,e)}
+    var total=+m[1];e.t=total;var out=new Uint8Array(total),nextOff=CH;
+    function chunk(a,b,tries){return fetch(url,{headers:{Range:'bytes='+a+'-'+b}}).then(function(r2){
+      if(r2.status!==206)throw new Error('range '+r2.status);
+      return readInto(r2,out,a,e).then(function(n){if(n!==b-a+1){e.l-=n;throw new Error('short')}})})
+      .catch(function(err){if((tries||0)<2)return chunk(a,b,(tries||0)+1);throw err})}
+    function worker(){if(nextOff>=total)return Promise.resolve();var a=nextOff;nextOff+=CH;
+      return chunk(a,Math.min(a+CH,total)-1).then(worker)}
+    var jobs=[readInto(r,out,0,e).then(function(n){if(n!==Math.min(CH,total))throw new Error('short0')})];
+    for(var i=0;i<PAR&&CH*(i+1)<total;i++)jobs.push(worker());
+    return Promise.all(jobs).then(function(){return out.buffer})
+  }).then(function(b){if(!magic(b))throw new Error('bad glb');return b})}
+function cacheGet(url){if(!window.caches)return Promise.resolve(null);
+  return caches.open(CACHE).then(function(c){return c.match(url)}).then(function(r){return r?r.arrayBuffer():null})
+    .then(function(b){return b&&magic(b)?b:null}).catch(function(){return null})}
+function cachePut(url,b){try{if(!window.caches)return;caches.open(CACHE).then(function(c){
+  return c.put(url,new Response(b.slice(0),{headers:{'Content-Type':'model/gltf-binary'}}))}).catch(function(){})}catch(x){}}
+function load(url,e){return cacheGet(url).then(function(b){
+  if(b){e.l=e.t=b.byteLength;emit(e,true);return b}
+  return fetchRanged(url,e).catch(function(){e.l=0;e.t=0;e.pct=0;return fetchPlain(url,e)}).then(function(b){
+    emit(e,true);cachePut(url,b);return b})})}
+function get(url,cb){var e=S[url];
+  if(!e){e=S[url]={cbs:[],pct:0,l:0,t:0};e.promise=load(url,e).catch(function(err){delete S[url];throw err})}
+  if(cb){e.cbs.push(cb);if(e.pct){try{cb(e.pct,e.l,e.t)}catch(x){}}}
+  return e.promise}
+window.__glb={get:get};
+try{caches.keys().then(function(ks){ks.forEach(function(k){if(k.indexOf('sarbon-glb-')===0&&k!==CACHE)caches.delete(k)})})}catch(x){}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(x){}
+/* Darhol boshlash: avval 1-model (MacBook), tugagach qolganlari fonda ketma-ket */
+var M=window.SARBON_MODELS||{},urls=['models/macbook-pro-m3-16.glb','models/airpods-pro-3.glb','models/iphone-18-pro-max.glb'].map(function(k){return M[k]}).filter(Boolean);
+if(urls.length){var nc=navigator.connection||{},slow=nc.saveData||/(^|-)2g$|3g/.test(nc.effectiveType||'');
+  get(urls[0]).catch(function(){}).then(function(){if(slow)return;
+    return urls.slice(1).reduce(function(p,u){return p.then(function(){return get(u).catch(function(){})})},Promise.resolve())})}
+})();
+<\/script>
+<script>
 (function(){window.__dbg=function(){};
 window.addEventListener("error",function(e){window.__dbg("ERR: "+(e.message||"")+" "+(e.filename||"").slice(-40)+":"+(e.lineno||""))});
 window.addEventListener("unhandledrejection",function(e){window.__dbg("REJ: "+(e.reason&&e.reason.message||e.reason))});
@@ -1228,6 +1293,12 @@ document.addEventListener("DOMContentLoaded",function(){
     border: 1.5px solid var(--line); border-top-color: var(--sage);
     animation: spin 1s linear infinite;
   }
+  .loader::after {
+    content: ""; width: 150px; height: 4px; margin: 0 auto; border-radius: 4px;
+    background: linear-gradient(90deg, var(--sage) var(--p,0%), var(--line) var(--p,0%));
+    transition: background .2s;
+  }
+  .loader.err::after, .loader.err::before { display: none; }
   .loader.off { opacity: 0; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .fallback {
@@ -1879,8 +1950,9 @@ function loadModel(rig, url) {
   rig.failed = false;
   const src = (window.SARBON_MODELS && window.SARBON_MODELS[url]) || url;
   window.__dbg('GLB -> '+src);
-  gltfLoader.load(src, gltf => {
-    window.__dbg('GLB OK '+src); rig._try = 0;
+  rig.pct = 0; rig.parsing = false; rig.mbL = 0; rig.mbT = 0;
+  const onLoad = gltf => {
+    window.__dbg('GLB OK '+src); rig._try = 0; rig.parsing = false;
     if (token !== rig.loadToken) return;
     clearHolder(rig);
     const obj = gltf.scene;
@@ -1905,19 +1977,37 @@ function loadModel(rig, url) {
     rig.holder.scale.setScalar(0.7 / Math.max(sphere.radius, 1e-6));
     rig.loaded = true;
     refreshLoader();
-  }, (e) => {
-    const k = src.slice(-12); window.__pl = window.__pl || {};
-    const mb = (e.loaded/1048576).toFixed(1) + '/' + (e.total ? (e.total/1048576).toFixed(1) : '?') + 'MB';
-    if (!window.__pl[k] || Date.now() - window.__pl[k] > 1500) { window.__pl[k] = Date.now(); window.__dbg('dl ' + k + ' ' + mb); }
-  }, (err) => {
-    window.__dbg('GLB FAIL '+src+' '+(err&&err.message||''));
+  };
+  const onErr = (err) => {
+    window.__dbg('GLB FAIL '+src+' '+(err&&err.message||err||''));
+    rig.parsing = false;
     if (token !== rig.loadToken) return;
     rig._try = (rig._try || 0) + 1;
     if (rig._try <= 4) { window.__dbg('retry '+rig._try); setTimeout(() => loadModel(rig, url), 2000 * rig._try); return; }
     rig.failed = true; rig.loaded = false;
     rig.errMsg = 'Model yuklanmadi. GitHub papkasidagi .glb fayl nomini tekshiring.';
     refreshLoader();
-  });
+  };
+  const onProg = (p, l, t) => {
+    if (token !== rig.loadToken) return;
+    rig.pct = p; rig.mbL = l; rig.mbT = t;
+    if (rigs[active] === rig && !rig.loaded && !rig.failed) setLoaderText(rig);
+    const k = src.slice(-12); window.__pl = window.__pl || {};
+    if (p === 100 || !window.__pl[k] || Date.now() - window.__pl[k] > 1500) {
+      window.__pl[k] = Date.now();
+      window.__dbg('dl ' + k + ' ' + p + '% ' + (l/1048576).toFixed(1) + '/' + (t ? (t/1048576).toFixed(1) : '?') + 'MB');
+    }
+  };
+  window.__glb.get(src, onProg).then(buf => {
+    if (token !== rig.loadToken) return;
+    rig.parsing = true;
+    if (rigs[active] === rig) setLoaderText(rig);
+    /* "tayyorlanmoqda" yozuvi chizilib olishi uchun biroz kutamiz */
+    setTimeout(() => {
+      if (token !== rig.loadToken) return;
+      try { gltfLoader.parse(buf, '', onLoad, onErr); } catch (e) { onErr(e); }
+    }, 30);
+  }, onErr);
 }
 
 function currentVariant(rig) {
@@ -2158,6 +2248,14 @@ lensBtn.addEventListener('click', () => {
 const tabs = $$('.tab');
 const navBtns = $$('.nav button');
 
+function setLoaderText(rig) {
+  loaderEl.classList.remove('err');
+  loaderEl.style.setProperty('--p', (rig.parsing ? 100 : (rig.pct || 0)) + '%');
+  if (rig.parsing) { loaderEl.textContent = 'Model tayyorlanmoqda…'; return; }
+  const mb = rig.mbT ? '  (' + (rig.mbL/1048576).toFixed(1) + '/' + (rig.mbT/1048576).toFixed(1) + ' MB)' : '';
+  loaderEl.textContent = 'Model yuklanmoqda… ' + (rig.pct || 0) + '%' + mb;
+}
+
 function refreshLoader() {
   const rig = rigs[active];
   if (rig.loaded) {
@@ -2172,11 +2270,12 @@ function refreshLoader() {
     } else {
       fallbackEl.classList.remove('show');
       loaderEl.classList.remove('off');
+      loaderEl.classList.add('err');
       loaderEl.textContent = rig.errMsg || 'Model yuklanmadi.';
     }
   } else {
     loaderEl.classList.remove('off');
-    loaderEl.textContent = 'Model yuklanmoqda…';
+    setLoaderText(rig);
     fallbackEl.classList.remove('show');
   }
 }
