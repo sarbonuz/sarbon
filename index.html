@@ -2813,6 +2813,15 @@ init();
 @keyframes hubIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .pay1{display:inline-block;margin-top:6px;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(120deg,#7B5CF0,#D6246E);cursor:pointer}
 .hubw .btn{width:100%}
+/* Saqlanganlar: qatorda 3 ta, ixcham */
+.favg3{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:0 8px!important}
+.favg3 .card{border-radius:14px}
+.favg3 .card .in{padding:5px 6px 7px!important}
+.favg3 .card .n{font-size:10.5px!important;line-height:1.2!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
+.favg3 .sold{display:none!important}
+.favg3 .pr{font-size:11px!important;margin-top:3px}
+.favg3 .heart{width:22px!important;height:22px!important;font-size:11px!important;right:4px!important;top:4px!important}
+.favg3 .badge{font-size:7.5px!important;padding:1px 5px!important;left:4px!important;top:4px!important}
 /* Buyurtma kartalari: 1 qatorda 2 ta, xarita doim ochiq */
 .mzr{display:none!important}
 .mapw{zoom:1!important}
@@ -3139,7 +3148,7 @@ function hub(){
    ["addr","Yetkazish manzili",0,"<path d='M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z'/><circle cx='12' cy='10' r='2.5'/>","#5BE08A","#16A3AE"]];
   var h='<h2 class="sec">Buyurtmalarim</h2><div class="hubt">'+T.map(function(t){return '<button class="hb'+(S.hub===t[0]?' on':'')+'" data-a="hub" data-v="'+t[0]+'" style="--c1:'+t[4]+';--c2:'+t[5]+';--c1a:'+t[4]+'4D;--c2a:'+t[5]+'1F"><span class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+t[3]+'</svg>'+(t[2]?'<i>'+t[2]+'</i>':'')+'</span><em>'+t[1]+'</em></button>'}).join("")+'</div>';
   var p;
-  if(S.hub==="fav"){var f=hubFav();p='<h2 class="sec">Saqlanganlar <small>'+f.length+' ta</small></h2>'+(f.length?'<div class="grid">'+f.map(function(i){return card(+i)}).join("")+'</div>':'<div class="mut">Yurakchani bosib tovarlarni saqlang.</div>')}
+  if(S.hub==="fav"){var f=hubFav();p='<h2 class="sec">Saqlanganlar <small>'+f.length+' ta</small></h2>'+(f.length?'<div class="grid favg3">'+f.map(function(i){return card(+i)}).join("")+'</div>':'<div class="mut">Yurakchani bosib tovarlarni saqlang.</div>')}
   else if(S.hub==="pay")p=hubPayPanel();
   else if(S.hub==="sent")p=orders("Yuborildi",hubSent);
   else if(S.hub==="addr")p='<h2 class="sec">Yetkazish manzili</h2><div class="form"><div class="note">O\'zbekistondagi UzPost filialini tanlang. Tovar shu manzilga yetkaziladi.</div><button class="pick" data-a="dl"><span>Yetkazish</span><b>'+(S.dl?esc(S.dl.r+", "+S.dl.b):"Filialni tanlang")+'</b></button></div>';
