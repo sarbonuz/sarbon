@@ -941,6 +941,25 @@ html:not([data-theme="dark"]) .menu button.li:nth-of-type(5){background:linear-g
 /* ===== BANNER: bulut "drift" animatsiyasi bannerni siljitib yuborardi, alohida nom berildi ===== */
 @keyframes bndrift{from{background-position:0% 50%}to{background-position:100% 50%}}
 .bn{animation:bndrift 9s ease-in-out infinite alternate!important}
+/* ===== MAHSULOT SAHIFASI: Avto/Avia, Rang/O'lcham tanlovi (glass + gradient) ===== */
+html[data-theme] .sp .opt button,html[data-theme] .sp .sortbar button{position:relative;border:1.5px solid rgba(160,170,255,.22)!important;background:rgba(255,255,255,.05)!important;color:var(--ink)!important;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 8px rgba(0,0,0,.18);transition:background .35s ease,box-shadow .35s ease,transform .3s ease,color .25s ease}
+html[data-theme] .sp .opt button{border-radius:18px!important}
+html[data-theme] .sp .sortbar button{border-radius:999px!important}
+html:not([data-theme="dark"]) .sp .opt button,html:not([data-theme="dark"]) .sp .sortbar button{background:rgba(255,255,255,.6)!important;border-color:rgba(37,48,143,.16)!important;box-shadow:inset 0 1px 0 #fff,0 2px 8px rgba(37,48,143,.08)}
+html[data-theme] .sp .opt button.on,html[data-theme] .sp .sortbar button.on{background:linear-gradient(135deg,rgba(54,118,232,.6),rgba(124,72,224,.66))!important;color:#fff!important;border-color:transparent!important;box-shadow:0 10px 26px rgba(98,84,255,.45),0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.38);transform:translateY(-1px);animation:optPop .45s cubic-bezier(.2,.8,.3,1.2)}
+html:not([data-theme="dark"]) .sp .opt button.on,html:not([data-theme="dark"]) .sp .sortbar button.on{background:linear-gradient(135deg,rgba(110,165,255,.7),rgba(170,128,250,.75))!important;color:#17205f!important}
+.sp .opt button.on::before,.sp .sortbar button.on::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;background:linear-gradient(135deg,#4FE0E8,#7B5CF0 55%,#FF6FAE);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none}
+@keyframes optPop{0%{transform:scale(.94)}100%{transform:translateY(-1px) scale(1)}}
+.sp .sortbar{padding:6px 8px 14px!important;margin:0 -8px;overflow-y:visible}
+/* ===== SAVATGA QO'SHILGANDA: sahifa sekin pastga tortiladi, savat bo'limi 2 soniya yonadi ===== */
+.sh.slow{transition:opacity .5s ease .55s!important}
+.sh.slow .sp{transition:transform 1s cubic-bezier(.45,0,.2,1)!important}
+html[data-theme] .nav button.flash{color:#fff!important}
+html[data-theme] .nav button.flash svg{stroke:#fff;filter:drop-shadow(0 0 6px rgba(140,160,255,.95)) drop-shadow(0 0 14px rgba(170,110,255,.8))!important;animation:cartPop 2s ease-in-out both}
+.nav button.flash i{animation:cartPop 2s ease-in-out both}
+.nav button.flash::after{content:"";position:absolute;inset:-2px;border-radius:22px;background:radial-gradient(circle at 50% 40%,rgba(150,160,255,.6),rgba(170,100,255,.25) 55%,transparent 75%);animation:cartGlow 2s ease-in-out both;pointer-events:none;z-index:-1}
+@keyframes cartPop{0%{transform:scale(1)}15%{transform:scale(1.5) translateY(-5px)}30%{transform:scale(.95)}45%{transform:scale(1.28) translateY(-2px)}62%{transform:scale(1)}100%{transform:scale(1.06)}}
+@keyframes cartGlow{0%{opacity:0}18%{opacity:1}75%{opacity:.85}100%{opacity:0}}
 </style>
 <style>.b3d{margin:0}#b3dhost{position:absolute;z-index:1;left:0;top:0;width:100%;height:0;overflow:hidden;background:transparent;isolation:isolate;display:none;pointer-events:auto;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 3.5%,#000 96.5%,transparent 100%),linear-gradient(180deg,transparent 0,#000 5%,#000 94%,transparent 100%);mask-composite:intersect}#b3dhost iframe{position:absolute;left:0;top:0;border:0;width:1040px;height:640px;transform-origin:0 0;background:transparent;will-change:transform}</style>
 <script type="text/plain" id="hero3d-src"><!DOCTYPE html>
@@ -2765,6 +2784,8 @@ document.addEventListener("scroll",function(){},{passive:true});
 
 function openSheet(html){$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;$("sh").classList.add("open")}
 function closeSheet(){$("sh").classList.remove("open")}
+function closeSheetSlow(){var sh=$("sh");sh.classList.add("slow");sh.classList.remove("open");clearTimeout(window._slw);window._slw=setTimeout(function(){sh.classList.remove("slow")},1700)}
+function cartFlash(){clearTimeout(window._cft);window._cft=setTimeout(function(){window._cfUntil=Date.now()+2000;var b=document.querySelector('#navb button[data-v="cart"]');if(b){b.classList.remove("flash");void b.offsetWidth;b.classList.add("flash")}clearTimeout(window._cfr);window._cfr=setTimeout(function(){var x=document.querySelector('#navb button[data-v="cart"]');if(x)x.classList.remove("flash")},2100)},550)}
 
 function favTxt(i){return S.fav[i]?'♥ Saqlangan':'♡ Saqlash'}
 function product(i,mode){
@@ -2854,7 +2875,7 @@ document.addEventListener("click",function(e){
   if(a==="fav2"){S.fav[v]=!S.fav[v];save();t.textContent=favTxt(v);render();return}
   if(a==="mode"){product(+t.dataset.i,v);return}
   if(a==="add"){var i=+v;var oo=skOpts(P[i]);if(oo.sz&&!S.osz){$("pe").textContent="O'lchamni tanlang.";return}if(oo.col&&!S.ocol){$("pe").textContent="Rangni tanlang.";return}if(S.mode==="avia"){var ck=$("ok");if(!ck||!ck.checked){$("pe").textContent="Avia uchun ro'yxatni tasdiqlang.";return}}
-    var f=S.cart.filter(function(c){return c.i===i&&c.m===S.mode&&(c.sz||"")===(S.osz||"")&&(c.col||"")===(S.ocol||"")})[0];if(f)f.q++;else S.cart.push({i:i,m:S.mode,q:1,sz:S.osz||"",col:S.ocol||""});S.oi=-1;save();closeSheet();render();return}
+    var f=S.cart.filter(function(c){return c.i===i&&c.m===S.mode&&(c.sz||"")===(S.osz||"")&&(c.col||"")===(S.ocol||"")})[0];if(f)f.q++;else S.cart.push({i:i,m:S.mode,q:1,sz:S.osz||"",col:S.ocol||""});S.oi=-1;save();closeSheetSlow();render();cartFlash();return}
   if(a==="qty"){var c=S.cart[+v];c.q+=+t.dataset.d;if(c.q<1)S.cart.splice(+v,1);save();render();return}
   if(a==="login"){$("mv").classList.remove("open");login(1);return}
   if(a==="sendcode"){var ph=$("lp").value.replace(/\D/g,"");if(ph.length<9){$("le").textContent="Telefon raqamini to'liq kiriting.";return}login(2,"+"+(ph.length===9?"998"+ph:ph));return}
@@ -3076,6 +3097,7 @@ find3d();
 loadServer();setInterval(loadServer,15000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)loadServer()});
 window.addEventListener("online",loadServer);
+(function(){var r0=render;render=function(){r0.apply(this,arguments);if(Date.now()<(window._cfUntil||0)){var b=document.querySelector('#navb button[data-v="cart"]');if(b&&!b.classList.contains("flash"))b.classList.add("flash")}}})();
 </script>
 </body>
 </html>
