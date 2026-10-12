@@ -977,8 +977,7 @@ html[data-theme] .nav button.flash svg{stroke:#fff;filter:drop-shadow(0 0 6px rg
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
 <script>window.SARBON_MODELS=/*__MODELS__*/{};<\/script>
 <script>
-(function(){var d;function box(){if(d)return d;d=document.createElement("div");d.id="dbg";d.style.cssText="position:fixed;left:8px;top:34px;z-index:99;font:11px/1.35 monospace;color:#8f8;background:rgba(0,0,0,.6);padding:4px 6px;border-radius:6px;max-width:92%;pointer-events:none;white-space:pre-wrap";document.body.appendChild(d);return d}
-window.__dbg=function(t){try{box().textContent+=t+"\n"}catch(e){}};
+(function(){window.__dbg=function(){};
 window.addEventListener("error",function(e){window.__dbg("ERR: "+(e.message||"")+" "+(e.filename||"").slice(-40)+":"+(e.lineno||""))});
 window.addEventListener("unhandledrejection",function(e){window.__dbg("REJ: "+(e.reason&&e.reason.message||e.reason))});
 document.addEventListener("DOMContentLoaded",function(){window.__dbg("v2 boot ok")})})();
@@ -2673,7 +2672,7 @@ function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" so'm"}
 function kf(n){return n>=1000?(n/1000).toFixed(n>=10000?0:1)+" ming":String(n)}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return "&#"+c.charCodeAt(0)+";"})}
 var PROMOS={SARBON10:.1};
-function cartSub(){return S.cart.reduce(function(s,c){return s+goods(P[c.i])*c.q},0)}
+function cartSub(){return S.cart.reduce(function(s,c){return P[c.i]?s+goods(P[c.i])*c.q:s},0)}
 function promoLeft(){var n=S.user?S.orders.filter(function(o){return o.ph===S.user.phone}).length:0;return Math.max(0,10-n)}
 function cartPct(){var m=(S.promo&&PROMOS[S.promo])?PROMOS[S.promo]:0;var a=(promoLeft()>0&&S.cart.length)?.1:0;return Math.max(m,a)}
 function cartPromoName(){return (S.promo&&PROMOS[S.promo]&&PROMOS[S.promo]>=.1)?S.promo:(promoLeft()>0?"BIRINCHI 10 BUYURTMA":(S.promo||""))}
@@ -2701,8 +2700,8 @@ function simBox(i){var c=P[i].c,ids=idx(c).filter(function(x){return x!==i}).sor
  return ids.length?'<h3 style="margin:16px 0 8px;font-size:15px">O\'xshash tovarlar</h3><div class="hs" style="padding:0 0 6px">'+ids.map(card).join("")+'</div>':''}
 function promoBox(){return '<div class="form" style="margin-top:10px"><div style="display:flex;gap:8px"><input id="promoin" placeholder="Promo-kod" value="'+esc(S.promo||(promoLeft()>0?"SARBON10":""))+'" style="flex:1;min-width:0;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;font:inherit"><button class="btn" data-a="promo" style="width:auto;margin:0;padding:0 16px">Qo\'llash</button></div><div class="note" id="pm2" style="padding:6px 0 0">'+(promoLeft()>0?'✅ Birinchi 10 ta buyurtmangizga 10% chegirma avtomatik qo\'llanadi (qolgan: '+promoLeft()+' ta). Kod: SARBON10.':'')+'</div></div>'}
 function combineBox(){if(S.cart.length<2)return '';var sep=S.cart.reduce(function(s,c){return s+uzp(P[c.i].kg*c.q)},0),sv=sep-uzp(cartKg());return sv>0?'<div class="form" style="margin-top:6px"><div class="note" style="padding:0">Hamma tovarlar bitta cargo va bitta UzPost posilkasida keladi: UzPostda ~'+fmt(sv)+' tejaysiz.</div></div>':''}
-function cartCargo(){return S.cart.reduce(function(s,c){return s+cargo(P[c.i],c.m)*c.q},0)}
-function cartKg(){return S.cart.reduce(function(s,c){return s+P[c.i].kg*c.q},0)}
+function cartCargo(){return S.cart.reduce(function(s,c){return P[c.i]?s+cargo(P[c.i],c.m)*c.q:s},0)}
+function cartKg(){return S.cart.reduce(function(s,c){return P[c.i]?s+P[c.i].kg*c.q:s},0)}
 function cartN(){return S.cart.reduce(function(s,c){return s+c.q},0)}
 function catOf(k){return CATS.filter(function(c){return c[0]===k})[0]}
 function svg(p,sz){return "<svg viewBox='0 0 24 24' width='"+sz+"' height='"+sz+"' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'>"+p+"</svg>"}
@@ -2745,6 +2744,8 @@ function catalog(){
 }
 function cart(){
   var h='<h2 class="sec">Savat</h2>';
+  if(!LOADED)return h+'<div class="mut">Mahsulotlar yuklanmoqda…</div>';
+  S.cart=S.cart.filter(function(c){return P[c.i]});
   if(!S.cart.length)return h+'<div class="mut">Savat bo\'sh. Tovarni tanlang.</div>';
   h+='<div class="list">'+S.cart.map(function(c,j){return '<div class="row">'+picC(P[c.i],c.col,"th")+'<div class="t">'+esc(P[c.i].n)+'<b>'+fmt(goods(P[c.i])*c.q)+'</b><span class="note" style="padding:0">'+(c.m==="auto"?"Avto":"Avia")+(c.sz?" · "+esc(c.sz):"")+(c.col?" · "+esc(c.col):"")+'</span></div><div class="q"><button data-a="qty" data-v="'+j+'" data-d="-1">−</button><span>'+c.q+'</span><button data-a="qty" data-v="'+j+'" data-d="1">+</button></div></div>'}).join("")+'</div>';
   h+='<div class="sum"><div class="ln"><span>Tovarlar</span><span>'+fmt(cartSub())+'</span></div>'+(cartDisc()?'<div class="ln" style="color:var(--teal)"><span>Chegirma ('+esc(cartPromoName())+' · '+Math.round(cartPct()*100)+'%)</span><span>−'+fmt(cartDisc())+'</span></div>':'')+'<div class="ln"><span>Hozir to\'lanadi</span><b>'+fmt(cartTotal())+'</b></div><div class="ln"><span>Cargo (taxminiy, '+cartKg().toFixed(1)+' kg)</span><span>~'+fmt(cartCargo())+'</span></div><div class="ln"><span>UzPost (filialda)</span><span>~'+fmt(uzp(cartKg()))+'</span></div><div class="note">Cargo va UzPost haqiqiy og\'irlik bo\'yicha keyin aniqlanadi.</div></div>';
@@ -3052,7 +3053,7 @@ resumeLogin();document.addEventListener("visibilitychange",function(){if(!docume
 setInterval(loadMyOrders,5000);
 function mdU(u){return /^(https?:|data:)/.test(u)?u:WORKER+u}
 function mdList(a){return (Array.isArray(a)?a:[]).map(function(m){var u=typeof m==="string"?m:(m&&(m.u||m.url));if(!u)return null;var t=(m&&(m.t||m.type))||"";var v=(t==="v"||t==="video")||(!t&&/\.(mp4|webm|mov|m4v)(\?|$)/i.test(u));return {u:mdU(u),t:v?"v":"i"}}).filter(Boolean)}
-function galList(p,col){var l=(col&&p.cm&&p.cm[col]&&p.cm[col].length)?p.cm[col]:(p.media||[]);if(!l.length&&p.cm){Object.keys(p.cm).forEach(function(k){l=l.concat(p.cm[k])})}if(!l.length&&p.img)l=[{u:p.img,t:"i"}];return l}
+function galList(p,col){if(!p)return [];var l=(col&&p.cm&&p.cm[col]&&p.cm[col].length)?p.cm[col]:(p.media||[]);if(!l.length&&p.cm){Object.keys(p.cm).forEach(function(k){l=l.concat(p.cm[k])})}if(!l.length&&p.img)l=[{u:p.img,t:"i"}];return l}
 function galHtml(p,col){var l=galList(p,col);if(!l.length)return pic(p,"big");
   return '<div class="gal" style="background:'+p.b+'"><div class="gs">'+l.map(function(m){return '<div class="gi">'+(m.t==="v"?'<video src="'+esc(m.u)+'" controls playsinline preload="metadata"></video>':'<img src="'+esc(m.u)+'" alt="">')+'</div>'}).join("")+'</div>'+
   (l.length>1?'<button class="gb l" data-a="gp">\u2039</button><button class="gb r" data-a="gn">\u203A</button><div class="gd">'+l.map(function(m,k){return '<i'+(k?'':' class="on"')+'></i>'}).join("")+'</div><div class="gc">1/'+l.length+'</div>':'')+'</div>'}
