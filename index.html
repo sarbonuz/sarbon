@@ -1837,7 +1837,7 @@ const stage = $('#stage');
 window.__dbg('module ok');
 fetch('https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_wasm_wrapper.js').then(r=>window.__dbg('draco '+(r.ok?'OK':'HTTP '+r.status))).catch(()=>window.__dbg('draco BLOCKED'));
 const canvas = $('#gl');
-canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); }, false);
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); setTimeout(() => location.reload(), 400); }, false);
 const loaderEl = $('#loader');
 const fallbackEl = $('#fallback');
 /* Qurilma kuchini aniqlash: zaif bo'lsa effektlar saqlanadi, faqat og'ir qismlari yengillashadi */
@@ -3411,7 +3411,7 @@ function mount3d(){sync3d()}
 function heroHtml(map){var t=document.getElementById("hero3d-src").textContent.replace(/<\\\/script/g,"</script");
   var loc="";try{loc=ghBase()+"vesper-bg.mp4"}catch(e){}
   return t.replace("/*__MODELS__*/{}",function(){return JSON.stringify(map)}).replace("__VSPLOCAL__",loc)}
-function build3d(map){if(/iPhone|iPad|iPod/.test(navigator.userAgent)&&!/[?&]3d=1/.test(location.search))return;if(B3DMAP)return;B3DMAP=map;
+function build3d(map){if(B3DMAP)return;B3DMAP=map;
   var h=b3dHost(),f=document.createElement("iframe");f.setAttribute("title","3D mahsulotlar");f.setAttribute("scrolling","no");f.setAttribute("allow","autoplay; fullscreen");f.srcdoc=heroHtml(map);
   h.appendChild(f);sync3d()}
 function pickModels(paths){var map={},keys=[["models/macbook-pro-m3-16.glb","macbook"],["models/airpods-pro-3.glb","airpod"],["models/iphone-18-pro-max.glb","iphone"]];
@@ -3450,17 +3450,5 @@ document.addEventListener("visibilitychange",function(){if(!document.hidden)load
 window.addEventListener("online",loadServer);
 (function(){var r0=render;render=function(){r0.apply(this,arguments);if(Date.now()<(window._cfUntil||0)){var b=document.querySelector('#navb button[data-v="cart"]');if(b&&!b.classList.contains("flash"))b.classList.add("flash")}}})();
 </script>
-<style id="zoomfix">
-html.zoomed *,html.zoomed *::before,html.zoomed *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;animation-play-state:paused!important;will-change:auto!important}
-html.zoomed #b3dhost,html.zoomed #gl,html.zoomed #snow{display:none!important}
-</style>
-<script>(function(){
-var vv=window.visualViewport;if(!vv)return;var h=document.documentElement,t;
-function chk(){clearTimeout(t);
- if(vv.scale>1.02){h.classList.add("zoomed")}
- else{t=setTimeout(function(){h.classList.remove("zoomed")},250)}}
-vv.addEventListener("resize",chk);
-document.addEventListener("gesturestart",function(){h.classList.add("zoomed")});
-})();</script>
 </body>
 </html>
