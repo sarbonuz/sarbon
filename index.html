@@ -2851,18 +2851,24 @@ function finishLogin(x){
   save();closeSheet();render();loadMyOrders();
 }
 function pollLogin(id){
-  clearInterval(LTIMER);var tries=0;
+  clearInterval(LTIMER);var tries=0,busyF=false,done=false;
   function hint(t){var e=$("tgs");if(e)e.textContent=t}
-  LTIMER=setInterval(function(){
+  function check(){
+    if(done||busyF)return;
     tries++;
-    if(tries>100){clearInterval(LTIMER);try{localStorage.removeItem("sarbon.lid")}catch(e){}hint("Vaqt tugadi. Oynani yopib, \"Kirish\" ni qaytadan bosing.");return}
-    if(tries===20)hint("Hali tasdiqlanmadi. Botda Start bosib, telefon raqamingizni yuborganingizni tekshiring.");
-    fetch(WORKER+"/login-status?id="+encodeURIComponent(id),{cache:"no-store"}).then(function(r){return r.json()}).then(function(x){
+    if(tries>200){done=true;clearInterval(LTIMER);try{localStorage.removeItem("sarbon.lid")}catch(e){}hint("Vaqt tugadi. Oynani yopib, \"Kirish\" ni qaytadan bosing.");return}
+    if(tries===40)hint("Hali tasdiqlanmadi. Botda Start bosib, telefon raqamingizni yuborganingizni tekshiring.");
+    busyF=true;
+    fetch(WORKER+"/login-status?id="+encodeURIComponent(id)+"&_="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(x){
+      busyF=false;
       if(!x||!x.ok)return;
-      if(!x.token){clearInterval(LTIMER);hint("Server kirish tokenini bermadi (Worker xatosi). Admin bilan bog'laning.");return}
-      clearInterval(LTIMER);finishLogin(x);
-    }).catch(function(){});
-  },3000);
+      if(!x.token){done=true;clearInterval(LTIMER);hint("Server kirish tokenini bermadi (Worker xatosi). Admin bilan bog'laning.");return}
+      done=true;clearInterval(LTIMER);finishLogin(x);
+    }).catch(function(){busyF=false});
+  }
+  window._loginNow=check;
+  LTIMER=setInterval(check,1500);
+  check();
 }
 function resumeLogin(){
   if(S.sess)return;
@@ -3049,7 +3055,7 @@ try{var sv=JSON.parse(localStorage.getItem("sarbon.sess")||"null");if(sv&&sv.tok
 
 
 var STATIC_N=0,lastSig="",srvFails=0;
-resumeLogin();document.addEventListener("visibilitychange",function(){if(!document.hidden)resumeLogin()});window.addEventListener("focus",resumeLogin);
+resumeLogin();function _ln(){if(S.sess)return;if(window._loginNow&&LTIMER){window._loginNow()}else resumeLogin()}document.addEventListener("visibilitychange",function(){if(!document.hidden)_ln()});window.addEventListener("focus",_ln);window.addEventListener("pageshow",_ln);
 setInterval(loadMyOrders,5000);
 function mdU(u){return /^(https?:|data:)/.test(u)?u:WORKER+u}
 function mdList(a){return (Array.isArray(a)?a:[]).map(function(m){var u=typeof m==="string"?m:(m&&(m.u||m.url));if(!u)return null;var t=(m&&(m.t||m.type))||"";var v=(t==="v"||t==="video")||(!t&&/\.(mp4|webm|mov|m4v)(\?|$)/i.test(u));return {u:mdU(u),t:v?"v":"i"}}).filter(Boolean)}
