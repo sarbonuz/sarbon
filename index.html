@@ -1711,6 +1711,7 @@ function setPic(el, src) {
 const hero = $('#hero');
 const stage = $('#stage');
 const canvas = $('#gl');
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); setTimeout(() => location.reload(), 400); }, false);
 const loaderEl = $('#loader');
 const fallbackEl = $('#fallback');
 const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
@@ -3057,7 +3058,7 @@ function loadServer(){
     lastSig=sig;LOADED=true;render()
   }).catch(function(e){toast("srverr","Server javobini o'qib bo'lmadi: "+(e&&e.message||e),"Qayta urinish",function(){loadServer()})})
 }
-var GLB_FILES=[]; var GLB_FALLBACK=["airpods_pro_3.glb","iphone_18_pro_max.glb","macbook_pro_m3_16_inch_2024.glb"]; /* API ishlamasa (limit) shu fayllar urinib ko'riladi */ /* ixtiyoriy: qo'lda yozish mumkin, masalan ["models/a.glb","models/b.glb","models/c.glb"] */
+var GLB_FILES=["airpods_pro_3.glb","iphone_18_pro_max.glb","macbook_pro_m3_16_inch_2024.glb"]; var GLB_FALLBACK=["airpods_pro_3.glb","iphone_18_pro_max.glb","macbook_pro_m3_16_inch_2024.glb"]; /* API ishlamasa (limit) shu fayllar urinib ko'riladi */ /* ixtiyoriy: qo'lda yozish mumkin, masalan ["models/a.glb","models/b.glb","models/c.glb"] */
 var HERO_W=1040,HERO_H=640,B3DMAP=null,B3DIO=null,B3DVIS=true;
 function ghBase(){var p=location.pathname.split("/").filter(Boolean);return (p.length&&!/\./.test(p[0]))?"/"+p[0]+"/":"/"}
 function ghRepo(){var o=location.hostname.split(".")[0],p=location.pathname.split("/").filter(Boolean);return {o:o,r:(p.length&&!/\./.test(p[0]))?p[0]:o+".github.io"}}
@@ -3083,17 +3084,29 @@ function pickModels(paths){var map={},keys=[["models/macbook-pro-m3-16.glb","mac
   keys.forEach(function(k){for(var i=0;i<paths.length;i++){if(paths[i].toLowerCase().indexOf(k[1])>-1){map[k[0]]=paths[i];break}}});return map}
 function find3d(){
   if(GLB_FILES.length){build3d(pickModels(GLB_FILES.map(function(f){return ghBase()+f.replace(/^\//,"")})));return}
-  try{var c=JSON.parse(localStorage.getItem("sarbon.glb2")||"null");if(c&&Date.now()-c.t<604800000&&c.f&&c.f.length){build3d(pickModels(c.f));return}}catch(e){}
+  try{var c=JSON.parse(localStorage.getItem("sarbon.glb2")||"null");if(c&&Date.now()-c.t<604800000&&c.f&&c.f.length){var cm=pickModels(c.f);if(Object.keys(cm).length===3){build3d(cm);return}}}catch(e){}
   var g=ghRepo(),api="https://api.github.com/repos/"+g.o+"/"+g.r+"/contents/";
   function ls(path){return fetch(api+path).then(function(r){if(!r.ok)throw 0;return r.json()}).catch(function(){return []})}
   function isG(x){return x.type==="file"&&/\.glb$/i.test(x.name)}
+  function resolveFallback(){
+    var cand={"models/macbook-pro-m3-16.glb":["models/macbook-pro-m3-16.glb","macbook_pro_m3_16_inch_2024.glb","models/macbook_pro_m3_16_inch_2024.glb"],
+      "models/airpods-pro-3.glb":["models/airpods-pro-3.glb","airpods_pro_3.glb","models/airpods_pro_3.glb"],
+      "models/iphone-18-pro-max.glb":["models/iphone-18-pro-max.glb","iphone_18_pro_max.glb","models/iphone_18_pro_max.glb"]},map={};
+    return Promise.all(Object.keys(cand).map(function(k){
+      return cand[k].reduce(function(pr,c){return pr.then(function(ok){if(ok)return ok;
+        return fetch(ghBase()+c,{method:"HEAD"}).then(function(r){return r.ok?ghBase()+c:null}).catch(function(){return null})})},Promise.resolve(null))
+        .then(function(u){if(u)map[k]=u})
+    })).then(function(){build3d(map)})
+  }
   ls("").then(function(root){var out=[],dirs=[];
-    root.forEach(function(x){if(isG(x))out.push(x.path);else if(x.type==="dir"&&!/^(\.|node_modules)/.test(x.name))dirs.push(x.path)});
+    root.forEach(function(x){if(isG(x))out.push(x.path);else if(x.type==="dir"&&!/^(\\.|node_modules)/.test(x.name))dirs.push(x.path)});
     return Promise.all(dirs.slice(0,6).map(ls)).then(function(r){r.forEach(function(a){a.forEach(function(x){if(isG(x))out.push(x.path)})});return out})
   }).then(function(out){
     out=out.slice(0,12).map(function(p){return ghBase()+p.split("/").map(encodeURIComponent).join("/")});
-    if(out.length){try{localStorage.setItem("sarbon.glb2",JSON.stringify({t:Date.now(),f:out}))}catch(e){}}
-    var fb=GLB_FALLBACK.map(function(f){return ghBase()+f});build3d(pickModels(out.length?out:fb))}).catch(function(){build3d(pickModels(GLB_FALLBACK.map(function(f){return ghBase()+f})))})
+    var m=pickModels(out);
+    if(Object.keys(m).length===3){try{localStorage.setItem("sarbon.glb2",JSON.stringify({t:Date.now(),f:out}))}catch(e){};build3d(m)}
+    else resolveFallback()
+  }).catch(resolveFallback)
 }
 window.addEventListener("resize",sync3d);window.addEventListener("load",sync3d);setInterval(sync3d,900);
 try{document.documentElement.style.setProperty('--mz',localStorage.getItem('sarbon.mz')||'1')}catch(e){}
