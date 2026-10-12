@@ -976,13 +976,30 @@ html[data-theme] .nav button.flash svg{stroke:#fff;filter:drop-shadow(0 0 6px rg
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
 <script>window.SARBON_MODELS=/*__MODELS__*/{};<\/script>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-  }
-}
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  var V="three@0.170.0/",C=[
+    ["three/","build/three.module.js","examples/jsm/"],
+    ["https://cdn.jsdelivr.net/npm/"+V,"build/three.module.js","examples/jsm/"],
+    ["https://fastly.jsdelivr.net/npm/"+V,"build/three.module.js","examples/jsm/"],
+    ["https://gcore.jsdelivr.net/npm/"+V,"build/three.module.js","examples/jsm/"],
+    ["https://unpkg.com/"+V,"build/three.module.js","examples/jsm/"]
+  ],ld=document.getElementById("loader");
+  function probe(c){return new Promise(function(res){var t=setTimeout(function(){res(false)},7000);
+    fetch(c[0]+c[1],{method:"GET",cache:"force-cache"}).then(function(r){clearTimeout(t);res(r.ok)}).catch(function(){clearTimeout(t);res(false)})})}
+  function go(i){
+    if(i>=C.length){if(ld)ld.textContent="3D kutubxona yuklanmadi (internet yoki CDN bloklangan).";return}
+    probe(C[i]).then(function(ok){
+      if(!ok)return go(i+1);
+      var im=document.createElement("script");im.type="importmap";
+      im.textContent=JSON.stringify({imports:{"three":C[i][0]+C[i][1],"three/addons/":C[i][0]+C[i][2]}});
+      document.head.appendChild(im);
+      var m=document.createElement("script");m.type="module";
+      m.textContent=document.getElementById("mod3d").textContent;
+      document.body.appendChild(m);
+    })}
+  go(0);
+});
 <\/script>
 <style>
   :root {
@@ -1580,7 +1597,7 @@ html[data-theme] .nav button.flash svg{stroke:#fff;filter:drop-shadow(0 0 6px rg
   <canvas id="gl" aria-hidden="true"></canvas>
 </div>
 
-<script type="module">
+<script type="text/plain" id="mod3d">
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
