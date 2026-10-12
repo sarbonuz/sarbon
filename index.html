@@ -1011,7 +1011,7 @@ html.lowfx body::before,html.lowfx body::after{filter:blur(24px)}
 /* ===== GLB tez yuklovchi: parallel bo'laklar + brauzer keshi + foiz =====
    Modellarni o'zgartirsangiz (fayl nomi bir xil bo'lsa ham) GLB_VER ni oshiring: '1' -> '2' */
 (function(){
-var GLB_VER='1',CACHE='sarbon-glb-'+GLB_VER,CH=524288,PAR=5,S={};
+var GLB_VER='2',CACHE='sarbon-glb-'+GLB_VER,CH=524288,PAR=5,S={};
 function magic(b){try{var d=new DataView(b);return b.byteLength>12&&d.getUint32(0,true)===0x46546C67}catch(x){return false}}
 function emit(e,done){var p=done?100:(e.t?Math.min(99,Math.floor(e.l*100/e.t)):0);
   if(!done&&p===e.pct)return;e.pct=p;e.cbs.forEach(function(f){try{f(p,e.l,e.t)}catch(x){}})}
