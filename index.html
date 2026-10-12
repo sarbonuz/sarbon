@@ -3095,19 +3095,20 @@ function mapZ(d){var z=parseFloat(localStorage.getItem('sarbon.mz')||'1')+d*0.1;
 
 /* ===== BUYURTMALARIM: Saqlanganlar · Savat · To'lov kutilmoqda · Yuborildi ===== */
 function hubFav(){return Object.keys(S.fav).filter(function(i){return S.fav[i]&&P[i]})}
+function hubWait(o){return o.srv?o.st==="yangi":o.s===0}
+function hubSent(o){return o.srv?(o.st==="uzb"||o.st==="uzpost"||o.st==="yetkazildi"):o.s>=3}
 function hubMine(){return S.user?S.orders.filter(function(o){return o.ph===S.user.phone}):[]}
 function hubPayPanel(){
   var h='<h2 class="sec">To\'lov kutilmoqda</h2>';
   if(!S.user)return h+'<div class="form"><div class="mut">Ko\'rish uchun kiring.</div><button class="btn" data-a="login">Kirish</button></div>';
-  var wait=hubMine().filter(function(o){return o.s===0});
+  var wait=hubMine().filter(hubWait);
   var any=false;
-  if(S.cart.length&&LOADED){any=true;h+='<div class="row hubw" style="display:block"><b>To\'lanmagan savat</b><div class="note" style="padding:4px 0 0">'+S.cart.length+' xil tovar · jami <b>'+fmt(cartTotal())+'</b></div><button class="btn" data-a="hub" data-v="cart" style="margin-top:8px">Savatga o\'tib to\'lash</button></div>'}
-  if(wait.length){any=true;h+='<div class="note" style="padding:6px 14px">To\'lov cheki yuborilgan, tekshirilmoqda:</div>'+wait.map(function(o){return '<div class="row hubw" style="display:block"><b>Buyurtma #'+o.id+'</b> · '+fmt(o.t)+'<div class="steps" style="margin-top:8px">'+[0,1,2,3,4,5].map(function(j){return '<i class="'+(j<=o.s?'d':'')+'"></i>'}).join("")+'</div><div class="note">Holat: <b>'+ST[0]+'</b></div></div>'}).join("")}
+  if(wait.length){any=true;h+='<div class="note" style="padding:6px 14px">To\'lov qilingan, Telegramda tasdiqlanishi kutilmoqda:</div>'+wait.map(function(o){return '<div class="row hubw" style="display:block"><b>Buyurtma #'+o.id+'</b> · '+fmt(o.t)+'<div class="steps" style="margin-top:8px">'+[0,1,2,3,4,5].map(function(j){return '<i class="'+(j<=o.s?'d':'')+'"></i>'}).join("")+'</div><div class="note">Holat: <b>'+ST[0]+'</b></div></div>'}).join("")}
   if(!any)h+='<div class="mut">To\'lov kutayotgan buyurtma yo\'q.</div>';
   return h}
 function hub(){
   if(!S.hub)S.hub="cart";
-  var mine=hubMine(),fc=hubFav().length,cn=cartN(),pn=mine.filter(function(o){return o.s===0}).length+(S.cart.length?1:0),sn=mine.filter(function(o){return o.s>=1}).length;
+  var mine=hubMine(),fc=hubFav().length,cn=cartN(),pn=mine.filter(hubWait).length,sn=mine.filter(hubSent).length;
   var T=[
    ["fav","Saqlanganlar",fc,"<path d='M12 21s-8-5.3-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.7-8 11-8 11z'/>","#FF6FAE","#D6246E"],
    ["cart","Savat",cn,"<path d='M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM3 3h3l3 12h10l2-8H7'/>","#FFC247","#F28C1B"],
@@ -3118,16 +3119,16 @@ function hub(){
   var p;
   if(S.hub==="fav"){var f=hubFav();p='<h2 class="sec">Saqlanganlar <small>'+f.length+' ta</small></h2>'+(f.length?'<div class="grid">'+f.map(function(i){return card(+i)}).join("")+'</div>':'<div class="mut">Yurakchani bosib tovarlarni saqlang.</div>')}
   else if(S.hub==="pay")p=hubPayPanel();
-  else if(S.hub==="sent")p=orders("Yuborildi");
+  else if(S.hub==="sent")p=orders("Yuborildi",hubSent);
   else if(S.hub==="addr")p='<h2 class="sec">Yetkazish manzili</h2><div class="form"><div class="note">O\'zbekistondagi UzPost filialini tanlang. Tovar shu manzilga yetkaziladi.</div><button class="pick" data-a="dl"><span>Yetkazish</span><b>'+(S.dl?esc(S.dl.r+", "+S.dl.b):"Filialni tanlang")+'</b></button></div>';
   else p=cart();
   return h+'<div class="hubp">'+p+'</div>'}
-function orders(ttl){
+function orders(ttl,flt){
   var unread=Math.max(0,S.msgs.length-(S.seen||0));
   var h='<div class="bellrow"><h2 class="sec" style="margin:0">'+(ttl||"Hisobotlarim")+'</h2><button class="bellb" data-a="bell" aria-label="Bildirishnomalar">🔔'+(unread&&!S.bell?'<i>'+unread+'</i>':'')+'</button>'+(S.bell?'<div class="bellp">'+(S.msgs.length?S.msgs.slice(0,8).map(function(m){return '<div class="bi">'+esc(m)+'</div>'}).join(""):'<div class="bi">Yangi xabar yo\'q</div>')+'</div>':'')+'</div><div class="mzr"><button onclick="mapZ(-1)">−</button><span>Xarita hajmi</span><button onclick="mapZ(1)">+</button></div>';
   if(!S.user)return h+'<div class="form"><div class="mut">Buyurtmalarni ko\'rish uchun kiring.</div><button class="btn" data-a="login">Kirish</button></div>';
-  var mine=S.orders.filter(function(o){return o.ph===S.user.phone});
-  if(!mine.length)return h+'<div class="mut">Hali buyurtma yo\'q.</div>';
+  var mine=S.orders.filter(function(o){return o.ph===S.user.phone&&(!flt||flt(o))});
+  if(!mine.length)return h+'<div class="mut">'+(flt?"O\'zbekistonga yuborilgan buyurtma hali yo\'q.":"Hali buyurtma yo\'q.")+'</div>';
   return h+'<div class="list">'+mine.map(function(o){
     var steps='<div class="steps">'+[0,1,2,3,4,5].map(function(j){return '<i class="'+(j<=o.s?'d':'')+'"></i>'}).join("")+'</div>';
     var tr=o.srv?'':o.s>=2?'<div class="note">Trek: <b>'+o.tk+'</b> · Og\'irlik: '+o.kg+' kg · Cargo: <b>'+fmt(o.cf)+'</b></div>':'<div class="note">Cargo: ~'+fmt(o.c)+' (og\'irlik o\'lchangach)</div>';
@@ -3583,7 +3584,7 @@ function loadMyOrders(){
     if(!Array.isArray(list))return;
     var map={yangi:0,tasdiqlandi:1,yolda:2,uzb:3,uzpost:4,yetkazildi:5,bekor:0};
     var ph=(S.user&&S.user.phone)||"";
-    var nl=list.map(function(o){return {id:o.id,ph:ph,t:o.total,c:0,kg:0,w:0,s:map[o.status]||0,chek:true,a:o.uzp?("UzPost: "+o.uzp):"",srv:true,trk:o.trk||""}});
+    var nl=list.map(function(o){return {id:o.id,ph:ph,t:o.total,c:0,kg:0,w:0,s:map[o.status]||0,st:o.status||"yangi",chek:true,a:o.uzp?("UzPost: "+o.uzp):"",srv:true,trk:o.trk||""}});
     var sig=JSON.stringify(nl);
     if(sig!==S._osig){S._osig=sig;S.orders=nl;try{window.sbTrkCheck&&window.sbTrkCheck(S.orders)}catch(e){}save()}
     if(sig===S._rsig)return;
