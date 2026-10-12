@@ -3450,5 +3450,17 @@ document.addEventListener("visibilitychange",function(){if(!document.hidden)load
 window.addEventListener("online",loadServer);
 (function(){var r0=render;render=function(){r0.apply(this,arguments);if(Date.now()<(window._cfUntil||0)){var b=document.querySelector('#navb button[data-v="cart"]');if(b&&!b.classList.contains("flash"))b.classList.add("flash")}}})();
 </script>
+<style id="zoomfix">
+html.zoomed *,html.zoomed *::before,html.zoomed *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;animation-play-state:paused!important;will-change:auto!important}
+html.zoomed #b3dhost,html.zoomed #gl,html.zoomed #snow{display:none!important}
+</style>
+<script>(function(){
+var vv=window.visualViewport;if(!vv)return;var h=document.documentElement,t;
+function chk(){clearTimeout(t);
+ if(vv.scale>1.02){h.classList.add("zoomed")}
+ else{t=setTimeout(function(){h.classList.remove("zoomed")},250)}}
+vv.addEventListener("resize",chk);
+document.addEventListener("gesturestart",function(){h.classList.add("zoomed")});
+})();</script>
 </body>
 </html>
