@@ -3057,7 +3057,7 @@ function loadServer(){
     lastSig=sig;LOADED=true;render()
   }).catch(function(e){toast("srverr","Server javobini o'qib bo'lmadi: "+(e&&e.message||e),"Qayta urinish",function(){loadServer()})})
 }
-var GLB_FILES=[]; /* ixtiyoriy: qo'lda yozish mumkin, masalan ["models/a.glb","models/b.glb","models/c.glb"] */
+var GLB_FILES=["models/macbook-pro-m3-16.glb","models/airpods-pro-3.glb","models/iphone-18-pro-max.glb"]; /* ixtiyoriy: qo'lda yozish mumkin, masalan ["models/a.glb","models/b.glb","models/c.glb"] */
 var HERO_W=1040,HERO_H=640,B3DMAP=null,B3DIO=null,B3DVIS=true;
 function ghBase(){var p=location.pathname.split("/").filter(Boolean);return (p.length&&!/\./.test(p[0]))?"/"+p[0]+"/":"/"}
 function ghRepo(){var o=location.hostname.split(".")[0],p=location.pathname.split("/").filter(Boolean);return {o:o,r:(p.length&&!/\./.test(p[0]))?p[0]:o+".github.io"}}
