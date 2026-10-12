@@ -1734,6 +1734,7 @@ function setPic(el, src) {
 const hero = $('#hero');
 const stage = $('#stage');
 window.__dbg('module ok');
+fetch('https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_wasm_wrapper.js').then(r=>window.__dbg('draco '+(r.ok?'OK':'HTTP '+r.status))).catch(()=>window.__dbg('draco BLOCKED'));
 const canvas = $('#gl');
 canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); setTimeout(() => location.reload(), 400); }, false);
 const loaderEl = $('#loader');
@@ -1839,7 +1840,11 @@ function loadModel(rig, url) {
     rig.holder.scale.setScalar(0.7 / Math.max(sphere.radius, 1e-6));
     rig.loaded = true;
     refreshLoader();
-  }, undefined, (err) => {
+  }, (e) => {
+    const k = src.slice(-12); window.__pl = window.__pl || {};
+    const mb = (e.loaded/1048576).toFixed(1) + '/' + (e.total ? (e.total/1048576).toFixed(1) : '?') + 'MB';
+    if (!window.__pl[k] || Date.now() - window.__pl[k] > 1500) { window.__pl[k] = Date.now(); window.__dbg('dl ' + k + ' ' + mb); }
+  }, (err) => {
     window.__dbg('GLB FAIL '+src+' '+(err&&err.message||''));
     if (token !== rig.loadToken) return;
     rig.failed = true; rig.loaded = false;
