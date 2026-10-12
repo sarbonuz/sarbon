@@ -1,40 +1,35 @@
-const CACHE = "sarbon-v3";
-const FILES = ["./", "./index.html", "./manifest.json", "./logo-180.png", "./logo-192.png", "./logo-512.png"];
+/* Sarbon service worker: eski keshlash kodi sw-base.js ga ko'chiriladi, bu fayl esa push qo'shadi */
+try { importScripts("sw-base.js"); } catch (e) { /* sw-base.js yo'q bo'lsa ham push ishlaydi */ }
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) =>
-      Promise.all(FILES.map((f) => c.add(f).catch(() => {})))
-    )
-  );
-  self.skipWaiting();
+self.addEventListener("install", function () { self.skipWaiting(); });
+self.addEventListener("activate", function (e) { e.waitUntil(self.clients.claim()); });
+
+self.addEventListener("push", function (e) {
+  var d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (x) { d = {}; }
+  var oid = d.oid || "gen", kind = d.t || "chat";
+  e.waitUntil(Promise.all([
+    self.registration.showNotification(d.title || "Sarbon", {
+      body: d.text || d.body || "Yangi xabar",
+      tag: "sb-" + kind + "-" + oid,
+      renotify: true,
+      icon: "logo-180.png",
+      badge: "logo-180.png",
+      data: { oid: oid, t: kind }
+    }),
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (cs) {
+      cs.forEach(function (c) { c.postMessage({ sb: "push", d: d }); });
+    })
+  ]));
 });
 
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener("fetch", (e) => {
-  const req = e.request;
-  if (req.method !== "GET") return;
-  const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;
-
-  e.respondWith(
-    fetch(req)
-      .then((res) => {
-        if (res && res.status === 200) {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-        }
-        return res;
-      })
-      .catch(() =>
-        caches.match(req).then((r) => r || (req.mode === "navigate" ? caches.match("./index.html") : undefined))
-      )
-  );
+self.addEventListener("notificationclick", function (e) {
+  e.notification.close();
+  var dt = e.notification.data || {}, oid = dt.oid || "gen";
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (cs) {
+    for (var i = 0; i < cs.length; i++) {
+      if ("focus" in cs[i]) { cs[i].postMessage({ sb: "open", oid: oid, t: dt.t }); return cs[i].focus(); }
+    }
+    return self.clients.openWindow("./?chat=" + encodeURIComponent(oid));
+  }));
 });
