@@ -2,8 +2,21 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#25308F">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sarbon">
+<meta name="format-detection" content="telephone=no">
+<style>
+html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+*{touch-action:manipulation;-webkit-touch-callout:none}
+body{-webkit-user-select:none;user-select:none;overscroll-behavior-y:none}
+input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text}
+</style>
 <title>Sarbon</title>
 <style>
 :root{--ink:#1B1D45;--mute:#5F6390;--brand:#25308F;--teal:#16A3AE;--pink:#D6246E;--gold:#E9A800;--line:rgba(37,48,143,.12);--r:20px;box-sizing:border-box}
@@ -3523,6 +3536,9 @@ loadServer();setInterval(loadServer,15000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)loadServer()});
 window.addEventListener("online",loadServer);
 (function(){var r0=render;render=function(){r0.apply(this,arguments);if(Date.now()<(window._cfUntil||0)){var b=document.querySelector('#navb button[data-v="cart"]');if(b&&!b.classList.contains("flash"))b.classList.add("flash")}}})();
+</script>
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
 </script>
 </body>
 </html>
