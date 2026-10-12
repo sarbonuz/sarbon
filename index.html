@@ -1361,6 +1361,19 @@ html[data-theme="dark"] .bgstars{display:none}
     background: linear-gradient(145deg, rgba(255,255,255,.34) 0%, rgba(255,255,255,.14) 50%, rgba(255,255,255,.22) 100%) !important;
     border-color: rgba(255,255,255,.5) !important;
   }
+
+/* ===== YON MENYU: oval chetlar + gradient ===== */
+.menu{border-radius:0 34px 34px 0!important;display:flex;flex-direction:column;gap:10px}
+.menu #mh{margin-bottom:2px}
+.me{border-radius:26px!important}
+.me button{border-radius:999px!important}
+.menu button.li{border:1px solid rgba(160,170,255,.16)!important;border-bottom:1px solid rgba(160,170,255,.16)!important;border-radius:999px!important;padding:14px 18px!important;box-shadow:0 4px 14px rgba(8,10,40,.28)}
+.menu button.li b{border-radius:50%!important;width:11px;height:11px}
+html[data-theme="dark"] .menu{background:linear-gradient(180deg,rgba(18,21,58,.97) 0%,rgba(30,26,86,.97) 45%,rgba(52,30,108,.97) 75%,rgba(36,24,92,.98) 100%)!important}
+html[data-theme="dark"] .menu button.li{background:linear-gradient(120deg,rgba(40,46,110,.85),rgba(58,40,120,.8))!important}
+html:not([data-theme="dark"]) .menu{background:linear-gradient(180deg,rgba(255,255,255,.82) 0%,rgba(226,228,255,.88) 55%,rgba(200,196,250,.92) 100%)!important}
+html:not([data-theme="dark"]) .menu button.li{background:rgba(255,255,255,.7)!important;border-color:rgba(37,48,143,.12)!important}
+.menu .ver{position:fixed;left:0;bottom:calc(46px + env(safe-area-inset-bottom,0px));width:min(300px,84%);text-align:center;font-size:10px;letter-spacing:.06em;color:var(--muted);opacity:.75;pointer-events:none;margin:0;padding:0}
 </style>
 </head>
 <body class="dusk">
@@ -2475,6 +2488,7 @@ init();
     <button class="li" data-a="tab" data-v="cart"><b style="background:var(--gold)"></b>Savat</button>
     <button class="li" data-a="tab" data-v="support"><b style="background:var(--pink)"></b>Yordam va AI bot</button>
     <button class="li" data-a="tab" data-v="support"><b style="background:#2E9E5B"></b>Aloqa (Telegram, telefon)</button>
+    <div class="ver">version 0.1.0</div>
   </aside>
 </div>
 
