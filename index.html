@@ -3362,9 +3362,10 @@ var parTr=0,PEASE="cubic-bezier(.32,.72,0,1)";
 function parEls(){var a=[];["app","nav","fab","b3dhost"].forEach(function(id){var e=document.getElementById(id);if(e)a.push(e)});var t=document.querySelector(".top");if(t)a.push(t);return a}
 function parStop(){clearTimeout(parRaf);parRaf=0;if(!parTr)return;parTr=0;var a=document.getElementById("app"),c=0;if(a){var q=getComputedStyle(a).translate;if(q&&q!=="none")c=parseFloat(q)||0}var els=parEls();els.forEach(function(e){e.style.transition="none"});parApply(Math.round(c));void document.body.offsetWidth;els.forEach(function(e){e.style.transition=""})}
 function parTween(to,dur){parStop();var H=document.documentElement;if(parX===to){H.classList.remove("shanim");return}var els=parEls(),tr="translate "+dur+"ms "+PEASE;els.forEach(function(e){e.style.transition=tr});void document.body.offsetWidth;parTr=1;parX=to;els.forEach(function(e){e.style.translate=to+"px 0"});parRaf=setTimeout(function(){parRaf=0;parTr=0;els.forEach(function(e){e.style.transition=""});parApply(to);H.classList.remove("shanim")},dur+40)}
+function parCSS(to,dur,cb){parStop();var H=document.documentElement,els=parEls(),E="cubic-bezier(.32,.72,0,1)";H.classList.add("sheet-anim");els.forEach(function(e){e.style.transition="translate "+dur+"ms "+E});void document.body.offsetWidth;parX=to;els.forEach(function(e){e.style.translate=to?to+"px 0":""});parRaf=setTimeout(function(){parRaf=0;els.forEach(function(e){e.style.transition=""});parApply(to);H.classList.remove("sheet-anim");if(cb)cb()},dur+20)}
 function bgPause(on){window._bgPause=!!on;clearTimeout(bgT);var h=document.documentElement;if(on)bgT=setTimeout(function(){if(window._bgPause)h.classList.add("shfull")},600);else h.classList.remove("shfull");parTween(on?parD():0,on?550:600)}
 function lockBody(){var b=document.body,H=document.documentElement;if(H.classList.contains("sheet-lock"))return;window._lockY=window.pageYOffset||0;var r=b.getBoundingClientRect();b.style.width=r.width+"px";b.style.left=r.left+"px";b.style.top=(-window._lockY)+"px";b.style.position="fixed";H.classList.add("sheet-lock")}
-function unlockBody(){var b=document.body,H=document.documentElement;if(!H.classList.contains("sheet-lock"))return;H.classList.remove("sheet-lock");b.style.position="";b.style.top="";b.style.left="";b.style.width="";window.scrollTo(0,window._lockY||0)}
+function unlockBody(){var b=document.body,H=document.documentElement;if(!H.classList.contains("sheet-lock"))return;H.classList.remove("sheet-lock");b.style.position="";b.style.top="";b.style.left="";b.style.width="";var Hs=H.style,sb=Hs.scrollBehavior;Hs.scrollBehavior="auto";window.scrollTo({left:0,top:window._lockY||0,behavior:"instant"});Hs.scrollBehavior=sb}
 function openSheet(html){var pb0=$("pbf");if(pb0)pb0.remove();lockBody();if(window._skipBg){window._skipBg=0}else bgPause(window._fullSh);$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;var sh0=$("sh"),nf=!!window._fullSh,wf=sh0.classList.contains("full");if(nf&&!wf){sh0.classList.add("noanim","full");void sh0.offsetWidth;sh0.classList.remove("noanim")}else sh0.classList.toggle("full",nf);window._fullSh=0;if(nf&&window.sheetOpenAnim&&!sh0.classList.contains("open")){sh0.classList.remove("noanim");window.sheetOpenAnim()}else sh0.classList.add("open")}
 function closeSheet(){$("sh").classList.remove("open");unlockBody();bgPause(0);if(window.vsHide)vsHide();if(window._favDirty){window._favDirty=0;favSync();if(S.tab!=="home")setTimeout(render,450)}}
 function favSync(){[].forEach.call(document.querySelectorAll("#app .heart"),function(b){var t=S.fav[b.dataset.v]?"\u2665":"\u2661";if(b.textContent!==t)b.textContent=t})}
@@ -4055,6 +4056,11 @@ html[data-theme="dark"] .nav,html[data-theme="dark"] .nav.glass{background:rgba(
 /* Yon menyu: yopilishi ham ochilishidek silliq (sekin) */
 #mv{transition:opacity .32s cubic-bezier(.22,.8,.2,1)}
 #mv .menu{transition:transform .32s cubic-bezier(.22,.8,.2,1)!important}
+
+/* Oyna siljiganda: asosiy qatlamlar kompozitor (GPU) da, fon animatsiyalari to'xtaydi */
+html.sheet-anim #app,html.sheet-anim #nav,html.sheet-anim #fab,html.sheet-anim .top,html.sheet-anim #sh,html.sheet-anim #sp{will-change:transform,translate}
+html.sheet-anim *,html.sheet-anim *::before,html.sheet-anim *::after{animation-play-state:paused!important}
+html.sheet-anim .pill{transition:none!important}
 </style>
 <script id="ac-js">(function(){
 var cur="gen",timer=null,sig="",msgs=[],UN={},open=false,sending=false,first=true;
@@ -4316,10 +4322,8 @@ if(!raf)raf=requestAnimationFrame(paint)},{passive:true});
 function glide(from,to,dur,cb){var t0=performance.now();window._sheetBusy=true;if(raf){cancelAnimationFrame(raf);raf=0}parStop();
 function f(n){var k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3),x=from+(to-from)*e;sh.style.transform="translate3d("+x+"px,0,0)";parApply(Math.round(parD()*(1-Math.min(1,x/W))));if(k<1)raf=requestAnimationFrame(f);else{raf=0;window._sheetBusy=false;cb()}}
 raf=requestAnimationFrame(f)}
-window.sheetOpenAnim=function(){W=sh.clientWidth||360;if(raf){cancelAnimationFrame(raf);raf=0}setT("none");sh.style.transform="translate3d("+W+"px,0,0)";sh.classList.add("open");void sh.offsetWidth;window._bgPause=true;clearTimeout(window._shT);window._shT=setTimeout(function(){if(window._bgPause)document.documentElement.classList.add("shfull")},420);
-glide(W,0,480,function(){setT("");sh.style.transform="";sh.style.willChange="";parApply(parD())})};
-window.sheetCloseAnim=function(){if(!sh.classList.contains("open")||!sh.classList.contains("full")){closeSheet();return}W=sh.clientWidth||360;if(raf){cancelAnimationFrame(raf);raf=0}window._bgPause=false;document.documentElement.classList.remove("shfull");setT("none");sh.style.willChange="transform";
-glide(0,W,460,function(){finish()})};
+window.sheetOpenAnim=function(){W=sh.clientWidth||360;if(raf){cancelAnimationFrame(raf);raf=0}setT("none");sh.style.willChange="transform";sh.style.transform="translate3d("+W+"px,0,0)";sh.classList.add("open");void sh.offsetWidth;window._bgPause=true;clearTimeout(window._shT);window._shT=setTimeout(function(){if(window._bgPause)document.documentElement.classList.add("shfull")},420);window._sheetBusy=true;setT("transform 480ms cubic-bezier(.32,.72,0,1)");sh.style.transform="translate3d(0px,0,0)";parCSS(parD(),480,function(){window._sheetBusy=false;setT("");sh.style.transform="";sh.style.willChange="";parApply(parD())})};
+window.sheetCloseAnim=function(){if(!sh.classList.contains("open")||!sh.classList.contains("full")){closeSheet();return}W=sh.clientWidth||360;if(raf){cancelAnimationFrame(raf);raf=0}window._bgPause=false;document.documentElement.classList.remove("shfull");window._sheetBusy=true;setT("transform 460ms cubic-bezier(.32,.72,0,1)");sh.style.willChange="transform";void sh.offsetWidth;sh.style.transform="translate3d("+W+"px,0,0)";parCSS(0,460,function(){});setTimeout(function(){window._sheetBusy=false;finish()},475)};
 function end(){var spe=document.getElementById("sp");if(spe)spe.style.overflowY="";if(m!==2){m=0;return}m=0;
 var close=dx>W*.42||(vel>.5&&dx>60);var from=Math.max(0,dx);
 var rem=close?Math.max(0,W-from):from,ratio=Math.min(1,rem/W);
