@@ -2796,6 +2796,69 @@ init();
     requestAnimationFrame(loop);
   }
 })();
+<script>
+/* O'ng matn paneli: rezinkadek (elastik) surilish — kun va tun rejimida bir xil */
+(function(){
+  var card=document.querySelector('.card'),det=document.getElementById('detail');
+  if(!card||!det)return;
+  var st=document.createElement('style');
+  st.textContent='.card{overflow-y:hidden!important;touch-action:none!important;overscroll-behavior:contain}.card .detail{will-change:transform}';
+  document.head.appendChild(st);
+  var p=0,v=0,max=0,raf=0,last=0,drag=false,sy=0,lt=0;
+  function clamp(x){return x<0?0:(x>max?max:x)}
+  function measure(){var prev=det.style.transform;det.style.transform='';max=Math.max(0,card.scrollHeight-card.clientHeight);det.style.transform=prev}
+  function apply(){var c=clamp(p);card.scrollTop=c;var ty=c-p;det.style.transform=ty?'translate3d(0,'+ty+'px,0)':''}
+  function stop(){if(raf){cancelAnimationFrame(raf);raf=0}}
+  function currentP(){
+    var m=/translate3d\(0px,\s*(-?[\d.]+)px/.exec(det.style.transform||'');
+    var ty=m?parseFloat(m[1]):0;
+    return card.scrollTop-ty;
+  }
+  function loop(now){
+    var dt=Math.min(32,now-last);last=now;
+    var c=clamp(p);
+    if(p!==c){
+      var x=p-c;
+      v+=(-0.0035*x-0.11*v)*dt;p+=v*dt;
+      if(Math.abs(p-c)<0.3&&Math.abs(v)<0.01){p=c;v=0;apply();raf=0;return}
+    }else{
+      v*=Math.exp(-dt/325);p+=v*dt;
+      if(Math.abs(v)<0.015&&p===clamp(p)){v=0;apply();raf=0;return}
+    }
+    apply();raf=requestAnimationFrame(loop);
+  }
+  function kick(){stop();last=performance.now();raf=requestAnimationFrame(loop)}
+  card.addEventListener('touchstart',function(e){
+    if(e.touches.length!==1)return;
+    stop();measure();p=currentP();v=0;drag=true;sy=e.touches[0].clientY;lt=e.timeStamp;
+  },{passive:true});
+  card.addEventListener('touchmove',function(e){
+    if(!drag)return;
+    if(max<=2)return;
+    var y=e.touches[0].clientY,dy=sy-y;sy=y;
+    var c=clamp(p),over=Math.abs(p-c);
+    var outward=(p<=0&&dy<0)||(p>=max&&dy>0);
+    if(outward||over>0){
+      var movingBack=(p<0&&dy>0)||(p>max&&dy<0);
+      if(!movingBack)dy*=0.5/(1+over/50);
+    }
+    p+=dy;
+    var dt=Math.max(1,e.timeStamp-lt);lt=e.timeStamp;
+    v=0.8*(dy/dt)+0.2*v;
+    apply();
+    if(e.cancelable)e.preventDefault();
+  },{passive:false});
+  function end(){if(!drag)return;drag=false;if(max<=2)return;if(Math.abs(v)>3)v=v>0?3:-3;kick()}
+  card.addEventListener('touchend',end,{passive:true});
+  card.addEventListener('touchcancel',end,{passive:true});
+  card.addEventListener('wheel',function(e){
+    measure();if(max<=2)return;
+    stop();p=clamp(currentP()+e.deltaY);v=0;apply();
+    if(e.cancelable)e.preventDefault();
+  },{passive:false});
+  new MutationObserver(function(){stop();p=0;v=0;apply()}).observe(det,{childList:true,subtree:true});
+})();
+<\/script>
 <\/script>
 </body>
 </html>
@@ -4453,12 +4516,19 @@ sh.addEventListener("touchend",end,{passive:true});sh.addEventListener("touchcan
       var el=d.getElementById("sb-day-css");
       if(!day){ if(el) el.remove(); return }
       if(!el){ el=d.createElement("style"); el.id="sb-day-css"; d.head.appendChild(el) }
-      el.textContent="html,body,body.dusk{background:#FFFFFF!important}.lx-base,.lx-reveal,.lx-ring,.lx-shade{filter:invert(1) hue-rotate(180deg)!important}:root{--bg:#FFFFFF;--ink:#1F1F1F;--muted:#8A8A8A;--panel:#FFFFFF;--line:#EEEEEE;--sage:#FF4B1F}";
+      el.textContent="html,body,body.dusk{background:#FFFFFF!important}.lx-base{background:#FFFFFF!important;filter:none!important}.lx-base::after,.vsp-video,.lx-reveal,.lx-ring,.lx-shade,.bg-shade,.glass{display:none!important}:root,html:root body .hero[data-light]{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#1F1F1F;--muted:#6B6B6B;--line:#E8E8E8;--sage:#FF4B1F;--sage-ink:#FFFFFF;--sage-tint:#FFF0EA;--chip:#F3F3F3;--shadow:0,0,0}html:root body .hero[data-light] .info .card{background:#FFFFFF!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid #EEEEEE!important;box-shadow:0 8px 24px rgba(0,0,0,.10)!important;color:#1F1F1F!important;--bg:#FFFFFF;--panel:#FFFFFF;--ink:#1F1F1F;--muted:#6B6B6B;--line:#E8E8E8;--sage:#FF4B1F;--sage-ink:#FFFFFF;--sage-tint:#FFF0EA;--chip:#F3F3F3;--shadow:0,0,0}html:root body .hero[data-light] .tab{background:#FFFFFF!important;border:1px solid #EEEEEE!important;box-shadow:0 4px 14px rgba(0,0,0,.08)!important;color:#1F1F1F!important}html:root body .hero[data-light] .tab[aria-selected=true]{border-color:#FF4B1F!important}html:root body .hero[data-light] .tags span,html:root body .hero[data-light] .chip{background:#F3F3F3!important;color:#1F1F1F!important;border-color:#E8E8E8!important}html:root body .hero[data-light] h1,html:root body .hero[data-light] h2,html:root body .hero[data-light] .desc,html:root body .hero[data-light] .trait,html:root body .hero[data-light] .price,html:root body .hero[data-light] .caption,html:root body .hero[data-light] .spec-line{color:#1F1F1F!important;text-shadow:none!important}html:root body .hero[data-light] .trait .k,html:root body .hero[data-light] .hint,html:root body .hero[data-light] .loader{color:#6B6B6B!important}";
     });
   }
   setInterval(syncHeroDay,800);
   document.addEventListener("click",function(){ setTimeout(syncHeroDay,60) },true);
 })();
 </script>
+<style id="sb-day-top">
+/* Kunduz: tepa panel 3D zonani yopib qo'ymasin (tundagidek) — faqat tugmalar orqasida oq, pastida shaffof */
+html[data-day] .top,html[data-day] .top.glass{
+  background:linear-gradient(180deg,#FFFFFF 0,#FFFFFF calc(env(safe-area-inset-top,0px) + 50px),rgba(255,255,255,0) calc(env(safe-area-inset-top,0px) + 62px))!important;
+  box-shadow:none!important;border-radius:0!important;pointer-events:none}
+html[data-day] .top>*{pointer-events:auto}
+</style>
 </body>
 </html>
