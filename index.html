@@ -3489,15 +3489,15 @@ function parCSS(to,dur,cb){parStop();var H=document.documentElement,els=parEls()
 function bgPause(on){window._bgPause=!!on;clearTimeout(bgT);var h=document.documentElement;if(on)bgT=setTimeout(function(){if(window._bgPause)h.classList.add("shfull")},600);else h.classList.remove("shfull");parTween(on?parD():0,on?550:600)}
 function lockBody(){var b=document.body,H=document.documentElement;if(H.classList.contains("sheet-lock"))return;window._lockY=window.pageYOffset||0;var r=b.getBoundingClientRect();b.style.width=r.width+"px";b.style.left=r.left+"px";b.style.top=(-window._lockY)+"px";b.style.position="fixed";H.classList.add("sheet-lock")}
 function unlockBody(){var b=document.body,H=document.documentElement;if(!H.classList.contains("sheet-lock"))return;H.classList.remove("sheet-lock");b.style.position="";b.style.top="";b.style.left="";b.style.width="";var Hs=H.style,sb=Hs.scrollBehavior;Hs.scrollBehavior="auto";window.scrollTo({left:0,top:window._lockY||0,behavior:"instant"});Hs.scrollBehavior=sb}
-function openSheet(html){var pb0=$("pbf");if(pb0)pb0.remove();lockBody();if(window._skipBg){window._skipBg=0}else bgPause(window._fullSh);$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;var sh0=$("sh"),nf=!!window._fullSh,wf=sh0.classList.contains("full");if(nf&&!wf){sh0.classList.add("noanim","full");void sh0.offsetWidth;sh0.classList.remove("noanim")}else sh0.classList.toggle("full",nf);window._fullSh=0;if(nf&&window.sheetOpenAnim&&!sh0.classList.contains("open")){sh0.classList.remove("noanim");window.sheetOpenAnim()}else sh0.classList.add("open")}
-function closeSheet(){$("sh").classList.remove("open");unlockBody();bgPause(0);if(window.vsHide)vsHide();if(window._favDirty){window._favDirty=0;favSync();if(S.tab!=="home")setTimeout(render,450)}}
+function openSheet(html){var pb0=$("pbf");if(pb0)pb0.remove();lockBody();if(window._skipBg){window._skipBg=0}else bgPause(window._fullSh);$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;var sh0=$("sh"),nf=!!window._fullSh,wf=sh0.classList.contains("full");if(nf&&!wf){sh0.classList.add("noanim","full");void sh0.offsetWidth;sh0.classList.remove("noanim")}else sh0.classList.toggle("full",nf);window._fullSh=0;if(nf&&window.sheetOpenAnim&&!sh0.classList.contains("open")){sh0.classList.remove("noanim");var spx0=$("sp");void spx0.offsetHeight;window._shGo=1;var go0=function(){if(!window._shGo)return;window._shGo=0;window.sheetOpenAnim()};var im0=spx0.querySelector("img");setTimeout(function(){requestAnimationFrame(go0)},170);if(im0&&im0.decode){im0.decode().then(function(){requestAnimationFrame(go0)},function(){requestAnimationFrame(go0)})}else requestAnimationFrame(function(){requestAnimationFrame(go0)})}else sh0.classList.add("open")}
+function closeSheet(){window._shGo=0;$("sh").classList.remove("open");unlockBody();bgPause(0);if(window.vsHide)vsHide();if(window._favDirty){window._favDirty=0;favSync();if(S.tab!=="home")setTimeout(render,450)}}
 function favSync(){[].forEach.call(document.querySelectorAll("#app .heart"),function(b){var t=S.fav[b.dataset.v]?"\u2665":"\u2661";if(b.textContent!==t)b.textContent=t})}
 function closeSheetSlow(){var sh=$("sh");sh.classList.add("slow");sh.classList.remove("open");unlockBody();bgPause(0);if(window.vsHide)vsHide();clearTimeout(window._slw);window._slw=setTimeout(function(){sh.classList.remove("slow")},1700)}
 function cartFlash(){clearTimeout(window._cft);window._cft=setTimeout(function(){window._cfUntil=Date.now()+2000;var b=document.querySelector('#navb button[data-v="cart"]');if(b){b.classList.remove("flash");void b.offsetWidth;b.classList.add("flash")}clearTimeout(window._cfr);window._cfr=setTimeout(function(){var x=document.querySelector('#navb button[data-v="cart"]');if(x)x.classList.remove("flash")},2100)},550)}
 
 function favTxt(i){return S.fav[i]?'♥ Saqlangan':'♡ Saqlash'}
 function product(i,mode){
-  if(!window._prodDefer&&!$("sh").classList.contains("open")&&window.sheetOpenAnim){window._prodDefer=1;window._skipBg=1;$("sh").classList.add("full");lockBody();sheetOpenAnim();requestAnimationFrame(function(){window._prodDefer=0;product(i,mode)});return}
+  if(!$("sh").classList.contains("open")&&window.sheetOpenAnim){window._skipBg=1}
   var p=P[i];if(S.oi!==i){S.oi=i;S.osz="";S.ocol="";S.rv=[i].concat((S.rv||[]).filter(function(x){return x!==i})).slice(0,8)}if(!p.av&&mode==="avia")mode="auto";S.mode=mode;var m=mode;
   var again=$("sh").classList.contains("open")&&window._pid===i;window._pid=i;var st0=again?$("sp").scrollTop:0;$("sp").classList.toggle("nofx",again);
   window._galSig=galList(p,S.ocol).map(function(m){return m.u}).join("|");
@@ -4649,6 +4649,20 @@ html[data-day] .menu .mi svg{filter:none!important}
 html[data-day] .menu .mi svg [stroke]:not([stroke="none"]){stroke:#FF4B1F!important}
 html[data-day] .menu .mi svg [fill]:not([fill="none"]){fill:#FF4B1F!important}
 html[data-day] .menu .ver{color:#8A8A8A!important}
+</style>
+<style id="sb-day-opt-fix">
+/* Kun rejimi: tanlangan Avto/Avia/variant = "Sotib olish" tugmasidek orange gradient */
+html[data-day][data-theme] body .sp .opt button.on,
+html[data-day][data-theme] body .sp .sortbar button.on,
+html[data-day] body .sp .opt button.on,
+html[data-day] body .sp .sortbar button.on{
+  background:linear-gradient(135deg,#FF6A3D,#FF4B1F)!important;
+  color:#fff!important;border-color:transparent!important;
+  box-shadow:0 4px 12px rgba(255,75,31,.22),inset 0 1px 0 rgba(255,255,255,.35)!important}
+html[data-day] body .sp .opt button.on *,
+html[data-day] body .sp .sortbar button.on *{color:#fff!important}
+html[data-day] body .sp .opt button.on::before,
+html[data-day] body .sp .sortbar button.on::before{display:none!important}
 </style>
 </body>
 </html>
