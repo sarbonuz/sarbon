@@ -3579,10 +3579,16 @@ function payment(){
   clearInterval(S.iv);S.iv=setInterval(function(){var e=$("tm");if(!e){clearInterval(S.iv);return}var q=Math.max(0,Math.round((S.due-Date.now())/1000));e.textContent=("0"+(q/60|0)).slice(-2)+":"+("0"+q%60).slice(-2);if(!q){clearInterval(S.iv);openSheet('<div class="mut">To\'lov vaqti tugadi. Buyurtmani qaytadan bering.</div>')}},1000);
 }
 
+function closeMenu(){var mv=$("mv"),mn=$("mn");if(!mv||!mv.classList.contains("open"))return;
+var T="transform .55s cubic-bezier(.32,.72,0,1)";
+if(mn)mn.style.setProperty("transition",T,"important");
+mv.style.setProperty("transition","opacity .55s cubic-bezier(.32,.72,0,1)","important");
+void mv.offsetWidth;mv.classList.remove("open");
+setTimeout(function(){mv.style.removeProperty("transition");if(mn)mn.style.removeProperty("transition")},570)}
 document.addEventListener("click",function(e){
   if(S.ai&&!e.target.closest("#ap")&&!e.target.closest("#fab")){S.ai=false;render()}
   if(e.target.id==="sh"){closeSheet();return}
-  if(e.target.id==="mv"){$("mv").classList.remove("open");return}
+  if(e.target.id==="mv"){closeMenu();return}
   var t=e.target.closest("[data-a]");if(!t)return;
   var a=t.dataset.a,v=t.dataset.v;
   if(a==="gp"||a==="gn"){var gs=t.parentNode.querySelector(".gs");if(gs)gs.scrollBy({left:(a==="gn"?1:-1)*gs.clientWidth,behavior:"smooth"});return}
@@ -4045,6 +4051,10 @@ html[data-theme="dark"] .nav,html[data-theme="dark"] .nav.glass{background:rgba(
 
 .ordDet .tmap2{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;cursor:default}
 .ordr:active{opacity:.85}
+
+/* Yon menyu: yopilishi ham ochilishidek silliq (sekin) */
+#mv{transition:opacity .32s cubic-bezier(.22,.8,.2,1)}
+#mv .menu{transition:transform .32s cubic-bezier(.22,.8,.2,1)!important}
 </style>
 <script id="ac-js">(function(){
 var cur="gen",timer=null,sig="",msgs=[],UN={},open=false,sending=false,first=true;
