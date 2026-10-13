@@ -2896,8 +2896,10 @@ html.shfull .sbbg,html.shfull .bgflash,html.shfull #snow,html.shfull .land,html.
 .sp .gal .gi img,.sp .gal .gi video{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;background:#fff}
 .sp .gal .gi video{object-fit:contain;background:#000}
 /* tezroq ochilish, suring uchun */
-.sh.full{transition:opacity .16s ease!important}
-.sh.full .sp{transition:transform .24s cubic-bezier(.22,.8,.2,1)!important;touch-action:pan-y;overscroll-behavior:contain}
+.sh.full{opacity:1!important;visibility:hidden;pointer-events:none;transform:translate3d(100%,0,0);transition:transform .38s cubic-bezier(.22,.8,.2,1),visibility 0s linear .38s!important}
+.sh.full.open{visibility:visible;pointer-events:auto;transform:translate3d(0,0,0);transition:transform .38s cubic-bezier(.22,.8,.2,1),visibility 0s!important}
+.sh.full .sp{transform:none!important;transition:none!important;touch-action:pan-y;overscroll-behavior:contain;box-shadow:-10px 0 28px rgba(0,0,0,.28)}
+html .sh.noanim,html .sh.noanim .sp{transition:none!important}
 /* 1-oyna: pastki panel */
 .pbf{padding:8px 12px calc(10px + env(safe-area-inset-bottom,0px))!important}
 .pbr{display:flex;gap:10px;align-items:center}
@@ -3335,9 +3337,15 @@ document.addEventListener("scroll",function(){},{passive:true});
 function setProdBar(i){var sh=$("sh"),b=$("pbf");if(!b){b=document.createElement("div");b.id="pbf";b.className="pbf";sh.appendChild(b)}
   var sv=!!S.fav[i];
   b.innerHTML='<div class="pbr"><button class="pbi'+(sv?' on':'')+'" type="button" data-vs="fav" data-v="'+i+'" aria-label="Saqlash"><svg viewBox="0 0 24 24" fill="'+(sv?'currentColor':'none')+'" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Saqlash</span></button><button class="pbi" type="button" data-vs="cart" data-v="'+i+'" aria-label="Savat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H6.5"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span>Savat</span>'+(S.cart.length?'<i>'+S.cart.length+'</i>':'')+'</button><button class="pbb" type="button" data-vs="buy" data-v="'+i+'">Sotib olish</button></div>'}
-function bgPause(on){window._bgPause=!!on;document.documentElement.classList.toggle("shfull",!!on)}
-function openSheet(html){var pb0=$("pbf");if(pb0)pb0.remove();bgPause(window._fullSh);$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;var sh0=$("sh");sh0.classList.toggle("full",!!window._fullSh);window._fullSh=0;sh0.classList.add("open")}
-function closeSheet(){$("sh").classList.remove("open");bgPause(0);if(window.vsHide)vsHide();if(window._favDirty){window._favDirty=0;setTimeout(render,320)}}
+var parX=0,parRaf=0,bgT=0;
+function parD(){return -Math.round(innerWidth*.26)}
+function parApply(x){parX=x;var v=x?x+"px 0":"";["app","nav","fab","b3dhost"].forEach(function(id){var e=document.getElementById(id);if(e)e.style.translate=v});var t=document.querySelector(".top");if(t)t.style.translate=v}
+function parStop(){cancelAnimationFrame(parRaf);parRaf=0}
+function parTween(to,dur){parStop();var from=parX;if(from===to)return;var t0=performance.now();(function f(n){var k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3);parApply(Math.round(from+(to-from)*e));if(k<1)parRaf=requestAnimationFrame(f)})(t0)}
+function bgPause(on){window._bgPause=!!on;clearTimeout(bgT);var h=document.documentElement;if(on)bgT=setTimeout(function(){if(window._bgPause)h.classList.add("shfull")},420);else h.classList.remove("shfull");parTween(on?parD():0,on?380:400)}
+function openSheet(html){var pb0=$("pbf");if(pb0)pb0.remove();bgPause(window._fullSh);$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;var sh0=$("sh"),nf=!!window._fullSh,wf=sh0.classList.contains("full");if(nf&&!wf){sh0.classList.add("noanim","full");void sh0.offsetWidth;sh0.classList.remove("noanim")}else sh0.classList.toggle("full",nf);window._fullSh=0;sh0.classList.add("open")}
+function closeSheet(){$("sh").classList.remove("open");bgPause(0);if(window.vsHide)vsHide();if(window._favDirty){window._favDirty=0;favSync();if(S.tab!=="home")setTimeout(render,450)}}
+function favSync(){[].forEach.call(document.querySelectorAll("#app .heart"),function(b){var t=S.fav[b.dataset.v]?"\u2665":"\u2661";if(b.textContent!==t)b.textContent=t})}
 function closeSheetSlow(){var sh=$("sh");sh.classList.add("slow");sh.classList.remove("open");bgPause(0);if(window.vsHide)vsHide();clearTimeout(window._slw);window._slw=setTimeout(function(){sh.classList.remove("slow")},1700)}
 function cartFlash(){clearTimeout(window._cft);window._cft=setTimeout(function(){window._cfUntil=Date.now()+2000;var b=document.querySelector('#navb button[data-v="cart"]');if(b){b.classList.remove("flash");void b.offsetWidth;b.classList.add("flash")}clearTimeout(window._cfr);window._cfr=setTimeout(function(){var x=document.querySelector('#navb button[data-v="cart"]');if(x)x.classList.remove("flash")},2100)},550)}
 
@@ -3354,7 +3362,7 @@ function product(i,mode){
   simBox(i));
   setProdBar(i);
   if(again)$("sp").scrollTop=st0;
-  setTimeout(function(){(p.rang||[]).forEach(function(c){galList(p,c).forEach(function(m){if(m.t!=="v"){var im=new Image();im.decoding="async";im.src=m.u}})})},60);
+  setTimeout(function(){(p.rang||[]).forEach(function(c){galList(p,c).forEach(function(m){if(m.t!=="v"){var im=new Image();im.decoding="async";im.src=m.u}})})},900);
 }
 var LTIMER=null;
 function finishLogin(x){
@@ -4220,22 +4228,24 @@ if(a==="buy"){open(i,"buy")}});
 <script>
 /* Chapdan o'ngga surish: mahsulot oynasini yopadi (iOS kabi), ekranning istalgan joyidan */
 (function(){
-var sh=document.getElementById("sh"),vs=null,x0=0,y0=0,t0=0,dx=0,m=0,raf=0,W=0;
+var sh=document.getElementById("sh"),vs=null,x0=0,y0=0,t0=0,dx=0,m=0,raf=0,W=0,EASE="cubic-bezier(.25,.8,.25,1)";
 function blocked(t){for(var n=t;n&&n!==sh;n=n.parentNode){if(n.nodeType===1){if(n.scrollWidth>n.clientWidth+2&&n.scrollLeft>2)return true;if(/^(INPUT|TEXTAREA|SELECT)$/.test(n.tagName))return true}}return false}
-function paint(){raf=0;sh.style.transform="translate3d("+Math.max(0,dx)+"px,0,0)"}
-function finish(){sh.style.transition="none";sh.style.opacity="0";closeSheet();sh.style.transform="";void sh.offsetWidth;sh.style.transition="";sh.style.opacity="";sh.style.willChange=""}
+function setT(v){if(v)sh.style.setProperty("transition",v,"important");else sh.style.removeProperty("transition")}
+function paint(){raf=0;var d=Math.max(0,dx);sh.style.transform="translate3d("+d+"px,0,0)";parApply(Math.round(parD()*(1-Math.min(1,d/W))))}
+function finish(){sh.classList.add("noanim");closeSheet();sh.style.transform="";setT("");void sh.offsetWidth;sh.style.willChange="";setTimeout(function(){sh.classList.remove("noanim")},80)}
 sh.addEventListener("touchstart",function(e){vs=vs||document.getElementById("vs");
 if(!sh.classList.contains("open")||!sh.classList.contains("full")||(vs&&vs.classList.contains("on"))||e.touches.length!==1){m=3;return}
 x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now();dx=0;m=blocked(e.target)?3:1},{passive:true});
 sh.addEventListener("touchmove",function(e){if(m===0||m===3)return;var c=e.touches[0];dx=c.clientX-x0;var dy=c.clientY-y0;
 if(m===1){if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){m=3;return}
 if(dx<-12){m=3;return}
-if(dx>18&&dx>Math.abs(dy)*1.6){m=2;W=sh.clientWidth||360;sh.style.transition="none";sh.style.willChange="transform"}else return}
+if(dx>18&&dx>Math.abs(dy)*1.6){m=2;W=sh.clientWidth||360;setT("none");sh.style.willChange="transform";parStop()}else return}
 if(!raf)raf=requestAnimationFrame(paint)},{passive:true});
 function end(){if(m!==2){m=0;return}m=0;if(raf){cancelAnimationFrame(raf);raf=0}
 var v=dx/Math.max(1,Date.now()-t0),close=dx>W*.42||(v>.9&&dx>70);
-sh.style.transition="transform "+(close?".42s":".32s")+" cubic-bezier(.25,.8,.25,1)";sh.style.transform=close?"translate3d(100%,0,0)":"translate3d(0,0,0)";
-setTimeout(function(){if(close)finish();else{sh.style.transition="";sh.style.transform="";sh.style.willChange=""}},close?430:330)}
+setT("transform "+(close?".42s":".32s")+" "+EASE);sh.style.transform=close?"translate3d(100%,0,0)":"translate3d(0,0,0)";
+if(close){window._bgPause=false;document.documentElement.classList.remove("shfull");parTween(0,420)}else parTween(parD(),320);
+setTimeout(function(){if(close)finish();else{setT("");sh.style.transform="";sh.style.willChange=""}},close?430:330)}
 sh.addEventListener("touchend",end,{passive:true});sh.addEventListener("touchcancel",end,{passive:true});
 })();
 </script>
