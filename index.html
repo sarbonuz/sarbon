@@ -4588,11 +4588,43 @@ window.SB_DAY_CSS="html,body,body.dusk{background:#FFFFFF!important}.lx-base{bac
 })();
 </script>
 <style id="sb-day-top">
-/* Kunduz: tepa panel 3D zonani yopib qo'ymasin (tundagidek) — faqat tugmalar orqasida oq, pastida shaffof */
-html[data-day] .top,html[data-day] .top.glass{
-  background:linear-gradient(180deg,#FFFFFF 0,#FFFFFF calc(env(safe-area-inset-top,0px) + 50px),rgba(255,255,255,0) calc(env(safe-area-inset-top,0px) + 62px))!important;
-  box-shadow:none!important;border-radius:0!important;pointer-events:none}
-html[data-day] .top>*{pointer-events:auto}
+/* Tepa panel: fon YO'Q — faqat 3 ta vidjet (menyu, qidiruv, kun/tun) o'zi qotib turadi */
+html .top,html .top.glass,html[data-day] .top,html[data-day] .top.glass{
+  background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none}
+html .top>*{pointer-events:auto}
+
+/* ===== iOS "Liquid Glass" (Safari paneli kabi): menyu + qidiruv + kun/tun ===== */
+html body .top>.ib[data-a="menu"],
+html body #app .search,
+html body .top>.tbtn{
+  background:rgba(255,255,255,.10)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(190%) brightness(1.05)!important;
+          backdrop-filter:blur(18px) saturate(190%) brightness(1.05)!important;
+  border:0!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.35),
+             0 0 0 .5px rgba(255,255,255,.22),
+             inset 0 1px 1px rgba(255,255,255,.38),
+             inset 0 -1px 2px rgba(255,255,255,.10)!important;
+  color:#ECEEFF!important;
+}
+html[data-day] body .top>.ib[data-a="menu"],
+html[data-day] body #app .search,
+html[data-day] body .top>.tbtn{
+  background:rgba(255,255,255,.34)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.13),
+             0 0 0 .5px rgba(0,0,0,.08),
+             inset 0 1px 1px rgba(255,255,255,.95),
+             inset 0 -1px 2px rgba(255,255,255,.45)!important;
+  color:#1F1F1F!important;
+}
+html[data-day] body .top>.ib[data-a="menu"]{color:#FF4B1F!important}
+/* qidiruv ichidagi input: o'z qutisi/chizig'i yo'q, shaffof */
+html body #app .search input{background:transparent!important;border:0!important;box-shadow:none!important;outline:none!important;color:inherit!important}
+html body #app .search input::placeholder{color:rgba(150,155,190,.95)}
+html[data-day] body #app .search input::placeholder{color:#8A8A8A}
+/* kun/tun tugmasi: doira, yog'du doiradan chiqmaydi */
+html .top>.tbtn{width:56px!important;height:56px!important;flex:0 0 56px!important;top:13px!important;overflow:hidden;border-radius:50%!important}
 </style>
 <style id="sb-day-menu">
 /* Kunduzgi rejim: yon menyu — faqat 3 rang: oq, to'q kulrang matn, #FF4B1F */
