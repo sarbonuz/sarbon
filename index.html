@@ -2896,8 +2896,10 @@ html.shfull .sbbg,html.shfull .bgflash,html.shfull #snow,html.shfull .land,html.
 .sp .gal .gi img,.sp .gal .gi video{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;background:#fff}
 .sp .gal .gi video{object-fit:contain;background:#000}
 /* tezroq ochilish, suring uchun */
-.sh.full{opacity:1!important;visibility:hidden;pointer-events:none;transform:translate3d(100%,0,0);transition:transform .38s cubic-bezier(.22,.8,.2,1),visibility 0s linear .38s!important}
-.sh.full.open{visibility:visible;pointer-events:auto;transform:translate3d(0,0,0);transition:transform .38s cubic-bezier(.22,.8,.2,1),visibility 0s!important}
+.sh.full{opacity:1!important;visibility:hidden;pointer-events:none;transform:translate3d(100%,0,0);transition:transform .6s cubic-bezier(.32,.72,0,1),visibility 0s linear .6s!important}
+.sh.full.open{visibility:visible;pointer-events:auto;transform:translate3d(0,0,0);transition:transform .55s cubic-bezier(.32,.72,0,1),visibility 0s!important}
+/* ko'p takrorlanadigan kartalarda blur o'chirilgan: siljishda va skrollda tez ishlaydi */
+.card,.row,.sum{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .sh.full .sp{transform:none!important;transition:none!important;touch-action:pan-y;overscroll-behavior:contain;box-shadow:-10px 0 28px rgba(0,0,0,.28)}
 html .sh.noanim,html .sh.noanim .sp{transition:none!important}
 /* 1-oyna: pastki panel */
@@ -3340,9 +3342,11 @@ function setProdBar(i){var sh=$("sh"),b=$("pbf");if(!b){b=document.createElement
 var parX=0,parRaf=0,bgT=0;
 function parD(){return -Math.round(innerWidth*.26)}
 function parApply(x){parX=x;var v=x?x+"px 0":"";["app","nav","fab","b3dhost"].forEach(function(id){var e=document.getElementById(id);if(e)e.style.translate=v});var t=document.querySelector(".top");if(t)t.style.translate=v}
-function parStop(){cancelAnimationFrame(parRaf);parRaf=0}
-function parTween(to,dur){parStop();var from=parX;if(from===to)return;var t0=performance.now();(function f(n){var k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3);parApply(Math.round(from+(to-from)*e));if(k<1)parRaf=requestAnimationFrame(f)})(t0)}
-function bgPause(on){window._bgPause=!!on;clearTimeout(bgT);var h=document.documentElement;if(on)bgT=setTimeout(function(){if(window._bgPause)h.classList.add("shfull")},420);else h.classList.remove("shfull");parTween(on?parD():0,on?380:400)}
+var parTr=0,PEASE="cubic-bezier(.32,.72,0,1)";
+function parEls(){var a=[];["app","nav","fab","b3dhost"].forEach(function(id){var e=document.getElementById(id);if(e)a.push(e)});var t=document.querySelector(".top");if(t)a.push(t);return a}
+function parStop(){clearTimeout(parRaf);parRaf=0;if(!parTr)return;parTr=0;var a=document.getElementById("app"),c=0;if(a){var q=getComputedStyle(a).translate;if(q&&q!=="none")c=parseFloat(q)||0}var els=parEls();els.forEach(function(e){e.style.transition="none"});parApply(Math.round(c));void document.body.offsetWidth;els.forEach(function(e){e.style.transition=""})}
+function parTween(to,dur){parStop();var H=document.documentElement;if(parX===to){H.classList.remove("shanim");return}var els=parEls(),tr="translate "+dur+"ms "+PEASE;els.forEach(function(e){e.style.transition=tr});void document.body.offsetWidth;parTr=1;parX=to;els.forEach(function(e){e.style.translate=to+"px 0"});parRaf=setTimeout(function(){parRaf=0;parTr=0;els.forEach(function(e){e.style.transition=""});parApply(to);H.classList.remove("shanim")},dur+40)}
+function bgPause(on){window._bgPause=!!on;clearTimeout(bgT);var h=document.documentElement;if(on)bgT=setTimeout(function(){if(window._bgPause)h.classList.add("shfull")},600);else h.classList.remove("shfull");parTween(on?parD():0,on?550:600)}
 function openSheet(html){var pb0=$("pbf");if(pb0)pb0.remove();bgPause(window._fullSh);$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;var sh0=$("sh"),nf=!!window._fullSh,wf=sh0.classList.contains("full");if(nf&&!wf){sh0.classList.add("noanim","full");void sh0.offsetWidth;sh0.classList.remove("noanim")}else sh0.classList.toggle("full",nf);window._fullSh=0;sh0.classList.add("open")}
 function closeSheet(){$("sh").classList.remove("open");bgPause(0);if(window.vsHide)vsHide();if(window._favDirty){window._favDirty=0;favSync();if(S.tab!=="home")setTimeout(render,450)}}
 function favSync(){[].forEach.call(document.querySelectorAll("#app .heart"),function(b){var t=S.fav[b.dataset.v]?"\u2665":"\u2661";if(b.textContent!==t)b.textContent=t})}
@@ -4228,7 +4232,7 @@ if(a==="buy"){open(i,"buy")}});
 <script>
 /* Chapdan o'ngga surish: mahsulot oynasini yopadi (iOS kabi), ekranning istalgan joyidan */
 (function(){
-var sh=document.getElementById("sh"),vs=null,x0=0,y0=0,t0=0,dx=0,m=0,raf=0,W=0,EASE="cubic-bezier(.25,.8,.25,1)";
+var sh=document.getElementById("sh"),vs=null,x0=0,y0=0,t0=0,dx=0,m=0,raf=0,W=0,EASE="cubic-bezier(.32,.72,0,1)";
 function blocked(t){for(var n=t;n&&n!==sh;n=n.parentNode){if(n.nodeType===1){if(n.scrollWidth>n.clientWidth+2&&n.scrollLeft>2)return true;if(/^(INPUT|TEXTAREA|SELECT)$/.test(n.tagName))return true}}return false}
 function setT(v){if(v)sh.style.setProperty("transition",v,"important");else sh.style.removeProperty("transition")}
 function paint(){raf=0;var d=Math.max(0,dx);sh.style.transform="translate3d("+d+"px,0,0)";parApply(Math.round(parD()*(1-Math.min(1,d/W))))}
@@ -4243,9 +4247,9 @@ if(dx>18&&dx>Math.abs(dy)*1.6){m=2;W=sh.clientWidth||360;setT("none");sh.style.w
 if(!raf)raf=requestAnimationFrame(paint)},{passive:true});
 function end(){if(m!==2){m=0;return}m=0;if(raf){cancelAnimationFrame(raf);raf=0}
 var v=dx/Math.max(1,Date.now()-t0),close=dx>W*.42||(v>.9&&dx>70);
-setT("transform "+(close?".42s":".32s")+" "+EASE);sh.style.transform=close?"translate3d(100%,0,0)":"translate3d(0,0,0)";
-if(close){window._bgPause=false;document.documentElement.classList.remove("shfull");parTween(0,420)}else parTween(parD(),320);
-setTimeout(function(){if(close)finish();else{setT("");sh.style.transform="";sh.style.willChange=""}},close?430:330)}
+setT("transform "+(close?".5s":".32s")+" "+EASE);sh.style.transform=close?"translate3d(100%,0,0)":"translate3d(0,0,0)";
+if(close){window._bgPause=false;document.documentElement.classList.remove("shfull");parTween(0,500)}else parTween(parD(),320);
+setTimeout(function(){if(close)finish();else{setT("");sh.style.transform="";sh.style.willChange=""}},close?510:330)}
 sh.addEventListener("touchend",end,{passive:true});sh.addEventListener("touchcancel",end,{passive:true});
 })();
 </script>
