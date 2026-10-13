@@ -1545,7 +1545,11 @@ document.addEventListener("DOMContentLoaded",function(){
                   text-shadow: 0 1px 6px rgba(0,0,0,.9); }
   }
   /* ===== qora zona kichraytirildi (chetdagi narsalar chiqib turadi); qidiruv/bildirishnoma/hisob olib tashlandi ===== */
-  .lx-base { inset: 10% 7% 10% 9% !important; }
+  /* ===== FON EFFEKTI KATTA: chap va o'ng shisha panellar ortidan ham ko'rinadi ===== */
+  .lx-base { inset: 0 !important;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%), linear-gradient(180deg, transparent 0, #000 6%, #000 94%, transparent 100%) !important;
+            mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%), linear-gradient(180deg, transparent 0, #000 6%, #000 94%, transparent 100%) !important; }
+  .vsp-video { transform: translateZ(0) scale(1.2) !important; transform-origin: 50% 50%; }
   .info .topbar { display: none !important; }
   .info { grid-template-rows: minmax(0,1fr) !important; }
   /* ===== iOS 26 uslubidagi yengil "liquid glass": chap kartalar va o'ng panel ===== */
@@ -1611,10 +1615,10 @@ html .hero .info .card,
 html[data-theme] .hero .info .card,
 html:not([data-theme="dark"]) .hero .info .card,
 html[data-theme="dark"] .hero .info .card{
-  background:linear-gradient(160deg,rgba(24,26,34,.94) 0%,rgba(10,11,16,.97) 100%)!important;
-  -webkit-backdrop-filter:blur(18px) saturate(120%)!important;
-  backdrop-filter:blur(18px) saturate(120%)!important;
-  border:1px solid rgba(255,255,255,.14)!important;
+  background:linear-gradient(160deg,rgba(40,44,60,.42) 0%,rgba(14,16,24,.55) 100%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(160%)!important;
+  backdrop-filter:blur(18px) saturate(160%)!important;
+  border:1px solid rgba(255,255,255,.22)!important;
   box-shadow:0 10px 28px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.10)!important;
   --ink:#f2ecdf;--muted:#a8a392;--line:rgba(255,255,255,.14);
   --sage:#a9b98a;--sage-ink:#14170f;--sage-tint:#283020;--chip:#262b1d;
@@ -4542,7 +4546,7 @@ sh.addEventListener("touchend",end,{passive:true});sh.addEventListener("touchcan
 </script>
 <script>
 /* 3D sahna ichki iframe'ini kunduzgi rejimda oqartiradi (tungida tegmaydi) */
-window.SB_DAY_CSS="html,body,body.dusk{background:#FFFFFF!important}.lx-base{background:#FFFFFF!important;filter:none!important}.lx-base::after,.lx-reveal,.lx-ring,.lx-shade,.bg-shade,.glass{display:none!important}.vsp-video{display:block!important;filter:invert(1) grayscale(1) contrast(1.08)!important;opacity:.92}:root,html:root body .hero[data-light]{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#1F1F1F;--muted:#6B6B6B;--line:#E8E8E8;--sage:#FF4B1F;--sage-ink:#FFFFFF;--sage-tint:#FFF0EA;--chip:#F3F3F3;--shadow:0,0,0}html:root body .hero[data-light] .info .card{background:#FFFFFF!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid #EEEEEE!important;box-shadow:0 8px 24px rgba(0,0,0,.10)!important;color:#1F1F1F!important;--bg:#FFFFFF;--panel:#FFFFFF;--ink:#1F1F1F;--muted:#6B6B6B;--line:#E8E8E8;--sage:#FF4B1F;--sage-ink:#FFFFFF;--sage-tint:#FFF0EA;--chip:#F3F3F3;--shadow:0,0,0}html:root body .hero[data-light] .tab{background:#FFFFFF!important;border:1px solid #EEEEEE!important;box-shadow:0 4px 14px rgba(0,0,0,.08)!important;color:#1F1F1F!important}html:root body .hero[data-light] .tab[aria-selected=true]{border-color:#FF4B1F!important}html:root body .hero[data-light] .tags span,html:root body .hero[data-light] .chip{background:#F3F3F3!important;color:#1F1F1F!important;border-color:#E8E8E8!important}html:root body .hero[data-light] h1,html:root body .hero[data-light] h2,html:root body .hero[data-light] .desc,html:root body .hero[data-light] .trait,html:root body .hero[data-light] .price,html:root body .hero[data-light] .caption,html:root body .hero[data-light] .spec-line{color:#1F1F1F!important;text-shadow:none!important}html:root body .hero[data-light] .trait .k,html:root body .hero[data-light] .hint,html:root body .hero[data-light] .loader{color:#6B6B6B!important}";
+window.SB_DAY_CSS="html,body,body.dusk{background:#FFFFFF!important}.lx-base{background:#FFFFFF!important;filter:none!important}.lx-base::after,.lx-reveal,.lx-ring,.lx-shade,.bg-shade,.glass{display:none!important}.vsp-video{display:block!important;filter:invert(1) grayscale(1) contrast(1.08)!important;opacity:.92}:root,html:root body .hero[data-light]{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#1F1F1F;--muted:#6B6B6B;--line:#E8E8E8;--sage:#FF4B1F;--sage-ink:#FFFFFF;--sage-tint:#FFF0EA;--chip:#F3F3F3;--shadow:0,0,0}html:root body .hero[data-light] .info .card{background:rgba(255,255,255,.48)!important;-webkit-backdrop-filter:blur(16px) saturate(170%)!important;backdrop-filter:blur(16px) saturate(170%)!important;border:1px solid rgba(255,255,255,.85)!important;box-shadow:0 8px 24px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.9)!important;color:#1F1F1F!important;--bg:#FFFFFF;--panel:#FFFFFF;--ink:#1F1F1F;--muted:#6B6B6B;--line:#E8E8E8;--sage:#FF4B1F;--sage-ink:#FFFFFF;--sage-tint:#FFF0EA;--chip:#F3F3F3;--shadow:0,0,0}html:root body .hero[data-light] .tab{background:rgba(255,255,255,.48)!important;-webkit-backdrop-filter:blur(14px) saturate(170%)!important;backdrop-filter:blur(14px) saturate(170%)!important;border:1px solid rgba(255,255,255,.85)!important;box-shadow:0 4px 14px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.9)!important;color:#1F1F1F!important}html:root body .hero[data-light] .tab[aria-selected=true]{border-color:#FF4B1F!important}html:root body .hero[data-light] .tags span,html:root body .hero[data-light] .chip{background:#F3F3F3!important;color:#1F1F1F!important;border-color:#E8E8E8!important}html:root body .hero[data-light] h1,html:root body .hero[data-light] h2,html:root body .hero[data-light] .desc,html:root body .hero[data-light] .trait,html:root body .hero[data-light] .price,html:root body .hero[data-light] .caption,html:root body .hero[data-light] .spec-line{color:#1F1F1F!important;text-shadow:none!important}html:root body .hero[data-light] .trait .k,html:root body .hero[data-light] .hint,html:root body .hero[data-light] .loader{color:#6B6B6B!important}";
 (function(){
   function syncHeroDay(){
     var day=document.documentElement.hasAttribute("data-day");
@@ -4574,6 +4578,12 @@ html[data-day] .menu .me h3{color:#1F1F1F!important;font-size:14px!important;lin
 html[data-day] .menu .me p{color:#6B6B6B!important;font-size:12px!important;opacity:1!important}
 html[data-day] .menu .me button{font-size:12px!important;padding:7px 13px!important;margin-top:8px!important;font-weight:700!important;background:#FF4B1F!important;color:#fff!important;border:1px solid #FF4B1F!important;box-shadow:none!important}
 html[data-day] .menu .me button+button{background:#fff!important;color:#FF4B1F!important;border-color:#FFD9CC!important}
+/* TUN rejimi: profil bloki joylashuvi/o'lchami kunduzgidek (ranglar o'zgarmagan) */
+html:not([data-day]) .menu .me{padding:14px!important;border-radius:22px!important}
+html:not([data-day]) .menu .me h3{font-size:14px!important;line-height:1.25;margin:0 0 2px!important;font-weight:700}
+html:not([data-day]) .menu .me p{font-size:12px!important}
+html:not([data-day]) .menu .me button{font-size:12px!important;padding:7px 13px!important;margin-top:8px!important;font-weight:700!important}
+html:not([data-day]) .menu .me button+button{margin-left:8px!important}
 html[data-day][data-theme] .menu button.li,
 html[data-day][data-theme] .menu button.li:nth-of-type(n){background:#F7F7F7!important;color:#1F1F1F!important;border:1px solid #EEEEEE!important;box-shadow:none!important}
 html[data-day][data-theme] .menu button.li:active{background:#FFF1EC!important}
