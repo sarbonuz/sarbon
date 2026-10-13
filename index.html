@@ -2841,7 +2841,6 @@ init();
   },{passive:true});
   card.addEventListener('touchmove',function(e){
     if(!drag)return;
-    if(max<=2)return;
     var y=e.touches[0].clientY,dy=sy-y;sy=y;
     var c=clamp(p),over=Math.abs(p-c);
     var outward=(p<=0&&dy<0)||(p>=max&&dy>0);
@@ -2855,7 +2854,7 @@ init();
     apply();
     if(e.cancelable)e.preventDefault();
   },{passive:false});
-  function end(){if(!drag)return;drag=false;if(max<=2)return;if(Math.abs(v)>3)v=v>0?3:-3;kick()}
+  function end(){if(!drag)return;drag=false;if(Math.abs(v)>3)v=v>0?3:-3;kick()}
   card.addEventListener('touchend',end,{passive:true});
   card.addEventListener('touchcancel',end,{passive:true});
   card.addEventListener('wheel',function(e){
@@ -2866,6 +2865,24 @@ init();
   new MutationObserver(function(){stop();p=0;v=0;apply()}).observe(det,{childList:true,subtree:true});
 })();
 <\/script>
+<script>
+/* Qora yonib-o'chishni oldini olish: model va fon video tayyor bo'lgach parent'ga "ready" yuboradi */
+(function(){
+  var v=document.getElementById('vspVideo'),L=document.getElementById('loader'),sent=false,lo=!L,vo=!v;
+  function ok(){if(sent)return;sent=true;try{parent.postMessage({b3d:"ready"},"*")}catch(e){}}
+  function tryOk(){if(lo&&vo)ok()}
+  if(v){
+    v.style.opacity='0';v.style.transition='opacity .6s ease';
+    var vs=function(){if(vo)return;vo=true;v.style.opacity='';tryOk()};
+    v.addEventListener('playing',vs);v.addEventListener('loadeddata',vs);
+    setTimeout(vs,2500);
+  }
+  if(L){
+    var chk=function(){if(L.classList.contains('off')){lo=true;tryOk()}};
+    new MutationObserver(chk).observe(L,{attributes:true,attributeFilter:['class']});chk();
+  }
+  setTimeout(ok,5500);
+})();
 <\/script>
 </body>
 </html>
@@ -3947,7 +3964,7 @@ function heroHtml(map){var t=document.getElementById("hero3d-src").textContent.r
 function build3d(map){if(B3DMAP)return;B3DMAP=map;
   var h=b3dHost(),f=document.createElement("iframe");f.setAttribute("title","3D mahsulotlar");f.setAttribute("scrolling","no");f.setAttribute("allow","autoplay; fullscreen");f.style.opacity="0";f.style.transition="opacity .4s ease";
   var shown=false;function showF(){if(shown)return;shown=true;setTimeout(function(){f.style.opacity="1"},80)}
-  f.addEventListener("load",showF);setTimeout(showF,3500);
+  window.addEventListener("message",function(e){if(e.source===f.contentWindow&&e.data&&e.data.b3d==="ready")showF()});setTimeout(showF,6000);
   f.srcdoc=heroHtml(map);
   h.appendChild(f);sync3d()}
 function pickModels(paths){var map={},keys=[["models/macbook-pro-m3-16.glb","macbook"],["models/airpods-pro-3.glb","airpod"],["models/iphone-18-pro-max.glb","iphone"]];
