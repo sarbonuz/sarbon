@@ -2813,6 +2813,22 @@ init();
 @keyframes hubIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .pay1{display:inline-block;margin-top:6px;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(120deg,#7B5CF0,#D6246E);cursor:pointer}
 .hubw .btn{width:100%}
+/* Mahsulot: variantlar pastga, pastki panel (Savatga qo'shish + Sotib olish) */
+.sp .sortbar.vgrid{flex-wrap:wrap;overflow:visible;margin:0!important;padding:2px 0 8px!important;gap:8px}
+.sp .sortbar.vgrid button{border-radius:12px!important;white-space:normal;text-align:left;padding:9px 14px;line-height:1.25;max-width:100%}
+.sh.full .sp{padding-bottom:0!important}
+.pbar{position:sticky;bottom:0;z-index:3;margin:14px -16px 0;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));background:inherit;box-shadow:0 -10px 24px rgba(0,0,0,.28)}
+.pbar .err{margin:0 0 6px}
+.prow{display:flex;gap:10px}
+.prow .btn{flex:1;width:auto;margin-top:0;padding:14px 8px;font-size:15px}
+.prow .buyn{background:linear-gradient(135deg,#FF4B3E,#E01E2B)!important;box-shadow:0 8px 20px rgba(224,30,43,.4)}
+/* Mahsulot oynasi: to'liq ekran */
+.sh.full{align-items:stretch;justify-content:stretch;background:transparent}
+.sh.full .sp{width:100%!important;max-width:none!important;height:100%;max-height:none!important;border-radius:0!important;padding-left:16px!important;padding-right:16px!important;padding-top:env(safe-area-inset-top,0px)!important;padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box}
+html[data-theme="dark"] .sh.full .sp{background:#0B0E2C!important}
+html:not([data-theme="dark"]) .sh.full .sp{background:#F2F2FD!important}
+.sh.full .sp .back{padding-top:12px;background:inherit}
+.sh.full .sp .gal{width:min(100%,520px)!important;margin:6px auto 0!important}
 /* Saqlanganlar: qatorda 3 ta, ixcham */
 .favg3{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:0 8px!important}
 .favg3 .card{border-radius:14px}
@@ -3003,7 +3019,7 @@ function skOpts(p){if(p.olcham||p.rang)return{sz:(p.olcham&&p.olcham.length)?p.o
  if(/g'ilof|quloqchin|soat|krossovka|ko'ylak|Futbolka|shim|Kurtka|Termos|choynak|gilam|shaker/i.test(n))o.col=["Qora","Oq","Ko'k","Pushti"];
  return o}
 function optBox(i){var o=skOpts(P[i]),h='';
- function row(t,arr,act,cur){return '<div class="note" style="padding:6px 0 2px">'+t+'</div><div class="sortbar" style="padding:0 0 4px">'+arr.map(function(x){return '<button data-a="'+act+'" data-v="'+esc(x)+'" data-i="'+i+'" class="'+(cur===x?'on':'')+'">'+esc(x)+'</button>'}).join("")+'</div>'}
+ function row(t,arr,act,cur){return '<div class="note" style="padding:6px 0 2px">'+t+'</div><div class="sortbar vgrid" style="padding:0 0 4px">'+arr.map(function(x){return '<button data-a="'+act+'" data-v="'+esc(x)+'" data-i="'+i+'" class="'+(cur===x?'on':'')+'">'+esc(x)+'</button>'}).join("")+'</div>'}
  if(o.sz)h+=row("O'lcham",o.sz,"osz",S.osz);
  if(o.col)h+=row("Rang",o.col,"ocol",S.ocol);
  return h}
@@ -3224,7 +3240,7 @@ function goB(k){var t=$("btr");if(!t)return;var n=k<0?4:k%6;if(n===0&&S.bi===5){
 function startBanners(){clearInterval(bnT);var t=$("btr");if(!t)return;var sx=0;t.parentNode.ontouchstart=function(e){sx=e.touches[0].clientX};t.parentNode.ontouchend=function(e){var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40){goB(S.bi+(dx<0?1:-1));clearInterval(bnT);bnT=setInterval(function(){goB(S.bi+1)},4000)}};goB(S.bi);bnT=setInterval(function(){goB(S.bi+1)},4000)}
 document.addEventListener("scroll",function(){},{passive:true});
 
-function openSheet(html){$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;$("sh").classList.add("open")}
+function openSheet(html){$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;var sh0=$("sh");sh0.classList.toggle("full",!!window._fullSh);window._fullSh=0;sh0.classList.add("open")}
 function closeSheet(){$("sh").classList.remove("open")}
 function closeSheetSlow(){var sh=$("sh");sh.classList.add("slow");sh.classList.remove("open");clearTimeout(window._slw);window._slw=setTimeout(function(){sh.classList.remove("slow")},1700)}
 function cartFlash(){clearTimeout(window._cft);window._cft=setTimeout(function(){window._cfUntil=Date.now()+2000;var b=document.querySelector('#navb button[data-v="cart"]');if(b){b.classList.remove("flash");void b.offsetWidth;b.classList.add("flash")}clearTimeout(window._cfr);window._cfr=setTimeout(function(){var x=document.querySelector('#navb button[data-v="cart"]');if(x)x.classList.remove("flash")},2100)},550)}
@@ -3232,13 +3248,13 @@ function cartFlash(){clearTimeout(window._cft);window._cft=setTimeout(function()
 function favTxt(i){return S.fav[i]?'♥ Saqlangan':'♡ Saqlash'}
 function product(i,mode){
   var p=P[i];if(S.oi!==i){S.oi=i;S.osz="";S.ocol="";S.rv=[i].concat((S.rv||[]).filter(function(x){return x!==i})).slice(0,8)}if(!p.av&&mode==="avia")mode="auto";S.mode=mode;var m=mode;
-  openSheet(galHtml(p,S.ocol)+'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h3 style="margin:12px 0 2px">'+esc(p.n)+'</h3><button class="svb" data-a="fav2" data-v="'+i+'" aria-label="Saqlash">'+favTxt(i)+'</button></div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan · ⭐ 4.8</div>'+
+  window._fullSh=1;openSheet(galHtml(p,S.ocol)+'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h3 style="margin:12px 0 2px">'+esc(p.n)+'</h3><button class="svb" data-a="fav2" data-v="'+i+'" aria-label="Saqlash">'+favTxt(i)+'</button></div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan · ⭐ 4.8</div>'+
   '<div class="opt"><button data-a="mode" data-v="auto" data-i="'+i+'" class="'+(m==="auto"?"on":"")+'"><b>🚛 Avto</b><br>'+DAYS.auto+'<br>~'+fmt(cargo(p,"auto"))+'</button><button data-a="mode" data-v="avia" data-i="'+i+'" '+(p.av?"":"disabled")+' class="'+(m==="avia"?"on":"")+'"><b>✈️ Avia</b><br>'+DAYS.avia+'<br>~'+fmt(cargo(p,"avia"))+'</button></div>'+
   optBox(i)+(!p.av?'<div class="warn">Bu tovar avia cargoda taqiqlangan (batareya, elektronika yoki suyuqlik). Faqat avto mumkin.</div>':'')+
   '<details class="ban"'+(m==="avia"?' open':'')+'><summary>⚠️ Avia cargoda taqiqlangan tovarlar</summary><div class="note">Avia cargo qoidasi (06.12.2025). Bu turdagi buyumlarni avia kargoga buyurtma qilish taqiqlanadi:</div><ul>'+BU.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><div class="note">Заказывать такие товары через авиа-карго запрещено:</div><ul>'+BR.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul></details>'+
   (m==="avia"?'<label class="ck"><input type="checkbox" id="ok"> Tovarim yuqoridagi ro\'yxatga kirmasligini tasdiqlayman</label>':'')+
   '<div class="ln"><span>Tovar narxi</span><b>'+fmt(goods(p))+'</b></div><div class="ln"><span>Cargo ~'+p.kg+' kg × $'+CG[m]+'</span><span>~'+fmt(cargo(p,m))+'</span></div><div class="note">Cargo alohida hisoblanadi: tovar omborga kelganda haqiqiy og\'irlik o\'lchanadi.</div>'+
-  '<div class="err" id="pe"></div><button class="btn" data-a="add" data-v="'+i+'">Savatga qo\'shish</button>'+simBox(i));
+  simBox(i)+'<div class="pbar"><div class="err" id="pe"></div><div class="prow"><button class="btn" data-a="add" data-v="'+i+'">Savatga qo\'shish</button><button class="btn buyn" data-a="buynow" data-v="'+i+'">Sotib olish</button></div></div>');
 }
 var LTIMER=null;
 function finishLogin(x){
@@ -3464,6 +3480,13 @@ document.addEventListener("click",function(e){
   if(a==="mode"){product(+t.dataset.i,v);return}
   if(a==="add"){var i=+v;var oo=skOpts(P[i]);if(oo.sz&&!S.osz){$("pe").textContent="O'lchamni tanlang.";return}if(oo.col&&!S.ocol){$("pe").textContent="Rangni tanlang.";return}if(S.mode==="avia"){var ck=$("ok");if(!ck||!ck.checked){$("pe").textContent="Avia uchun ro'yxatni tasdiqlang.";return}}
     var f=S.cart.filter(function(c){return c.i===i&&c.m===S.mode&&(c.sz||"")===(S.osz||"")&&(c.col||"")===(S.ocol||"")})[0];if(f)f.q++;else S.cart.push({i:i,m:S.mode,q:1,sz:S.osz||"",col:S.ocol||""});S.oi=-1;save();closeSheetSlow();render();cartFlash();return}
+  if(a==="buynow"){var i2=+v,o2=skOpts(P[i2]);if(o2.sz&&!S.osz){$("pe").textContent="O'lchamni tanlang.";return}if(o2.col&&!S.ocol){$("pe").textContent="Rangni tanlang.";return}if(S.mode==="avia"){var k2=$("ok");if(!k2||!k2.checked){$("pe").textContent="Avia uchun ro'yxatni tasdiqlang.";return}}
+    var j2=-1;S.cart.forEach(function(c,x){if(c.i===i2&&c.m===S.mode&&(c.sz||"")===(S.osz||"")&&(c.col||"")===(S.ocol||""))j2=x});
+    if(j2<0){S.cart.push({i:i2,m:S.mode,q:1,sz:S.osz||"",col:S.ocol||""});j2=S.cart.length-1}
+    save();
+    if(!S.user){$("mv").classList.remove("open");login(1);return}
+    if(!S.dl){S.only=null;S.oi=-1;closeSheet();S.tab="cart";S.hub="cart";S.anim=true;render();window.scrollTo(0,0);setTimeout(function(){var e2=$("er");if(e2){e2.textContent="Avval yetkazish filialini tanlang.";e2.scrollIntoView({behavior:"smooth",block:"center"})}},80);return}
+    S.only=j2;S.oi=-1;payment();return}
   if(a==="qty"){var c=S.cart[+v];c.q+=+t.dataset.d;if(c.q<1)S.cart.splice(+v,1);save();render();return}
   if(a==="login"){$("mv").classList.remove("open");login(1);return}
   if(a==="sendcode"){var ph=$("lp").value.replace(/\D/g,"");if(ph.length<9){$("le").textContent="Telefon raqamini to'liq kiriting.";return}login(2,"+"+(ph.length===9?"998"+ph:ph));return}
