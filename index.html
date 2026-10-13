@@ -2,6 +2,8 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
+<style>html.boot body>*{visibility:hidden!important}html.boot{background:#B4C2DC!important}html.boot:not([data-day]){background:#0B0D22!important}</style>
+<script>(function(){var d=document.documentElement;d.classList.add("boot");try{d.setAttribute("data-theme","dark");if(localStorage.getItem("sarbon.theme")!=="dark")d.setAttribute("data-day","1")}catch(e){}setTimeout(function(){d.classList.remove("boot")},3000)})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#25308F">
 <link rel="manifest" href="manifest.json">
@@ -3809,7 +3811,7 @@ function loadServer(pre){
       S.rv=(S.rv||[]).map(re).filter(function(j){return j>=0});if(S.oi>=0)S.oi=re(S.oi)}
     S.cart=S.cart.filter(function(c){return P[c.i]});S.rv=(S.rv||[]).filter(function(j){return P[j]});
     try{save()}catch(e){}
-    lastSig=sig;LOADED=true;render()
+    lastSig=sig;LOADED=true;render();document.documentElement.classList.remove("boot")
   }).catch(function(e){toast("srverr","Server javobini o'qib bo'lmadi: "+(e&&e.message||e),"Qayta urinish",function(){loadServer()})})
 }
 var GLB_FILES=["airpods_pro_3.glb","iphone_18_pro_max.glb","macbook_pro_m3_16_inch_2024.glb"]; var GLB_FALLBACK=["airpods_pro_3.glb","iphone_18_pro_max.glb","macbook_pro_m3_16_inch_2024.glb"]; /* API ishlamasa (limit) shu fayllar urinib ko'riladi */ /* ixtiyoriy: qo'lda yozish mumkin, masalan ["models/a.glb","models/b.glb","models/c.glb"] */
@@ -4228,12 +4230,12 @@ x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now();dx=0;m=blocked(e.t
 sh.addEventListener("touchmove",function(e){if(m===0||m===3)return;var c=e.touches[0];dx=c.clientX-x0;var dy=c.clientY-y0;
 if(m===1){if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){m=3;return}
 if(dx<-12){m=3;return}
-if(dx>12&&dx>Math.abs(dy)*1.4){m=2;W=sh.clientWidth||360;sh.style.transition="none";sh.style.willChange="transform"}else return}
+if(dx>18&&dx>Math.abs(dy)*1.6){m=2;W=sh.clientWidth||360;sh.style.transition="none";sh.style.willChange="transform"}else return}
 if(!raf)raf=requestAnimationFrame(paint)},{passive:true});
 function end(){if(m!==2){m=0;return}m=0;if(raf){cancelAnimationFrame(raf);raf=0}
-var v=dx/Math.max(1,Date.now()-t0),close=dx>W*.35||(v>.6&&dx>40);
-sh.style.transition="transform .2s ease-out";sh.style.transform=close?"translate3d(100%,0,0)":"translate3d(0,0,0)";
-setTimeout(function(){if(close)finish();else{sh.style.transition="";sh.style.transform="";sh.style.willChange=""}},210)}
+var v=dx/Math.max(1,Date.now()-t0),close=dx>W*.42||(v>.9&&dx>70);
+sh.style.transition="transform "+(close?".42s":".32s")+" cubic-bezier(.25,.8,.25,1)";sh.style.transform=close?"translate3d(100%,0,0)":"translate3d(0,0,0)";
+setTimeout(function(){if(close)finish();else{sh.style.transition="";sh.style.transform="";sh.style.willChange=""}},close?430:330)}
 sh.addEventListener("touchend",end,{passive:true});sh.addEventListener("touchcancel",end,{passive:true});
 })();
 </script>
