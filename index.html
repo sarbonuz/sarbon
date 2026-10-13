@@ -1621,6 +1621,12 @@ html[data-theme="dark"] .hero .info .card{
   color:#f2ecdf;
 }
 </style>
+<style id="hero-layer-fix">
+/* Model almashish effekti (#gl) o'ng matn kartasi va chap kartalar ORQASIDA o'tsin */
+#gl{z-index:4!important}
+.main>div:not(.stage),.info,.spec-float,.hint{z-index:6!important}
+.main>div:not(.stage){position:relative}
+</style>
 </head>
 <body class="dusk">
 <div class="lx-base" aria-hidden="true">
@@ -4560,6 +4566,21 @@ html[data-day] .top,html[data-day] .top.glass{
   background:linear-gradient(180deg,#FFFFFF 0,#FFFFFF calc(env(safe-area-inset-top,0px) + 50px),rgba(255,255,255,0) calc(env(safe-area-inset-top,0px) + 62px))!important;
   box-shadow:none!important;border-radius:0!important;pointer-events:none}
 html[data-day] .top>*{pointer-events:auto}
+</style>
+<style id="sb-day-menu">
+/* Kunduzgi rejim: yon menyu — faqat 3 rang: oq, to'q kulrang matn, #FF4B1F */
+html[data-day] .menu .me{background:#FFF1EC!important;border:1px solid #FFD9CC!important;box-shadow:none!important;color:#1F1F1F!important;padding:14px!important;border-radius:22px!important}
+html[data-day] .menu .me h3{color:#1F1F1F!important;font-size:14px!important;line-height:1.25;margin:0 0 2px!important;font-weight:700}
+html[data-day] .menu .me p{color:#6B6B6B!important;font-size:12px!important;opacity:1!important}
+html[data-day] .menu .me button{font-size:12px!important;padding:7px 13px!important;margin-top:8px!important;font-weight:700!important;background:#FF4B1F!important;color:#fff!important;border:1px solid #FF4B1F!important;box-shadow:none!important}
+html[data-day] .menu .me button+button{background:#fff!important;color:#FF4B1F!important;border-color:#FFD9CC!important}
+html[data-day][data-theme] .menu button.li,
+html[data-day][data-theme] .menu button.li:nth-of-type(n){background:#F7F7F7!important;color:#1F1F1F!important;border:1px solid #EEEEEE!important;box-shadow:none!important}
+html[data-day][data-theme] .menu button.li:active{background:#FFF1EC!important}
+html[data-day] .menu .mi svg{filter:none!important}
+html[data-day] .menu .mi svg [stroke]:not([stroke="none"]){stroke:#FF4B1F!important}
+html[data-day] .menu .mi svg [fill]:not([fill="none"]){fill:#FF4B1F!important}
+html[data-day] .menu .ver{color:#8A8A8A!important}
 </style>
 </body>
 </html>
