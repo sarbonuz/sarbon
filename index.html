@@ -4262,24 +4262,26 @@ if(a==="buy"){open(i,"buy")}});
 <script>
 /* Chapdan o'ngga surish: mahsulot oynasini yopadi (iOS kabi), ekranning istalgan joyidan */
 (function(){
-var sh=document.getElementById("sh"),vs=null,x0=0,y0=0,t0=0,dx=0,m=0,raf=0,W=0,EASE="cubic-bezier(.32,.72,0,1)";
+var sh=document.getElementById("sh"),vs=null,x0=0,y0=0,t0=0,dx=0,m=0,raf=0,W=0,EASE="cubic-bezier(.25,.8,.25,1)",lastDx=0,lastT=0,vel=0;
 function blocked(t){for(var n=t;n&&n!==sh;n=n.parentNode){if(n.nodeType===1){if(n.scrollWidth>n.clientWidth+2&&n.scrollLeft>2)return true;if(/^(INPUT|TEXTAREA|SELECT)$/.test(n.tagName))return true}}return false}
 function setT(v){if(v)sh.style.setProperty("transition",v,"important");else sh.style.removeProperty("transition")}
 function paint(){raf=0;var d=Math.max(0,dx);sh.style.transform="translate3d("+d+"px,0,0)";sh.style.translate="0px 0px";parApply(Math.round(parD()*(1-Math.min(1,d/W))))}
 function finish(){sh.classList.add("noanim");closeSheet();sh.style.transform="";setT("");void sh.offsetWidth;sh.style.willChange="";setTimeout(function(){sh.classList.remove("noanim")},80)}
-sh.addEventListener("touchstart",function(e){vs=vs||document.getElementById("vs");
+sh.addEventListener("touchstart",function(e){vs=vs||document.getElementById("vs");lastDx=0;lastT=performance.now();vel=0;
 if(!sh.classList.contains("open")||!sh.classList.contains("full")||(vs&&vs.classList.contains("on"))||e.touches.length!==1){m=3;return}
 x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now();dx=0;m=blocked(e.target)?3:1},{passive:true});
-sh.addEventListener("touchmove",function(e){if(m===0||m===3)return;var c=e.touches[0];dx=c.clientX-x0;var dy=c.clientY-y0;
+sh.addEventListener("touchmove",function(e){if(m===0||m===3)return;var c=e.touches[0];dx=c.clientX-x0;var nowT=performance.now();if(m===2){vel=vel*.6+((dx-lastDx)/Math.max(1,nowT-lastT))*.4}lastDx=dx;lastT=nowT;var dy=c.clientY-y0;
 if(m===1){if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){m=3;return}
 if(dx<-12){m=3;return}
 if(dx>18&&dx>Math.abs(dy)*1.6){m=2;W=sh.clientWidth||360;setT("none");sh.style.willChange="transform";parStop();var spx=document.getElementById("sp");if(spx){spx.style.overflowY="hidden";spx.scrollTop=spx.scrollTop}}else return}
 if(!raf)raf=requestAnimationFrame(paint)},{passive:true});
 function end(){var spe=document.getElementById("sp");if(spe)spe.style.overflowY="";if(m!==2){m=0;return}m=0;if(raf){cancelAnimationFrame(raf);raf=0}
-var v=dx/Math.max(1,Date.now()-t0),close=dx>W*.42||(v>.9&&dx>70);
-setT("transform "+(close?".5s":".32s")+" "+EASE);sh.style.transform=close?"translate3d(100%,0,0)":"translate3d(0,0,0)";
-if(close){window._bgPause=false;document.documentElement.classList.remove("shfull");parTween(0,500)}else parTween(parD(),320);
-setTimeout(function(){if(close)finish();else{setT("");sh.style.transform="";sh.style.willChange=""}},close?510:330)}
+var close=dx>W*.42||(vel>.5&&dx>60);
+var rem=close?Math.max(0,W-dx):Math.max(0,dx),ratio=Math.min(1,rem/W);
+var dur=Math.round(230+280*ratio);if(Math.abs(vel)>1.2)dur=Math.max(180,Math.round(dur*.6));
+setT("transform "+dur+"ms "+EASE);sh.style.transform=close?"translate3d(100%,0,0)":"translate3d(0,0,0)";
+if(close){window._bgPause=false;document.documentElement.classList.remove("shfull");parTween(0,dur)}else parTween(parD(),dur);
+setTimeout(function(){if(close)finish();else{setT("");sh.style.transform="";sh.style.willChange=""}},dur+12)}
 sh.addEventListener("touchmove",function(e){if(m===2&&e.cancelable)e.preventDefault()},{passive:false});
 sh.addEventListener("touchend",end,{passive:true});sh.addEventListener("touchcancel",end,{passive:true});
 })();
