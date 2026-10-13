@@ -3272,12 +3272,28 @@ function orders(ttl,flt){
   if(!S.user)return h+'<div class="form"><div class="mut">Buyurtmalarni ko\'rish uchun kiring.</div><button class="btn" data-a="login">Kirish</button></div>';
   var mine=S.orders.filter(function(o){return o.ph===S.user.phone&&(!flt||flt(o))});
   if(!mine.length)return h+'<div class="mut">'+(flt?"O\'zbekistonga yuborilgan buyurtma hali yo\'q.":"Hali buyurtma yo\'q.")+'</div>';
-  return h+'<div class="list olist2">'+mine.map(function(o){
-    var steps='<div class="steps">'+[0,1,2,3,4,5].map(function(j){return '<i class="'+(j<=o.s?'d':'')+'"></i>'}).join("")+'</div>';
-    var tr=o.srv?'':o.s>=2?'<div class="note">Trek: <b>'+o.tk+'</b> · Og\'irlik: '+o.kg+' kg · Cargo: <b>'+fmt(o.cf)+'</b></div>':'<div class="note">Cargo: ~'+fmt(o.c)+' (og\'irlik o\'lchangach)</div>';
-    var ut=o.s>=4&&o.ut?'<div class="note">UzPost trek: <b>'+o.ut+'</b></div>':'';var trkb=o.trk?'<div class="trkbox"><span>📦 Trek kod</span><b>'+esc(o.trk)+'</b><button data-x="cpy" data-v="'+esc(o.trk)+'">Nusxalash</button></div>':'';var chatb=o.srv?'<button class="btn ghost" data-x="achat" data-v="'+esc(o.id)+'" style="margin-top:8px">💬 Shu buyurtma bo\'yicha admin bilan yozish</button>':'';
-    return '<div class="row" style="display:block"><b>Buyurtma #'+o.id+'</b> · tovar '+fmt(o.t)+'<div class="mapw">'+trackMap(o)+'</div>'+steps+'<div class="note">Holat: <b>'+ST[o.s]+'</b></div>'+tr+ut+trkb+'<div class="note">'+esc(o.a)+'</div>'+chatb+(o.s<5&&location.hash==="#admin"?'<button class="btn ghost" data-a="nx" data-v="'+o.id+'">Demo: keyingi holat (admin)</button>':'')+'</div>'}).join("")+'</div>';
+  return h+'<div class="list">'+mine.map(function(o){
+    return '<div class="row ordr" data-a="ordopen" data-v="'+esc(o.id)+'" style="align-items:center;cursor:pointer">'+
+      '<div style="width:56px;height:56px;flex:0 0 56px;border-radius:16px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,#25308F,#16A3AE)">📦</div>'+
+      '<div class="t" style="flex:1;min-width:0"><b>Buyurtma #'+esc(o.id)+'</b><span class="note" style="padding:0">Tovar '+fmt(o.t)+'</span><span class="note" style="padding:0;color:var(--brand);font-weight:700">'+esc(ST[o.s])+'</span></div>'+
+      '<span style="font-size:22px;color:var(--mute);padding-left:4px">›</span></div>'}).join("")+'</div>';
 }
+
+/* Buyurtma tafsiloti: alohida oynada, xarita va holat bilan */
+function ordDetail(id){
+  var o=(S.orders||[]).filter(function(x){return String(x.id)===String(id)})[0];if(!o)return;
+  var steps='<div class="steps">'+[0,1,2,3,4,5].map(function(j){return '<i class="'+(j<=o.s?'d':'')+'"></i>'}).join("")+'</div>';
+  var tr=o.srv?'':o.s>=2?'<div class="note">Trek: <b>'+o.tk+'</b> · Og\'irlik: '+o.kg+' kg · Cargo: <b>'+fmt(o.cf)+'</b></div>':'<div class="note">Cargo: ~'+fmt(o.c)+' (og\'irlik o\'lchangach)</div>';
+  var ut=o.s>=4&&o.ut?'<div class="note">UzPost trek: <b>'+o.ut+'</b></div>':'';
+  var trkb=o.trk?'<div class="trkbox"><span>📦 Trek kod</span><b>'+esc(o.trk)+'</b><button data-x="cpy" data-v="'+esc(o.trk)+'">Nusxalash</button></div>':'';
+  var chatb=o.srv?'<button class="btn ghost" data-x="achat" data-v="'+esc(o.id)+'" style="margin-top:8px">💬 Shu buyurtma bo\'yicha admin bilan yozish</button>':'';
+  var h='<h2 class="sec" style="margin:12px 0 4px">Buyurtma #'+esc(o.id)+'</h2><div class="note" style="padding:0 0 8px;font-weight:700;color:var(--brand)">'+esc(ST[o.s])+'</div>'+
+    '<div class="ordDet" style="position:relative;width:100%;aspect-ratio:360/640;border-radius:18px;overflow:hidden;margin:6px 0 10px">'+trackMap(o)+'</div>'+
+    steps+'<div class="sum" style="margin:10px 0 0"><div class="ln"><span>Tovar narxi</span><b>'+fmt(o.t)+'</b></div></div>'+tr+ut+trkb+
+    (o.a?'<div class="note">'+esc(o.a)+'</div>':'')+chatb;
+  window._fullSh=0;openSheet(h);
+}
+
 var TIPS=[["🛒","Buyurtma qanday beriladi?"],["💳","To'lovni qanday qilaman?"],["⏱️","Qancha kutaman?"],["📍","Filialni qanday tanlayman?"],["✈️","Avia yoki avto?"],["📦","Buyurtmamni qayerda ko'raman?"],["↩️","Qaytarish mumkinmi?"],["💬","Operator bilan gaplashish"]];
 function aiChat(inline){
   return '<div class="aibox glass'+(inline?'':' apin')+'">'+'<div class="aihd"><span class="dot"></span><div><b>Sarbon AI yordamchi</b><small>Onlayn · odatda darhol javob beradi</small></div>'+(inline?'':'<button class="xb" data-a="aiclose" aria-label="Yopish">×</button>')+'</div><div class="ailog'+(inline?' tall':'')+'">'+S.chat.slice(-14).map(function(m,k,arr){var gi=S.chat.length-arr.length+k;return '<div class="bub '+(m.f==="me"?"me":"bot")+(gi>=S.fresh?" in":"")+'">'+esc(m.t)+'</div>'}).join("")+(S.typing?'<div class="bub bot typing"><i></i><i></i><i></i></div>':"")+'</div><div class="aich">'+CHIPS.map(function(q){return '<button data-a="bq" data-v="'+esc(q)+'">'+esc(q)+'</button>'}).join("")+'</div><div class="aiin"><input placeholder="Savol yozing..."><button data-a="ask" aria-label="Yuborish">➤</button></div></div>';
@@ -3321,7 +3337,7 @@ function restoreUI(o){var a=$("app");if(!a)return;a.setAttribute("data-tab",S.ta
 function render(){
   var keep=snapUI();S._rsig=S._osig;
   var h=S.tab==="home"?home():S.tab==="catalog"?catalog():S.tab==="cart"?hub():S.tab==="orders"?orders():support();
-  $("app").innerHTML=S.anim?'<div class="fu">'+h+'</div>':h;S.anim=false;restoreUI(keep);mount3d();
+  var out=S.anim?'<div class="fu">'+h+'</div>':h;var same=!S.anim&&window._lastRender===out;window._lastRender=out;if(!same){$("app").innerHTML=out;restoreUI(keep);mount3d()}S.anim=false;
   var n=cartN();
   var tabs=[["home","<path d='M3 11l9-7 9 7v9h-6v-6H9v6H3z'/>","Bosh"],["catalog","<rect x='3' y='3' width='7' height='7' rx='2'/><rect x='14' y='3' width='7' height='7' rx='2'/><rect x='3' y='14' width='7' height='7' rx='2'/><rect x='14' y='14' width='7' height='7' rx='2'/>","Katalog"],["cart","<path d='M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM3 3h3l3 12h10l2-8H7'/>","Buyurtmalarim"],["orders","<path d='M6 3h8l4 4v14H6z'/><path d='M14 3v4h4'/><path d='M9 17v-3M12 17v-5M15 17v-2'/>","Hisobotlarim"],["support","<path d='M4 5h16v11H9l-5 4z'/>","Yordam"]];
   $("navb").innerHTML=tabs.map(function(t){return '<button class="'+(S.tab===t[0]?'on':'')+'" data-a="tab" data-v="'+t[0]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+t[1]+'</svg>'+t[2]+(t[0]==="cart"&&n?'<i>'+n+'</i>':'')+'</button>'}).join("");
@@ -3349,7 +3365,7 @@ function parTween(to,dur){parStop();var H=document.documentElement;if(parX===to)
 function bgPause(on){window._bgPause=!!on;clearTimeout(bgT);var h=document.documentElement;if(on)bgT=setTimeout(function(){if(window._bgPause)h.classList.add("shfull")},600);else h.classList.remove("shfull");parTween(on?parD():0,on?550:600)}
 function lockBody(){var b=document.body,H=document.documentElement;if(H.classList.contains("sheet-lock"))return;window._lockY=window.pageYOffset||0;var r=b.getBoundingClientRect();b.style.width=r.width+"px";b.style.left=r.left+"px";b.style.top=(-window._lockY)+"px";b.style.position="fixed";H.classList.add("sheet-lock")}
 function unlockBody(){var b=document.body,H=document.documentElement;if(!H.classList.contains("sheet-lock"))return;H.classList.remove("sheet-lock");b.style.position="";b.style.top="";b.style.left="";b.style.width="";window.scrollTo(0,window._lockY||0)}
-function openSheet(html){var pb0=$("pbf");if(pb0)pb0.remove();lockBody();bgPause(window._fullSh);$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;var sh0=$("sh"),nf=!!window._fullSh,wf=sh0.classList.contains("full");if(nf&&!wf){sh0.classList.add("noanim","full");void sh0.offsetWidth;sh0.classList.remove("noanim")}else sh0.classList.toggle("full",nf);window._fullSh=0;sh0.classList.add("open")}
+function openSheet(html){var pb0=$("pbf");if(pb0)pb0.remove();lockBody();if(window._skipBg){window._skipBg=0}else bgPause(window._fullSh);$("sp").innerHTML='<button class="back" data-a="shclose">‹ Orqaga</button>'+html;var sh0=$("sh"),nf=!!window._fullSh,wf=sh0.classList.contains("full");if(nf&&!wf){sh0.classList.add("noanim","full");void sh0.offsetWidth;sh0.classList.remove("noanim")}else sh0.classList.toggle("full",nf);window._fullSh=0;if(nf&&window.sheetOpenAnim&&!sh0.classList.contains("open")){sh0.classList.remove("noanim");window.sheetOpenAnim()}else sh0.classList.add("open")}
 function closeSheet(){$("sh").classList.remove("open");unlockBody();bgPause(0);if(window.vsHide)vsHide();if(window._favDirty){window._favDirty=0;favSync();if(S.tab!=="home")setTimeout(render,450)}}
 function favSync(){[].forEach.call(document.querySelectorAll("#app .heart"),function(b){var t=S.fav[b.dataset.v]?"\u2665":"\u2661";if(b.textContent!==t)b.textContent=t})}
 function closeSheetSlow(){var sh=$("sh");sh.classList.add("slow");sh.classList.remove("open");unlockBody();bgPause(0);if(window.vsHide)vsHide();clearTimeout(window._slw);window._slw=setTimeout(function(){sh.classList.remove("slow")},1700)}
@@ -3357,6 +3373,7 @@ function cartFlash(){clearTimeout(window._cft);window._cft=setTimeout(function()
 
 function favTxt(i){return S.fav[i]?'♥ Saqlangan':'♡ Saqlash'}
 function product(i,mode){
+  if(!window._prodDefer&&!$("sh").classList.contains("open")&&window.sheetOpenAnim){window._prodDefer=1;window._skipBg=1;$("sh").classList.add("full");lockBody();sheetOpenAnim();requestAnimationFrame(function(){window._prodDefer=0;product(i,mode)});return}
   var p=P[i];if(S.oi!==i){S.oi=i;S.osz="";S.ocol="";S.rv=[i].concat((S.rv||[]).filter(function(x){return x!==i})).slice(0,8)}if(!p.av&&mode==="avia")mode="auto";S.mode=mode;var m=mode;
   var again=$("sh").classList.contains("open")&&window._pid===i;window._pid=i;var st0=again?$("sp").scrollTop:0;$("sp").classList.toggle("nofx",again);
   window._galSig=galList(p,S.ocol).map(function(m){return m.u}).join("|");
@@ -3572,7 +3589,8 @@ document.addEventListener("click",function(e){
   if(a==="theme"){toggleTheme(t);return}
   if(a==="top"){window.scrollTo({top:0,behavior:"smooth"});return}
   if(a==="menu"){$("mv").classList.add("open");return}
-  if(a==="shclose"){closeSheet();return}
+  if(a==="shclose"){if(window.sheetCloseAnim)sheetCloseAnim();else closeSheet();return}
+  if(a==="ordopen"){ordDetail(v);return}
   if(a==="hub"){S.hub=v;render();if(v==="sent"||v==="pay")nowT(loadMyOrders,"mo",8000);return}
   if(a==="buyone"){var j1=+v;if(!S.user){$("mv").classList.remove("open");login(1);return}if(!S.cart[j1])return;if(!S.dl){S.only=null;var e1=$("er");if(e1){e1.textContent="Avval yetkazish filialini tanlang.";e1.scrollIntoView({behavior:"smooth",block:"center"})}return}S.only=j1;payment();return}
   if(a==="tab"){S.tab=v;if(v==="cart"&&!S.hub)S.hub="cart";if(v==="catalog")S.sub="";S.anim=true;$("mv").classList.remove("open");render();window.scrollTo(0,0);if(v==="support"||v==="cart")nowT(loadRef,"lr",15000);if(v==="orders"||v==="cart")nowT(loadMyOrders,"mo",8000);if(v==="home"||v==="catalog")nowT(function(){loadServer()},"ls",60000);if(window.pollUnreadNow&&(v==="support"||v==="orders"||v==="cart"))window.pollUnreadNow();return}
@@ -3932,7 +3950,7 @@ html[data-theme="dark"] #sbptr{background:rgba(34,40,100,.92);color:#C9CEEA;bord
   var svg=el.firstChild,TH=60,sy=0,sx=0,pull=0,act=false,dir=0,loading=false;
   function top0(){return (window.pageYOffset||document.documentElement.scrollTop||0)<=0}
   function can(e){
-    if(loading||e.touches.length!==1)return false;
+    if(loading||window._sheetBusy||e.touches.length!==1)return false;
     if(!top0())return false;
     try{if(!(S.tab==="home"||S.tab==="catalog"))return false;if(S.ai||busy())return false}catch(_){return false}
     var t=e.target;if(t&&t.closest&&t.closest(".nav,#ap,#sh,#fab,input,textarea,select,button.ib"))return false;
@@ -3948,7 +3966,7 @@ html[data-theme="dark"] #sbptr{background:rgba(34,40,100,.92);color:#C9CEEA;bord
     try{SEED=(Math.random()*4294967296)>>>0}catch(_){}
     var pr;try{pr=loadServer()}catch(_){}
     Promise.resolve(pr).catch(function(){}).then(function(){
-      try{if(!busy()){S.anim=true;render()}}catch(_){}
+      try{if(!busy()){render()}}catch(_){}
       done(t0)})
   }
   document.addEventListener("touchstart",function(e){if(!can(e))return;sy=e.touches[0].clientY;sx=e.touches[0].clientX;act=true;dir=0;pull=0},{passive:true});
@@ -4017,6 +4035,16 @@ html[data-theme="dark"] .glass{background:rgba(26,30,72,.88)!important}
 .sh.full .sp{height:100%;touch-action:pan-y}
 
 .sh.full .sp{overscroll-behavior-y:none;overflow-anchor:none}
+
+/* Pastki nav: blur qotishning asosiy sababi edi. Blur o'rniga yarim shaffof fon. */
+.nav,.nav.glass{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html:not([data-theme="dark"]) .nav,html:not([data-theme="dark"]) .nav.glass{background:rgba(255,255,255,.8)!important}
+html[data-theme="dark"] .nav,html[data-theme="dark"] .nav.glass{background:rgba(18,21,50,.86)!important}
+/* Tanlangan belgi (pill): blur yo'q, faqat siljish */
+.pill{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;will-change:left,width}
+
+.ordDet .tmap2{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;cursor:default}
+.ordr:active{opacity:.85}
 </style>
 <script id="ac-js">(function(){
 var cur="gen",timer=null,sig="",msgs=[],UN={},open=false,sending=false,first=true;
@@ -4275,9 +4303,13 @@ if(m===1){if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){m=3;return}
 if(dx<-12){m=3;return}
 if(dx>18&&dx>Math.abs(dy)*1.6){m=2;W=sh.clientWidth||360;setT("none");sh.style.willChange="transform";parStop();var spx=document.getElementById("sp");if(spx){spx.style.overflowY="hidden";spx.scrollTop=spx.scrollTop}}else return}
 if(!raf)raf=requestAnimationFrame(paint)},{passive:true});
-function glide(from,to,dur,cb){var t0=performance.now();if(raf){cancelAnimationFrame(raf);raf=0}parStop();
-function f(n){var k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3),x=from+(to-from)*e;sh.style.transform="translate3d("+x+"px,0,0)";parApply(Math.round(parD()*(1-Math.min(1,x/W))));if(k<1)raf=requestAnimationFrame(f);else{raf=0;cb()}}
+function glide(from,to,dur,cb){var t0=performance.now();window._sheetBusy=true;if(raf){cancelAnimationFrame(raf);raf=0}parStop();
+function f(n){var k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3),x=from+(to-from)*e;sh.style.transform="translate3d("+x+"px,0,0)";parApply(Math.round(parD()*(1-Math.min(1,x/W))));if(k<1)raf=requestAnimationFrame(f);else{raf=0;window._sheetBusy=false;cb()}}
 raf=requestAnimationFrame(f)}
+window.sheetOpenAnim=function(){W=sh.clientWidth||360;if(raf){cancelAnimationFrame(raf);raf=0}setT("none");sh.style.transform="translate3d("+W+"px,0,0)";sh.classList.add("open");void sh.offsetWidth;window._bgPause=true;clearTimeout(window._shT);window._shT=setTimeout(function(){if(window._bgPause)document.documentElement.classList.add("shfull")},420);
+glide(W,0,480,function(){setT("");sh.style.transform="";sh.style.willChange="";parApply(parD())})};
+window.sheetCloseAnim=function(){if(!sh.classList.contains("open")||!sh.classList.contains("full")){closeSheet();return}W=sh.clientWidth||360;if(raf){cancelAnimationFrame(raf);raf=0}window._bgPause=false;document.documentElement.classList.remove("shfull");setT("none");sh.style.willChange="transform";
+glide(0,W,460,function(){finish()})};
 function end(){var spe=document.getElementById("sp");if(spe)spe.style.overflowY="";if(m!==2){m=0;return}m=0;
 var close=dx>W*.42||(vel>.5&&dx>60);var from=Math.max(0,dx);
 var rem=close?Math.max(0,W-from):from,ratio=Math.min(1,rem/W);
