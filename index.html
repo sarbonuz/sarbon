@@ -2201,7 +2201,7 @@ function resize() {
 }
 new ResizeObserver(resize).observe(hero);
 new ResizeObserver(refreshRects).observe(stage);
-setInterval(refreshRects, 700);
+setInterval(function(){if(!document.hidden)refreshRects()},700);
 resize();
 
 /* ---------- Aylantirish ---------- */
@@ -2539,7 +2539,7 @@ if (vsp) {
   ['loadeddata', 'canplay', 'stalled', 'suspend', 'pause'].forEach(ev => vsp.addEventListener(ev, vspSync));
   ['pointerdown', 'touchstart', 'keydown', 'wheel'].forEach(ev => addEventListener(ev, vspSync, { passive: true }));
   vspSync();
-  setInterval(vspSync, 1500);      /* brauzer o'zi to'xtatib qo'ysa ham qayta ishga tushadi */
+  setInterval(function(){if(!document.hidden)vspSync()},1500);      /* brauzer o'zi to'xtatib qo'ysa ham qayta ishga tushadi */
 }
 addEventListener('message', e => {
   const d = e.data;
@@ -2813,6 +2813,15 @@ init();
 @keyframes hubIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .pay1{display:inline-block;margin-top:6px;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(120deg,#7B5CF0,#D6246E);cursor:pointer}
 .hubw .btn{width:100%}
+/* Narx qatorlari: kattaroq va aniq */
+.sp .pricebox{margin:12px 0 4px;padding:12px 14px;border-radius:18px;background:rgba(124,92,255,.12);border:1px solid rgba(160,170,255,.25)}
+.sp .pricebox .ln{font-size:17px;padding:8px 0;color:var(--ink);align-items:center}
+.sp .pricebox .ln b{font-size:19px}
+.sp .pricebox .ln>span:first-child{font-weight:600}
+.sp .pricebox .ln>span:last-child{font-weight:700}
+.sp .pricebox .ln small{display:block;font-size:12.5px;font-weight:500;color:var(--mute);margin-top:2px;line-height:1.3}
+.sp .pricebox .ln+.ln{border-top:1px dashed rgba(160,170,255,.28)}
+.sp .pricebox .note{font-size:13px;padding-top:8px}
 /* Pastki panel eng pastda; tez almashtirish */
 .sh.full .sp{display:flex;flex-direction:column}
 .sh.full .sp>*{flex-shrink:0}
@@ -3262,7 +3271,7 @@ function product(i,mode){
   optBox(i)+(!p.av?'<div class="warn">Bu tovar avia cargoda taqiqlangan (batareya, elektronika yoki suyuqlik). Faqat avto mumkin.</div>':'')+
   '<details class="ban"'+(m==="avia"?' open':'')+'><summary>⚠️ Avia cargoda taqiqlangan tovarlar</summary><div class="note">Avia cargo qoidasi (06.12.2025). Bu turdagi buyumlarni avia kargoga buyurtma qilish taqiqlanadi:</div><ul>'+BU.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><div class="note">Заказывать такие товары через авиа-карго запрещено:</div><ul>'+BR.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul></details>'+
   (m==="avia"?'<label class="ck"><input type="checkbox" id="ok"> Tovarim yuqoridagi ro\'yxatga kirmasligini tasdiqlayman</label>':'')+
-  '<div class="ln"><span>Tovar narxi</span><b>'+fmt(goods(p))+'</b></div><div class="ln"><span>Cargo ~'+p.kg+' kg × $'+CG[m]+'</span><span>~'+fmt(cargo(p,m))+'</span></div><div class="note">Cargo alohida hisoblanadi: tovar omborga kelganda haqiqiy og\'irlik o\'lchanadi.</div>'+
+  '<div class="pricebox"><div class="ln"><span>Tovar narxi</span><b>'+fmt(goods(p))+'</b></div><div class="ln"><span>Cargo ~'+p.kg+' kg × $'+CG[m]+'</span><span>~'+fmt(cargo(p,m))+'</span></div><div class="ln uzl"><span>UzPost uchun to\'lov<small>1 kg gacha 15 000 so\'m, keyingi kg uchun +3 000 so\'m</small></span><b>'+fmt(uzp(p.kg))+'</b></div><div class="note">Cargo alohida hisoblanadi: tovar omborga kelganda haqiqiy og\'irlik o\'lchanadi.</div></div>'+
   simBox(i)+'<div class="pbar"><div class="err" id="pe"></div><div class="prow"><button class="btn" data-a="add" data-v="'+i+'">Savatga qo\'shish</button><button class="btn buyn" data-a="buynow" data-v="'+i+'">Sotib olish</button></div></div>');
   if(again)$("sp").scrollTop=st0;
   setTimeout(function(){(p.rang||[]).forEach(function(c){galList(p,c).forEach(function(m){if(m.t!=="v"){var im=new Image();im.decoding="async";im.src=m.u}})})},60);
@@ -3470,9 +3479,9 @@ document.addEventListener("click",function(e){
   if(a==="top"){window.scrollTo({top:0,behavior:"smooth"});return}
   if(a==="menu"){$("mv").classList.add("open");return}
   if(a==="shclose"){closeSheet();return}
-  if(a==="hub"){S.hub=v;render();if(v==="sent"||v==="pay")loadRef();return}
+  if(a==="hub"){S.hub=v;render();if(v==="sent"||v==="pay")nowT(loadMyOrders,"mo",8000);return}
   if(a==="buyone"){var j1=+v;if(!S.user){$("mv").classList.remove("open");login(1);return}if(!S.cart[j1])return;if(!S.dl){S.only=null;var e1=$("er");if(e1){e1.textContent="Avval yetkazish filialini tanlang.";e1.scrollIntoView({behavior:"smooth",block:"center"})}return}S.only=j1;payment();return}
-  if(a==="tab"){S.tab=v;if(v==="cart"&&!S.hub)S.hub="cart";if(v==="catalog")S.sub="";S.anim=true;$("mv").classList.remove("open");render();window.scrollTo(0,0);if(v==="support"||v==="cart")loadRef();return}
+  if(a==="tab"){S.tab=v;if(v==="cart"&&!S.hub)S.hub="cart";if(v==="catalog")S.sub="";S.anim=true;$("mv").classList.remove("open");render();window.scrollTo(0,0);if(v==="support"||v==="cart")nowT(loadRef,"lr",15000);if(v==="orders"||v==="cart")nowT(loadMyOrders,"mo",8000);if(v==="home"||v==="catalog")nowT(function(){loadServer()},"ls",60000);if(window.pollUnreadNow&&(v==="support"||v==="orders"||v==="cart"))window.pollUnreadNow();return}
   if(a==="catalog"){S.tab="catalog";S.sub="";S.anim=true;render();window.scrollTo(0,0);return}
   if(a==="opencat"){S.tab="catalog";S.sub=v;S.pf="";S.kt="";S.kb="";S.anim=true;render();window.scrollTo(0,0);return}
   if(a==="catback"){S.sub="";S.anim=true;render();window.scrollTo(0,0);return}
@@ -3672,8 +3681,13 @@ var STATIC_N=0,lastSig="",srvFails=0;
     if(me&&me.ok){finishLogin({token:lt,name:me.name})}
   }).catch(function(){})}catch(e){}})();
 resumeLogin();function _ln(){if(S.sess||window._deferLogin)return;if(window._loginNow&&LTIMER){window._loginNow()}else resumeLogin()}document.addEventListener("visibilitychange",function(){if(!document.hidden)_ln()});window.addEventListener("focus",_ln);window.addEventListener("pageshow",_ln);
-setInterval(loadMyOrders,5000);
-setInterval(loadRef,45000);
+/* Aqlli yangilash: faqat sahifa ochiq bo'lsa, faqat kerakli bo'limda (Worker limitini tejaydi) */
+function nowT(fn,key,min){var n=Date.now();if(n-(window["_t"+key]||0)>=min){window["_t"+key]=n;try{fn()}catch(e){}}}
+function tick(fn,key,per){setInterval(function(){if(document.hidden)return;var p=per();if(!p)return;var n=Date.now();if(n-(window["_t"+key]||0)>=p-300){window["_t"+key]=n;try{fn()}catch(e){}}},4000)}
+function onOrdTab(){return S.tab==="orders"||(S.tab==="cart"&&(S.hub==="sent"||S.hub==="pay"))}
+tick(loadMyOrders,"mo",function(){return S.sess?(onOrdTab()?20000:90000):0});
+tick(loadRef,"lr",function(){return S.sess&&(S.tab==="cart"||S.tab==="support")?60000:0});
+tick(function(){loadServer()},"ls",function(){return(S.tab==="home"||S.tab==="catalog")?120000:600000});
 function mdU(u){return /^(https?:|data:)/.test(u)?u:WORKER+u}
 function mdList(a){return (Array.isArray(a)?a:[]).map(function(m){var u=typeof m==="string"?m:(m&&(m.u||m.url));if(!u)return null;var t=(m&&(m.t||m.type))||"";var v=(t==="v"||t==="video")||(!t&&/\.(mp4|webm|mov|m4v)(\?|$)/i.test(u));return {u:mdU(u),t:v?"v":"i"}}).filter(Boolean)}
 function galList(p,col){if(!p)return [];var l=(col&&p.cm&&p.cm[col]&&p.cm[col].length)?p.cm[col]:(p.media||[]);if(!l.length&&p.cm){Object.keys(p.cm).forEach(function(k){l=l.concat(p.cm[k])})}if(!l.length&&p.img)l=[{u:p.img,t:"i"}];return l}
@@ -3694,14 +3708,14 @@ function normP(x){if(!x||typeof x!=="object"||!x.n)return null;var o={},k;for(k 
   o.img=x.img?mdU(x.img):(fm?fm.u:"");return o}
 function getJ(path){return fetch(WORKER+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error(path+" "+r.status);return r.json()})}
 function busy(){var a=document.activeElement,sh=$("sh");return !!((a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))||(sh&&sh.classList.contains("open")))}
-function loadServer(){
-  return Promise.all([getJ("/settings").catch(function(e){return {__e:e.message||"xato"}}),getJ("/products").catch(function(e){return {__e:e.message||"xato"}})]).then(function(res){
+function loadServer(pre){
+  return (pre&&pre.st?Promise.resolve([pre.st,pre.list]):Promise.all([getJ("/settings").catch(function(e){return {__e:e.message||"xato"}}),getJ("/products").catch(function(e){return {__e:e.message||"xato"}})])).then(function(res){
     var st=res[0],list=res[1],errs=[];
     var why=[];
     if(!(st&&!st.__e&&+st.rate>0)){errs.push("sozlamalar");why.push(st&&st.__e?st.__e:"bo'sh javob")}
     if(!Array.isArray(list)){errs.push("mahsulotlar");why.push(list&&list.__e?list.__e:"bo'sh javob")}
     if(errs.length){srvFails++;if(srvFails<3){setTimeout(loadServer,2000*srvFails);return}toast("srverr","Serverdan "+errs.join(" va ")+" olinmadi ("+why[0]+"). Internetni tekshiring.","Qayta urinish",function(){srvFails=0;loadServer()});return}
-    srvFails=0;toast("srverr","");
+    srvFails=0;toast("srverr","");if(!(pre&&pre.st)){try{localStorage.setItem("sarbon.srv1",JSON.stringify({st:st,list:list}))}catch(e){}}
     var np=list.map(normP).filter(Boolean);
     var sig=JSON.stringify(st)+JSON.stringify(np);
     if(LOADED&&sig===lastSig)return;
@@ -3770,11 +3784,12 @@ function find3d(){
     else resolveFallback()
   }).catch(resolveFallback)
 }
-window.addEventListener("resize",sync3d);window.addEventListener("load",sync3d);setInterval(sync3d,900);
+window.addEventListener("resize",sync3d);window.addEventListener("load",sync3d);setInterval(function(){if(!document.hidden)sync3d()},900);
 try{document.documentElement.style.setProperty('--mz',localStorage.getItem('sarbon.mz')||'1')}catch(e){}
 find3d();
-loadServer();setInterval(loadServer,15000);
-document.addEventListener("visibilitychange",function(){if(!document.hidden)loadServer()});
+try{var cs=JSON.parse(localStorage.getItem("sarbon.srv1")||"null");if(cs&&cs.st&&Array.isArray(cs.list))loadServer(cs)}catch(e){}
+loadServer();window._tls=Date.now();
+document.addEventListener("visibilitychange",function(){if(document.hidden)return;nowT(function(){loadServer()},"ls",45000);if(S.sess&&onOrdTab())nowT(loadMyOrders,"mo",15000)});
 window.addEventListener("online",loadServer);
 /* Offline buyurtmalar navbati: internet kelganda avtomatik yuboriladi */
 (function(){
@@ -4002,7 +4017,7 @@ function openChat(oid){
   try{ensurePush(true)}catch(e){}
   cur=oid||"gen";build();fillSel();open=true;sig="";msgs=[];first=true;draw();
   document.getElementById("achat").classList.add("on");document.body.classList.add("ac-lock");
-  load();clearInterval(timer);timer=setInterval(load,3000)}
+  load();clearInterval(timer);timer=setInterval(function(){if(!document.hidden)load()},4000)}
 function closeChat(){open=false;clearInterval(timer);var w=document.getElementById("achat");if(w)w.classList.remove("on");document.body.classList.remove("ac-lock")}
 function copy(v,btn){
   function ok(){btn.textContent="✓ Nusxalandi";setTimeout(function(){btn.textContent="Nusxalash"},1500)}
@@ -4043,7 +4058,10 @@ function pollUnread(){
     sn.chat=ch;setSeen(sn);
     if(changed)refresh()
   }).catch(function(){})}
-setInterval(pollUnread,5000);setTimeout(pollUnread,2500);
+window.pollUnreadNow=function(){var n=Date.now();if(n-(window._pu||0)>8000){window._pu=n;pollUnread()}};
+setInterval(function(){if(document.hidden||!T())return;var per=(window.S&&S.tab==="support")?15000:60000;if(Date.now()-(window._pu||0)>=per-500){window._pu=Date.now();pollUnread()}},5000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)window.pollUnreadNow()});
+setTimeout(function(){window._pu=Date.now();pollUnread()},2500);
 setTimeout(function(){ensurePush(false)},3500);
 try{var oc=new URLSearchParams(location.search).get("chat");if(oc){try{history.replaceState(null,"",location.pathname)}catch(e){}setTimeout(function(){if(T())openChat(oc)},1500)}}catch(e){}
 })();
