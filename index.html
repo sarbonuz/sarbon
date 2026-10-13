@@ -4275,13 +4275,18 @@ if(m===1){if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){m=3;return}
 if(dx<-12){m=3;return}
 if(dx>18&&dx>Math.abs(dy)*1.6){m=2;W=sh.clientWidth||360;setT("none");sh.style.willChange="transform";parStop();var spx=document.getElementById("sp");if(spx){spx.style.overflowY="hidden";spx.scrollTop=spx.scrollTop}}else return}
 if(!raf)raf=requestAnimationFrame(paint)},{passive:true});
-function end(){var spe=document.getElementById("sp");if(spe)spe.style.overflowY="";if(m!==2){m=0;return}m=0;if(raf){cancelAnimationFrame(raf);raf=0}
-var close=dx>W*.42||(vel>.5&&dx>60);
-var rem=close?Math.max(0,W-dx):Math.max(0,dx),ratio=Math.min(1,rem/W);
-var dur=Math.round(230+280*ratio);if(Math.abs(vel)>1.2)dur=Math.max(180,Math.round(dur*.6));
-setT("transform "+dur+"ms "+EASE);sh.style.transform=close?"translate3d(100%,0,0)":"translate3d(0,0,0)";
-if(close){window._bgPause=false;document.documentElement.classList.remove("shfull");parTween(0,dur)}else parTween(parD(),dur);
-setTimeout(function(){if(close)finish();else{setT("");sh.style.transform="";sh.style.willChange=""}},dur+12)}
+function glide(from,to,dur,cb){var t0=performance.now();if(raf){cancelAnimationFrame(raf);raf=0}parStop();
+function f(n){var k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3),x=from+(to-from)*e;sh.style.transform="translate3d("+x+"px,0,0)";parApply(Math.round(parD()*(1-Math.min(1,x/W))));if(k<1)raf=requestAnimationFrame(f);else{raf=0;cb()}}
+raf=requestAnimationFrame(f)}
+function end(){var spe=document.getElementById("sp");if(spe)spe.style.overflowY="";if(m!==2){m=0;return}m=0;
+var close=dx>W*.42||(vel>.5&&dx>60);var from=Math.max(0,dx);
+var rem=close?Math.max(0,W-from):from,ratio=Math.min(1,rem/W);
+var dur=Math.round(200+260*ratio);if(Math.abs(vel)>1.2)dur=Math.max(160,Math.round(dur*.6));
+setT("none");sh.style.willChange="transform";
+glide(from,close?W:0,dur,function(){
+  if(close){window._bgPause=false;document.documentElement.classList.remove("shfull");parApply(0);finish()}
+  else{setT("");sh.style.transform="";sh.style.willChange="";parApply(parD())}
+})}
 sh.addEventListener("touchmove",function(e){if(m===2&&e.cancelable)e.preventDefault()},{passive:false});
 sh.addEventListener("touchend",end,{passive:true});sh.addEventListener("touchcancel",end,{passive:true});
 })();
