@@ -4819,7 +4819,7 @@ window._vt0=Date.now();h+='<div class="vtg">';d.tiers.forEach(function(t,ti){var
 vfSheet(h)}).catch(function(){vfSheet('<h3>Badge</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
 function cmRow(c){return '<div class="vfcmi"><b>'+esc(c.n)+'</b>'+badge(c.verified,c.tier,16)+' '+esc(c.t)+'</div>'}
 function revDate(t){if(!t)return"";var d=new Date(Number(t));return isNaN(d)?"":("0"+d.getDate()).slice(-2)+"."+("0"+(d.getMonth()+1)).slice(-2)+"."+d.getFullYear()}
-function revRow(r){var nm=String(r.name||"?"),tx=(r.text&&r.text!=="–")?'<div class="vftx">'+esc(r.text)+'</div>':'';return '<div class="vfr"><div class="vfhd"><div class="vfav">'+esc(nm.trim().charAt(0).toUpperCase())+'</div><div class="vfhi">'+(r.purchase?'<div class="vfbuy">🛍 Sotib olgan</div>':'')+'<div class="vfnm"><b>'+esc(nm)+'</b>'+badge(r.verified,r.tier)+'</div></div><span class="vfdt">'+revDate(r.t)+'</span></div>'+(r.rating>0?'<div>'+stars(r.rating)+'</div>':'')+tx+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'<div class="vfcm">'+(r.comments||[]).map(cmRow).join("")+'<div class="vfcmw"><input maxlength="400" placeholder="Izoh yozing..."><span class="vfcs" data-vf="cmsend" data-rid="'+r.id+'">➤</span></div></div></div>'}
+function revRow(r){var nm=String(r.name||"?"),tx=(r.text&&r.text!=="–")?'<div class="vftx">'+esc(r.text)+'</div>':'';return '<div class="vfr"><div class="vftop">'+(r.rating>0?stars(r.rating):'<span></span>')+'<span class="vfdt">'+revDate(r.t)+'</span></div><div class="vfhd"><div class="vfav">'+esc(nm.trim().charAt(0).toUpperCase())+'</div><div class="vfhi"><div class="vfnm"><b>'+esc(nm)+'</b>'+badge(r.verified,r.tier,16)+(r.purchase?'<span class="vfbuy">🛍 Sotib olgan</span>':'')+'</div></div></div>'+tx+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'<div class="vfcm">'+(r.comments||[]).map(cmRow).join("")+'<div class="vfcmw"><input maxlength="400" placeholder="Izoh yozing..."><span class="vfcs" data-vf="cmsend" data-rid="'+r.id+'">➤</span></div></div></div>'}
 function cmSend(t){var w=t.closest(".vfcm"),i=w.querySelector("input"),tx=i.value.trim();if(!tx||t._b)return;if(!tok()){i.value="";i.placeholder="Izoh yozish uchun avval kiring";return}t._b=1;post("/review/comment",{rid:Number(t.getAttribute("data-rid")),text:tx}).then(function(d){t._b=0;if(d.ok){i.value="";i.placeholder="Izoh yozing...";i.parentNode.insertAdjacentHTML("beforebegin",cmRow(d.c))}else{i.value="";i.placeholder=d.error==="limit"?"Izohlar limiti tugadi":"Xatolik, qayta urinib ko'ring"}}).catch(function(){t._b=0;i.placeholder="Tarmoq xatosi"})}
 function stars(n){return '<span class="vfs">'+"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n)+'</span>'}
 function openReviews(){vfSheet('<h3>Sharhlar</h3><p>Yuklanmoqda...</p>');
@@ -4835,7 +4835,7 @@ var box=document.createElement("div");box.id="vfpr";box.className="vfc";box.inne
 var a=fetch(W()+"/reviews?pid="+p.id+"&t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}),b=tok()?post("/review/eligible",{pid:p.id,pn:p.n}):Promise.resolve({});
 Promise.all([a,b]).then(function(x){if(!box.isConnected)return;var d=x[0],e=x[1]||{},h="<h3 style='margin:0 0 6px'>⭐ Sharhlar"+(d.count?" · "+d.avg+" ("+d.count+")":"")+"</h3>";
 if(!tok())h+="<div style='opacity:.7;font-size:13px'>Sharh yozish uchun avval kiring.</div>";
-else h+='<div class="vfc"><b>'+(e.mine?'Sharhingizni yangilang':'Sharh yozing')+'</b>'+(e.bought?'<div style="font-size:12px;color:#16a34a;margin-top:2px">🛍 Siz bu tovarni sotib olgansiz — sharhingizda «Sotib olgan» belgisi chiqadi</div>':'')+''+starsIn("prr")+'<textarea id="prt" rows="3" maxlength="800" placeholder="Fikringiz (ixtiyoriy)"></textarea><label class="vfph"><span>📷 Rasm qo\'shish (ixtiyoriy)</span><input id="pri" type="file" accept="image/*" hidden></label><div id="prpv"></div><div id="pre" style="color:#d6246e;font-size:13px"></div><button class="btn" data-vf="prsend">Yuborish</button></div>';
+else h+='<div class="vfc"><b>'+(e.mine?'Sharhingizni yangilang':'Sharh yozing')+'</b>'+(e.bought?'<div style="font-size:12px;color:#16a34a;margin-top:2px">🛍 Siz bu tovarni sotib olgansiz — sharhingizda «Sotib olgan» belgisi chiqadi</div>':'')+''+starsIn("prr")+'<textarea id="prt" rows="2" maxlength="800" placeholder="Fikringiz (ixtiyoriy)"></textarea><label class="vfph"><span>📷 Rasm qo\'shish (ixtiyoriy)</span><input id="pri" type="file" accept="image/*" hidden></label><div id="prpv"></div><div id="pre" style="color:#d6246e;font-size:13px"></div><button class="btn" data-vf="prsend">Yuborish</button></div>';
 (d.rows||[]).forEach(function(r){h+=revRow(r)});
 if(!(d.rows||[]).length)h+="<div style='opacity:.7;font-size:13px;margin-top:6px'>Hozircha sharh yo'q.</div>";
 box.innerHTML=h;var f=$("pri");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u;var pv=$("prpv");if(pv)pv.innerHTML=u?'<img class="vfp" style="max-height:130px" src="'+u+'">':'<span style="color:#d6246e;font-size:12px">Rasm o\'qilmadi</span>'})}}).catch(function(){})}
@@ -4890,6 +4890,25 @@ if(/[?&]review=1/.test(location.search)){try{var ur=new URL(location.href);ur.se
 .vfhd{display:flex;align-items:center;gap:10px;margin-bottom:4px}
 .vfav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#7b5cf0,#ff6fae);color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;flex:none}
 .vfhi{flex:1;min-width:0}.vfhi .vfbuy{margin-bottom:1px}.vfdt{font-size:11px;opacity:.5;flex:none}.vftx{margin:2px 0 4px;line-height:1.4}
+/* sharhlar: ixcham karta (Uzum uslubi) */
+.vfr{background:rgba(127,127,127,.12);border:0;border-radius:14px;padding:10px 12px;margin:0 0 8px}
+.vftop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.vfs{font-size:14px;letter-spacing:1px}
+.vfdt{font-size:11.5px;opacity:.55}
+.vfhd{gap:7px;margin:5px 0 0}
+.vfav{width:22px;height:22px;font-size:11px}
+.vfnm{margin:0;flex-wrap:wrap;gap:4px;font-size:12.5px}
+.vfnm .vfb{margin-left:0}
+.vfbuy{margin:0;font-size:9.5px;padding:1px 6px}
+.vftx{margin:5px 0 2px;font-size:13px;line-height:1.4}
+.vfp{max-height:120px;margin-top:6px;border-radius:10px}
+.vfcm{margin:6px 0 0 2px;padding-left:8px}
+.vfcmi{font-size:12px;margin:4px 0}
+.vfcmw input{padding:6px 12px!important;font-size:12.5px!important}
+.vfcs{width:28px;height:28px;font-size:12px}
+.vfc{border-radius:12px;padding:10px;margin:8px 0}
+.vfsi{margin:4px 0}.vfsi span{font-size:30px;padding:0 3px}
+.vfph{padding:7px 12px;font-size:13px;border-radius:10px}
 /* iOS uslubidagi silliq oynalar */
 .ov .menu{transition:transform .5s cubic-bezier(.32,.72,0,1)!important}
 .ov{transition:opacity .4s ease!important}
