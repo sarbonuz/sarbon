@@ -3738,7 +3738,7 @@ document.addEventListener("click",function(e){
   if(a==="theme"){toggleTheme(t);return}
   if(a==="top"){window.scrollTo({top:0,behavior:"smooth"});return}
   if(a==="menu"){$("mv").classList.add("open");return}
-  if(a==="shclose"){if(window.sheetCloseAnim)sheetCloseAnim();else closeSheet();return}
+  if(a==="shclose"){if(window._vfFromProf&&!$("pfm")){window._vfFromProf=0;var eb=document.createElement("button");eb.setAttribute("data-a","editprof");document.body.appendChild(eb);eb.click();eb.remove();return}if($("pfm"))window._vfFromProf=0;if(window.sheetCloseAnim)sheetCloseAnim();else closeSheet();return}
   if(a==="ordopen"){ordDetail(v);return}
   if(a==="hub"){S.hub=v;render();if(v==="sent"||v==="pay")nowT(loadMyOrders,"mo",8000);return}
   if(a==="buyone"){var j1=+v;if(!S.user){$("mv").classList.remove("open");login(1);return}if(!S.cart[j1])return;if(!S.dl){S.only=null;var e1=$("er");if(e1){e1.textContent="Avval yetkazish filialini tanlang.";e1.scrollIntoView({behavior:"smooth",block:"center"})}return}S.only=j1;payment();return}
@@ -4740,11 +4740,11 @@ function vEase(t){return .5-.5*Math.cos(Math.PI*t)}
 function vSeq(a,b,N,f){var kt=[],vs=[];if(a>0){kt.push("0");vs.push(f(0))}for(var i=0;i<=N;i++){kt.push((a+(b-a)*i/N).toFixed(4));vs.push(f(vEase(i/N)))}if(b<1){kt.push("1");vs.push(f(1))}return{k:kt.join(";"),v:vs.join(";")}}
 /* 4 soniyalik sikl: ramka chapdan o'ngga 3D burilish (0-1.6s), yulduz tepadan pastga sekinroq 3D burilish (0.6-3s) */
 var FA=0,FB=.4,SA=.15,SB=.75;
-function tierIcon(color,size,k,still){var p=VP[k],n=++_vgi,A=!still,id="v"+n;
+function tierIcon(color,size,k,still,off){var p=VP[k],n=++_vgi,A=!still,id="v"+n;
 if(!p){var c0=/^#[0-9a-fA-F]{6}$/.test(color||"")?color:"#22c55e";p={r:[vMix(c0,.7),c0,vMix(c0,-.55)],i:[vMix(c0,-.6),vMix(c0,-.82)],s:[vMix(c0,.85),c0],g:c0,n:2};k="x"}
 var R=p.r,I=p.i,S=p.s,G=p.g,pts=[],cp=[];
 for(var j=0;j<10;j++){var an=-Math.PI/2+j*Math.PI/5,rr=j%2?2.9:6.5,rc=j%2?1.4:3.2;pts.push((rr*Math.cos(an)).toFixed(2)+","+(rr*Math.sin(an)).toFixed(2));cp.push((rc*Math.cos(an)).toFixed(2)+","+(rc*Math.sin(an)).toFixed(2))}
-var B='-'+((Date.now()/1000)%4).toFixed(2)+'s',T='dur="4s" begin="'+B+'" repeatCount="indefinite"';
+var B='-'+((off==null)?(Date.now()/1000)%4:((((Date.now()-(window._vt0||0))/1000-off)%4)+4)%4).toFixed(2)+'s',T='dur="4s" begin="'+B+'" repeatCount="indefinite"';
 function sg(x){return Math.abs(x)<.03?(x<0?-.03:.03):x}
 var F=vSeq(FA,FB,28,function(e){var t=2*Math.PI*e;return sg(Math.cos(t)).toFixed(3)+" "+(1-.07*Math.abs(Math.sin(t))).toFixed(3)});
 var FS=vSeq(FA,FB,28,function(e){return (.55*Math.abs(Math.sin(2*Math.PI*e))).toFixed(3)});
@@ -4815,7 +4815,7 @@ function sendVerify(){var e=$("vfe"),n=($("vfn").value||"").trim();if(n.replace(
 e.textContent="Yuborilmoqda...";post("/verify/submit",{number:n,image:window._vfImg}).then(function(d){if(d.ok){window._vfImg=null;openVerify();return}
 e.textContent={used:"Bu hujjat bilan tasdiqlash mumkin emas.",pending:"So'rov allaqachon yuborilgan.",already:"Siz allaqachon tasdiqlangansiz.",limit:"Bugungi urinishlar limiti tugadi.",image:"Rasm noto'g'ri yoki juda katta.",number:"Pasport raqami noto'g'ri.",auth:"Sessiya tugagan, qayta kiring.",config:"Xizmat hali sozlanmagan."}[d.error]||"Xatolik. Qayta urinib ko'ring."}).catch(function(){e.textContent="Tarmoq xatosi."})}
 function openBadge(){if(!need())return;vfSheet('<h3>Badge</h3><p>Yuklanmoqda...</p>');post("/badge/me").then(function(d){if(!d.ok){vfSheet('<h3>Badge</h3><p>Xatolik'+(d&&d.error?' ('+esc(d.error)+')':'')+'. Qayta urinib ko\'ring.</p>');return}VB=d;var h='<h3>Badge</h3><div class="vfc">Hisobga olingan buyurtmalar: <b>'+d.orders+'</b><br>Rasmiy verifikatsiya: '+(d.verified?"✅ bor":"yo'q")+'</div>';
-h+='<div class="vtg">';d.tiers.forEach(function(t){var cur=d.tier&&d.tier.k===t.k;h+='<div class="vtc'+(t.unlocked?'':' lk')+(cur?' on':'')+'">'+tierIcon(t.color,48,t.k)+'<b>'+esc(t.name)+'</b><small>'+t.min+'+ buyurtma</small>'+(t.unlocked?'<button data-vf="pick" data-k="'+esc(t.k)+'">'+(cur?"✔ Tanlangan":"Tanlash")+'</button>':'<em>'+vfLock()+'</em>')+'</div>'});h+='</div>';
+window._vt0=Date.now();h+='<div class="vtg">';d.tiers.forEach(function(t,ti){var cur=d.tier&&d.tier.k===t.k;h+='<div class="vtc'+(t.unlocked?'':' lk')+(cur?' on':'')+'">'+tierIcon(t.color,48,t.k,0,ti*.5)+'<b>'+esc(t.name)+'</b><small>'+t.min+'+ buyurtma</small>'+(t.unlocked?'<button data-vf="pick" data-k="'+esc(t.k)+'">'+(cur?"✔ Tanlangan":"Tanlash")+'</button>':'<em>'+vfLock()+'</em>')+'</div>'});h+='</div>';
 vfSheet(h)}).catch(function(){vfSheet('<h3>Badge</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
 function cmRow(c){return '<div class="vfcmi"><b>'+esc(c.n)+'</b>'+badge(c.verified,c.tier,16)+' '+esc(c.t)+'</div>'}
 function revDate(t){if(!t)return"";var d=new Date(Number(t));return isNaN(d)?"":("0"+d.getDate()).slice(-2)+"."+("0"+(d.getMonth()+1)).slice(-2)+"."+d.getFullYear()}
@@ -4851,7 +4851,7 @@ function rsSend(){var it=(window._vfq||[])[window._vfi||0],e=$("rse");if(!it)ret
 post("/review/add",{pid:it.pid,pn:it.name,rating:r,text:$("rst").value,image:window._rvImg||""}).then(function(d){if(d.ok||d.error==="dup"){if(d.coupon)window._vfc=d.coupon;rsNext();return}e.textContent={order:"Bu tovarga sharh yozib bo'lmaydi.",image:"Rasm juda katta.",rating:"Yulduzni tanlang."}[d.error]||"Xatolik. Qayta urinib ko'ring."}).catch(function(){e.textContent="Tarmoq xatosi."})}
 function showPending(force){if(!tok())return;if(!force&&$("sh")&&$("sh").classList.contains("open"))return;post("/review/pending").then(function(d){if(!d.ok)return;var q=d.rows||[];if(!force)q=q.filter(function(r){try{return !localStorage.getItem("vf.seen."+r.pid)}catch(e){return true}});if(q.length)rateSheet(q,0)}).catch(function(){})}
 document.addEventListener("click",function(ev){var t=ev.target.closest&&ev.target.closest("[data-vf]");if(!t)return;var a=t.getAttribute("data-vf");
-if(a==="verify"||a==="badge"||a==="rev"){var mv0=document.getElementById("mv");if(mv0&&mv0.classList.contains("open"))mv0.classList.remove("open")}
+if(a==="verify"||a==="badge"||a==="rev"){if(document.getElementById("pfm"))window._vfFromProf=1;var mv0=document.getElementById("mv");if(mv0&&mv0.classList.contains("open"))mv0.classList.remove("open")}
 if(a==="verify")openVerify();else if(a==="badge")openBadge();else if(a==="rev")openReviews();else if(a==="send")sendVerify();else if(a==="prsend")prSend();else if(a==="rssend")rsSend();else if(a==="rate")rateSheet(window._vfq,Number(t.getAttribute("data-i")));else if(a==="star"){var bx=t.parentNode,nn=Number(t.getAttribute("data-n"));bx.dataset.r=nn;[].forEach.call(bx.children,function(c,j){c.textContent=j<nn?"★":"☆"})}
 else if(a==="cmsend")cmSend(t);else if(a==="pick")post("/badge/choose",{tier:t.getAttribute("data-k")}).then(function(){refresh();openBadge()})},true);
 if(/[?&]verify=1/.test(location.search)){try{var uu=new URL(location.href);uu.searchParams.delete("verify");history.replaceState(null,"",uu.pathname+uu.search+uu.hash)}catch(e){}var n=0,iv=setInterval(function(){if(tok()){clearInterval(iv);openVerify()}else if(++n>12)clearInterval(iv)},500)}
