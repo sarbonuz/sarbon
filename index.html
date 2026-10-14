@@ -2921,6 +2921,55 @@ init();
   setTimeout(ok,5500);
 })();
 <\/script>
+<style id="vtcss">
+.vt{position:relative;display:inline-block;width:1em;height:1em;vertical-align:middle;flex:none;line-height:0;filter:drop-shadow(0 0 .1em var(--g));animation:vtGlow 2.6s ease-in-out infinite}
+.vt svg{position:relative;z-index:1;display:block}
+.vts{position:absolute;inset:0;border-radius:28%;overflow:hidden;z-index:2;pointer-events:none}
+.vts::after{content:"";position:absolute;top:-20%;bottom:-20%;left:0;width:45%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.85),transparent);transform:translateX(-160%) skewX(-18deg);animation:vtSheen 3.4s ease-in-out infinite}
+.vtk{position:absolute;width:.17em;height:.17em;border-radius:50%;background:#fff;box-shadow:0 0 .12em .03em var(--g);opacity:0;z-index:3;animation:vtTwk 1.9s ease-in-out infinite}
+.vtk.k1{top:-.06em;left:.12em}.vtk.k2{top:.28em;right:-.06em;animation-delay:.6s}.vtk.k3{bottom:.08em;left:-.06em;animation-delay:1.2s}
+/* Subscriber: yumshoq yashil puls + yulduz miltillashi */
+.vt-green{animation-duration:3.2s}.vt-green .vts{display:none}
+.vt-green svg polygon{transform-box:fill-box;transform-origin:center;animation:vtStar 2.2s ease-in-out infinite}
+/* Gold: iliq oltin yaltirash */
+.vt-gold{animation-duration:2.4s}.vt-gold .vts::after{animation-duration:2.8s}
+/* Platinum: tez sovuq yaltirash + uchqunlar */
+.vt-plat{animation-duration:2.8s}.vt-plat .vts::after{animation-duration:2.2s}
+/* Diamond: kamalak rang almashishi */
+.vt-sky{animation-duration:2.2s}.vt-sky svg{animation:vtHue 5s ease-in-out infinite}.vt-sky .vts::after{animation-duration:2.6s}
+/* Elite: aylanuvchi aura halqa */
+.vt-elite{animation-duration:1.8s}
+.vt-elite::before{content:"";position:absolute;inset:-.11em;border-radius:36%;background:conic-gradient(from 0deg,transparent 0 50%,var(--g) 78%,#fff 90%,transparent);filter:blur(.05em);animation:vtSpin 2.2s linear infinite;z-index:0}
+.vt-elite svg polygon{transform-box:fill-box;transform-origin:center;animation:vtStar 1.6s ease-in-out infinite}
+/* Legend: olov va uchqunlar */
+.vt-red{animation:vtFlame 1.3s ease-in-out infinite}.vt-red .vts::after{animation-duration:3.8s}
+.vt-red .vtk{background:#ffe2b8;top:auto;right:auto;bottom:.12em;animation:vtEmber 1.7s ease-out infinite}
+.vt-red .vtk.k1{left:.18em}.vt-red .vtk.k2{left:.5em;animation-delay:.55s}.vt-red .vtk.k3{left:.78em;animation-delay:1.05s}
+@keyframes vtGlow{0%,100%{filter:drop-shadow(0 0 .08em var(--g))}50%{filter:drop-shadow(0 0 .36em var(--g))}}
+@keyframes vtFlame{0%,100%{filter:drop-shadow(0 0 .12em var(--g))}20%{filter:drop-shadow(0 0 .42em #ff5a1f)}45%{filter:drop-shadow(0 0 .2em var(--g))}70%{filter:drop-shadow(0 0 .5em #ffb02e)}}
+@keyframes vtSheen{0%,35%{transform:translateX(-160%) skewX(-18deg)}75%,100%{transform:translateX(330%) skewX(-18deg)}}
+@keyframes vtTwk{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1)}}
+@keyframes vtStar{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+@keyframes vtHue{0%,100%{filter:hue-rotate(0)}50%{filter:hue-rotate(75deg)}}
+@keyframes vtSpin{to{transform:rotate(360deg)}}
+@keyframes vtEmber{0%{opacity:0;transform:translateY(0) scale(1)}15%{opacity:1}100%{opacity:0;transform:translateY(-.95em) scale(.3)}}
+@media(prefers-reduced-motion:reduce){.vt,.vt *,.vt::before{animation:none!important}}
+.vtg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.vtc{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 6px 10px;border-radius:20px;background:rgba(127,127,127,.12);text-align:center}
+.vtc.on{box-shadow:inset 0 0 0 2px #7b5cf0}.vtc small{opacity:.7;font-size:11px}.vtc em{font-style:normal;font-size:13px;padding:6px}
+.vtc button{border:0;border-radius:999px;padding:6px 12px;font-weight:700;font-size:12px;background:#7b5cf0;color:#fff}
+.vtc.lk .vt,.vtc.lk .vt *{animation:none!important}.vtc.lk .vt{opacity:.35;filter:grayscale(1)}
+.pfm{margin:18px 0 6px;border-radius:18px;overflow:hidden;background:rgba(127,127,127,.12)}
+.sp .pfm button{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:0!important;background:transparent!important;color:inherit;padding:15px 16px;font-size:16px;font-weight:600;text-align:left;box-shadow:none!important}
+.sp .pfm button+button{border-top:1px solid rgba(127,127,127,.22)}
+.pfm button i{font-style:normal;width:26px;text-align:center;font-size:19px}.pfm button span{flex:1}.pfm button s{text-decoration:none;opacity:.45;font-size:22px}
+.sp .pfm button.out{color:#ff453a}
+/* iOS uslubidagi silliq oynalar */
+.ov .menu{transition:transform .5s cubic-bezier(.32,.72,0,1)!important}
+.ov{transition:opacity .4s ease!important}
+.sp{transition:transform .5s cubic-bezier(.32,.72,0,1)!important}
+.sh{transition:opacity .4s ease!important}
+</style>
 </body>
 </html>
 </script>
@@ -3482,7 +3531,7 @@ function render(){
   var n=cartN();
   var tabs=[["home","<path d='M3 11l9-7 9 7v9h-6v-6H9v6H3z'/>","Bosh"],["catalog","<rect x='3' y='3' width='7' height='7' rx='2'/><rect x='14' y='3' width='7' height='7' rx='2'/><rect x='3' y='14' width='7' height='7' rx='2'/><rect x='14' y='14' width='7' height='7' rx='2'/>","Katalog"],["cart","<path d='M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM3 3h3l3 12h10l2-8H7'/>","Buyurtmalarim"],["orders","<path d='M6 3h8l4 4v14H6z'/><path d='M14 3v4h4'/><path d='M9 17v-3M12 17v-5M15 17v-2'/>","Hisobotlarim"],["support","<path d='M4 5h16v11H9l-5 4z'/>","Yordam"]];
   $("navb").innerHTML=tabs.map(function(t){return '<button class="'+(S.tab===t[0]?'on':'')+'" data-a="tab" data-v="'+t[0]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+t[1]+'</svg>'+t[2]+(t[0]==="cart"&&n?'<i>'+n+'</i>':'')+'</button>'}).join("");
-  placePill();$("mh").innerHTML=S.user?'<div class="me"><h3>Salom, '+esc(S.user.name)+'</h3><p>'+esc(S.user.phone)+'</p><button data-a="editprof">Profilni tahrirlash</button><button data-a="logout">Chiqish</button></div>':'<div class="me"><h3>Sarbonga xush kelibsiz</h3><p>Kiring va buyurtmalaringizni kuzating</p><button data-a="login">Kirish / Ro\'yxatdan o\'tish</button></div>';
+  placePill();$("mh").innerHTML=S.user?'<div class="me"><h3>Salom, '+esc(S.user.name)+'</h3><p>'+esc(S.user.phone)+'</p><button data-a="editprof">Profilni tahrirlash</button></div>':'<div class="me"><h3>Sarbonga xush kelibsiz</h3><p>Kiring va buyurtmalaringizni kuzating</p><button data-a="login">Kirish / Ro\'yxatdan o\'tish</button></div>';
   if(S.tab==="home"||(S.tab==="catalog"&&!S.sub))startBanners();document.querySelectorAll(".mk").forEach(function(m){var f=m.dataset.from,t=m.dataset.to;if(f&&t&&f!==t){m.style.transform="translate("+f+")";requestAnimationFrame(function(){requestAnimationFrame(function(){m.style.transform="translate("+t+")"})})}});
 $("ap").innerHTML=aiChat(false);$("ap").classList.toggle("open",!!S.ai);$("fab").classList.toggle("hid",!!S.ai);document.querySelectorAll(".ailog").forEach(function(l){l.scrollTo({top:l.scrollHeight,behavior:"smooth"})});S.fresh=S.chat.length;
   
@@ -3780,13 +3829,14 @@ document.addEventListener("click",function(e){
     $("mv").classList.remove("open");
     var u0=S.user||{},sp0=String(u0.name||"").split(" ");
     var fv=u0.first!==undefined?u0.first:(sp0[0]||""),lv=u0.last!==undefined?u0.last:sp0.slice(1).join(" ");
-    openSheet('<h3 style="margin:6px 0 12px">Profil</h3>'
+    window._fullSh=1;openSheet('<h3 style="margin:6px 0 12px">Profil</h3>'
       +'<input id="pf1" placeholder="Ism" autocomplete="given-name" maxlength="30" value="'+esc(fv)+'">'
       +'<input id="pf2" placeholder="Familya" autocomplete="family-name" maxlength="30" value="'+esc(lv)+'">'
       +'<input id="pf3" type="tel" inputmode="tel" placeholder="Telefon (+998...)" autocomplete="tel" maxlength="20" value="'+esc(u0.phone||"")+'">'
       +(u0.email?'<div class="mut" style="margin:0 0 10px">Akkaunt: '+esc(u0.email)+'</div>':'')
       +'<div id="pfe" style="color:#D6246E;font-size:13px;min-height:18px;margin-bottom:6px"></div>'
-      +'<button class="btn" data-a="profsave">Saqlash</button>');
+      +'<button class="btn" data-a="profsave">Saqlash</button>'
+      +'<div class="pfm"><button data-vf="verify"><i>🪪</i><span>Verifikatsiya</span><s>›</s></button><button data-vf="badge"><i>🏅</i><span>Badge</span><s>›</s></button><button data-vf="rev"><i>⭐</i><span>Sharhlar</span><s>›</s></button><button data-a="logout" class="out"><i>🚪</i><span>Chiqish</span></button></div>');
     return}
   if(a==="profsave"){
     var f1=$("pf1").value.trim(),l1=$("pf2").value.trim(),p1=$("pf3").value.replace(/\D/g,""),pe=$("pfe");
@@ -3801,10 +3851,10 @@ document.addEventListener("click",function(e){
       var old=S.user&&S.user.phone,em=S.user&&S.user.email;
       S.user={name:d.name,phone:d.phone,first:d.first,last:d.last,email:em};
       S.orders.forEach(function(o){if(o.ph===old)o.ph=d.phone});
-      save();closeSheet();render();
+      save();(window.sheetCloseAnim?sheetCloseAnim():closeSheet());render();
     }).catch(function(){t.disabled=false;pe.textContent="Internet xatosi. Qayta urinib ko'ring."});
     return}
-  if(a==="logout"){try{if(S.sess&&S.sess.token)fetch(WORKER+"/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:S.sess.token})})}catch(e){}S.user=null;S.sess=null;S.orders=[];MYREF=null;MYREF_SIG="";S._osig=S._rsig=undefined;try{localStorage.removeItem("sarbon.sess");localStorage.removeItem("sarbon.lid")}catch(e){}save();$("mv").classList.remove("open");render();return}
+  if(a==="logout"){try{if(S.sess&&S.sess.token)fetch(WORKER+"/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:S.sess.token})})}catch(e){}S.user=null;S.sess=null;S.orders=[];MYREF=null;MYREF_SIG="";S._osig=S._rsig=undefined;try{localStorage.removeItem("sarbon.sess");localStorage.removeItem("sarbon.lid")}catch(e){}save();$("mv").classList.remove("open");if($("sh").classList.contains("open")){window.sheetCloseAnim?sheetCloseAnim():closeSheet()}render();return}
   if(a==="dl"){delivery();return}
   if(a==="rg"){S.dr=v;UZP.user=null;document.querySelectorAll("[data-a=rg]").forEach(function(b){b.classList.toggle("on",b.dataset.v===v)});if(UZP.cur&&UZP.cur.r!==v)UZP.cur=null;uzpDraw(REG.indexOf(v),true);return}
   if(a==="bsel"){uzpPick(+v);return}
@@ -4714,6 +4764,7 @@ setInterval(function(){try{if(document.hidden)return;var H=document.documentElem
 (function(){
 var ST={none:"Verifikatsiyadan o'tmagan",pending:"⏳ Tekshirilmoqda",approved:"✅ Tasdiqlangan",rejected:"❌ Rad etilgan",need_info:"📝 Qo'shimcha ma'lumot talab qilinadi"};
 var css=document.createElement("style");css.textContent=".vfi{display:inline-block;vertical-align:middle;flex:none}@media(prefers-reduced-motion:reduce){.vfsh,.vfg{display:none}}.vfb{display:inline-flex;align-items:center;gap:3px;margin-left:5px;vertical-align:middle}.vfo{width:16px;height:16px;border-radius:50%;background:#1d9bf0;color:#fff;font-size:11px;line-height:16px;text-align:center;font-weight:700}.vft{font-size:10px;font-weight:700;color:#fff;padding:1px 7px;border-radius:99px}.vfx button{margin:6px 6px 0 0}.vfc{background:rgba(127,127,127,.12);border-radius:12px;padding:12px;margin:10px 0}.vfc input,.vfc textarea,.vfc select{width:100%;margin:6px 0;padding:10px;border-radius:10px;border:1px solid rgba(127,127,127,.35);background:transparent;color:inherit;font:inherit}.vfs{color:#f5a623;font-size:16px}.vfr{border-top:1px solid rgba(127,127,127,.25);padding:10px 0}.vfsi{margin:8px 0}.vfsi span{font-size:36px;color:#f5a623;padding:0 5px;cursor:pointer}.vfp{max-width:100%;border-radius:10px;margin-top:8px}";document.head.appendChild(css);
+function vfSheet(x){window._fullSh=1;openSheet(x)}
 function W(){return window.WORKER}
 function tok(){return S&&S.sess&&S.sess.token}
 function post(p,b){b=b||{};b.token=tok();return fetch(W()+p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json()})}
@@ -4721,45 +4772,44 @@ var _vgi=0;
 function vMix(h,t){var n=parseInt(h.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255,k=t<0?0:255,p=Math.abs(t);function m(c){return Math.round(c+(k-c)*p)}return "#"+((1<<24)+(m(r)<<16)+(m(g)<<8)+m(b)).toString(16).slice(1)}
 function vHsl(h){var n=parseInt(h.slice(1),16),r=(n>>16)/255,g=((n>>8)&255)/255,b=(n&255)/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn,H=0,S=0;if(d){S=d/(1-Math.abs(2*l-1));H=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;H*=60;if(H<0)H+=360}return[H,S,l]}
 function vHex(H,S,L){var c=(1-Math.abs(2*L-1))*S,x=c*(1-Math.abs((H/60)%2-1)),m=L-c/2,r=0,g=0,b=0;if(H<60){r=c;g=x}else if(H<120){r=x;g=c}else if(H<180){g=c;b=x}else if(H<240){g=x;b=c}else if(H<300){r=x;b=c}else{r=c;b=x}function h2(v){return("0"+Math.round((v+m)*255).toString(16)).slice(-2)}return"#"+h2(r)+h2(g)+h2(b)}
-function tierIcon(color,size){var c0=/^#[0-9a-fA-F]{6}$/.test(color||"")?color:"#22c55e",k=vHsl(c0),H=k[0],S=Math.min(1,k[1]*1.1+.25),L=Math.min(.58,Math.max(.46,k[2])),base=vHex(H,S,L),hi=vHex(H,S,Math.min(.8,L+.26)),lo=vHex(H,S,Math.max(.16,L-.3)),disc=vHex(H,S,.1),star=vHex(H,S,Math.min(.86,L+.3)),stk=vHex(H,.9,.93),n=++_vgi,gi="vg"+n,ri="vr"+n,si="vs"+n,ci="vc"+n,dl=((n%6)*.45).toFixed(2)+"s",pts=[];
-for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,r=i%2?2.7:6;pts.push((12+r*Math.cos(a)).toFixed(2)+","+(12+r*Math.sin(a)).toFixed(2))}
-return '<svg class="vfi" width="'+size+'" height="'+size+'" viewBox="0 0 24 24" overflow="visible" style="filter:drop-shadow(0 0 3px '+base+')" aria-hidden="true"><defs><linearGradient id="'+gi+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+hi+'"/><stop offset=".5" stop-color="'+base+'"/><stop offset="1" stop-color="'+lo+'"/></linearGradient><radialGradient id="'+ri+'"><stop offset="0" stop-color="'+base+'" stop-opacity=".9"/><stop offset="1" stop-color="'+base+'" stop-opacity="0"/></radialGradient><linearGradient id="'+si+'" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><clipPath id="'+ci+'"><circle cx="12" cy="12" r="11.2"/></clipPath></defs>'
-+'<circle class="vfg" cx="12" cy="12" r="13" fill="url(#'+ri+')"><animate attributeName="opacity" values=".45;1;.45" dur="2.2s" begin="'+dl+'" repeatCount="indefinite"/><animate attributeName="r" values="12;16;12" dur="2.2s" begin="'+dl+'" repeatCount="indefinite"/></circle>'
-+'<circle cx="12" cy="12" r="11.2" fill="url(#'+gi+')"/><circle cx="12" cy="12" r="8.6" fill="'+disc+'" stroke="'+hi+'" stroke-width=".7"/>'
-+'<polygon points="'+pts.join(" ")+'" fill="'+star+'" stroke="'+stk+'" stroke-width=".5" stroke-linejoin="round"><animate attributeName="opacity" values="1;.8;1" dur="1.8s" begin="'+dl+'" repeatCount="indefinite"/></polygon>'
-+'<g class="vfsh" clip-path="url(#'+ci+')"><g transform="rotate(20 12 12)"><rect x="0" y="-6" width="7" height="36" fill="url(#'+si+')"><animateTransform attributeName="transform" type="translate" values="-10 0;30 0;30 0" keyTimes="0;.45;1" dur="3.2s" begin="'+dl+'" repeatCount="indefinite"/></rect></g></g></svg>'}
-function badge(v,t){return (v?'<span class="vfb" title="Rasmiy tasdiqlangan"><span class="vfo">✓</span></span>':'')+(t?'<span class="vfb" title="'+esc(t.name)+'">'+tierIcon(t.color,20)+'</span>':'')}
+var VP={green:["#ecfccb","#84cc16","#365314","#a3e635"],gold:["#fef3c7","#f59e0b","#78350f","#fbbf24"],plat:["#f8fafc","#8fb8de","#1e3a5f","#93c5fd"],sky:["#e0e7ff","#6366f1","#1e1b4b","#818cf8"],elite:["#f5d0fe","#a21caf","#3b0764","#d946ef"],red:["#fed7aa","#ea580c","#7c1d0b","#fb923c"]};
+function tierIcon(color,size,k){var p=VP[k],n=++_vgi;
+if(!p){var c0=/^#[0-9a-fA-F]{6}$/.test(color||"")?color:"#22c55e";p=[vMix(c0,.75),c0,vMix(c0,-.65),c0];k="x"}
+var pts=[];for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,r=i%2?2.8:6.3;pts.push((12+r*Math.cos(a)).toFixed(2)+","+(12.4+r*Math.sin(a)).toFixed(2))}
+var sp=(k==="plat"||k==="sky"||k==="elite"||k==="red")?'<b class="vtk k1"></b><b class="vtk k2"></b><b class="vtk k3"></b>':'';
+return '<span class="vt vt-'+k+'" style="font-size:'+size+'px;--g:'+p[3]+'"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><defs><linearGradient id="vo'+n+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+p[0]+'"/><stop offset=".5" stop-color="'+p[1]+'"/><stop offset="1" stop-color="'+p[2]+'"/></linearGradient><linearGradient id="vi'+n+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+vMix(p[2],.12)+'"/><stop offset="1" stop-color="'+vMix(p[2],-.5)+'"/></linearGradient><linearGradient id="vq'+n+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+p[0]+'"/><stop offset="1" stop-color="'+p[1]+'"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#vo'+n+')"/><rect x="3.3" y="3.3" width="17.4" height="17.4" rx="4.6" fill="url(#vi'+n+')" stroke="'+p[1]+'" stroke-opacity=".6" stroke-width=".5"/><polygon points="'+pts.join(" ")+'" fill="url(#vq'+n+')" stroke="'+p[0]+'" stroke-width=".5" stroke-linejoin="round"/></svg><i class="vts"></i>'+sp+'</span>'}
+function badge(v,t){return (v?'<span class="vfb" title="Rasmiy tasdiqlangan"><span class="vfo">✓</span></span>':'')+(t?'<span class="vfb" title="'+esc(t.name)+'">'+tierIcon(t.color,20,t.k)+'</span>':'')}
 window.vfBadge=badge;
-function need(){if(tok())return true;openSheet('<h3>Avval kiring</h3><p>Bu bo\'lim uchun saytda «Telegram orqali kirish» tugmasini bosing.</p>');return false}
+function need(){if(tok())return true;vfSheet('<h3>Avval kiring</h3><p>Bu bo\'lim uchun saytda «Telegram orqali kirish» tugmasini bosing.</p>');return false}
 function shrink(file,max,cap,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);var q=.85,u=c.toDataURL("image/jpeg",q);while(u.length>cap&&q>.35){q-=.1;u=c.toDataURL("image/jpeg",q)}cb(u.length>cap?null:u)};im.onerror=function(){cb(null)};im.src=r.result};r.onerror=function(){cb(null)};r.readAsDataURL(file)}
 var VB=null;
 function refresh(){if(!tok())return;post("/badge/me").then(function(d){if(d.ok){VB=d;deco()}}).catch(function(){})}
 function deco(){var h=document.querySelector("#mh .me h3");if(h&&VB&&!h.querySelector(".vfb")&&(VB.verified||VB.tier))h.insertAdjacentHTML("beforeend",badge(VB.verified,VB.tier))}
-function inject(){var me=document.querySelector("#mh .me");if(!me)return;if(!me.querySelector(".vfx")){me.insertAdjacentHTML("beforeend",'<div class="vfx"><button data-vf="verify">🪪 Verifikatsiya</button><button data-vf="badge">🏅 Badge</button><button data-vf="rev">⭐ Sharhlar</button></div>')}deco()}
+function inject(){deco()}
 var mh=document.getElementById("mh");if(mh)new MutationObserver(inject).observe(mh,{childList:true,subtree:true});inject();
 var lastTok=null;setInterval(function(){var t=tok();if(t!==lastTok){lastTok=t;VB=null;if(t){refresh();setTimeout(function(){showPending(false)},2500)}}},1500);
 
-function openVerify(){if(!need())return;openSheet('<h3>Verifikatsiya</h3><p>Yuklanmoqda...</p>');
-post("/verify/status").then(function(d){if(!d.ok){openSheet('<h3>Verifikatsiya</h3><p>Xatolik'+(d&&d.error?' ('+esc(d.error)+')':'')+'. Qayta urinib ko\'ring.</p>');return}
+function openVerify(){if(!need())return;vfSheet('<h3>Verifikatsiya</h3><p>Yuklanmoqda...</p>');
+post("/verify/status").then(function(d){if(!d.ok){vfSheet('<h3>Verifikatsiya</h3><p>Xatolik'+(d&&d.error?' ('+esc(d.error)+')':'')+'. Qayta urinib ko\'ring.</p>');return}
 var h='<h3>Verifikatsiya</h3><div class="vfc"><b>Holat:</b> '+ST[d.status]+(d.verified?badge(1,null):'')+(d.reason?'<div style="margin-top:6px">Sabab: '+esc(d.reason)+'</div>':'')+'</div>';
 if(d.status==="approved"){h+='<p>Profilingizda rasmiy belgi ko\'rinadi.</p>'}
 else if(d.status==="pending"){h+='<p>So\'rovingiz #'+d.id+' admin tomonidan tekshirilmoqda. Natija Telegram botga ham yuboriladi.</p>'}
 else{h+='<div class="vfc"><input id="vfn" placeholder="Pasport seriyasi va raqami (masalan AB1234567)" maxlength="14" autocomplete="off"><input id="vff" type="file" accept="image/*"><div id="vfpv"></div><label style="display:block;font-size:13px"><input id="vfk" type="checkbox" style="width:auto;margin-right:6px">Hujjat faqat shaxsni tasdiqlash uchun ishlatilishiga roziman. Pasport rasmi shifrlanib saqlanadi va tekshiruvdan keyin o\'chiriladi.</label><div id="vfe" style="color:#d6246e;min-height:18px;font-size:13px"></div><button class="btn" data-vf="send">Yuborish</button></div>'}
-openSheet(h);var f=$("vff");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],1400,1150000,function(u){window._vfImg=u;$("vfpv").innerHTML=u?'<img class="vfp" src="'+u+'">':'<span style="color:#d6246e">Rasm o\'qilmadi</span>'})}}).catch(function(){openSheet('<h3>Verifikatsiya</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
+vfSheet(h);var f=$("vff");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],1400,1150000,function(u){window._vfImg=u;$("vfpv").innerHTML=u?'<img class="vfp" src="'+u+'">':'<span style="color:#d6246e">Rasm o\'qilmadi</span>'})}}).catch(function(){vfSheet('<h3>Verifikatsiya</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
 function sendVerify(){var e=$("vfe"),n=($("vfn").value||"").trim();if(n.replace(/[^A-Za-z0-9]/g,"").length<7){e.textContent="Pasport raqamini to'liq yozing.";return}if(!window._vfImg){e.textContent="Pasport rasmini tanlang.";return}if(!$("vfk").checked){e.textContent="Rozilik belgisini qo'ying.";return}
 e.textContent="Yuborilmoqda...";post("/verify/submit",{number:n,image:window._vfImg}).then(function(d){if(d.ok){window._vfImg=null;openVerify();return}
 e.textContent={used:"Bu hujjat bilan tasdiqlash mumkin emas.",pending:"So'rov allaqachon yuborilgan.",already:"Siz allaqachon tasdiqlangansiz.",limit:"Bugungi urinishlar limiti tugadi.",image:"Rasm noto'g'ri yoki juda katta.",number:"Pasport raqami noto'g'ri.",auth:"Sessiya tugagan, qayta kiring.",config:"Xizmat hali sozlanmagan."}[d.error]||"Xatolik. Qayta urinib ko'ring."}).catch(function(){e.textContent="Tarmoq xatosi."})}
-function openBadge(){if(!need())return;post("/badge/me").then(function(d){if(!d.ok){openSheet('<h3>Badge</h3><p>Xatolik'+(d&&d.error?' ('+esc(d.error)+')':'')+'. Qayta urinib ko\'ring.</p>');return}VB=d;var h='<h3>Badge</h3><div class="vfc">Hisobga olingan buyurtmalar: <b>'+d.orders+'</b><br>Rasmiy verifikatsiya: '+(d.verified?"✅ bor":"yo'q")+'</div>';
-d.tiers.forEach(function(t){h+='<div class="vfr" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+tierIcon(t.color,28)+'<b style="color:'+esc(t.color)+'">'+esc(t.name)+'</b> '+t.min+'+ buyurtma '+(t.unlocked?'<button data-vf="pick" data-k="'+esc(t.k)+'">'+(d.tier&&d.tier.k===t.k?"✔ Tanlangan":"Tanlash")+'</button>':'🔒')+'</div>'});
-openSheet(h)}).catch(function(){openSheet('<h3>Badge</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
+function openBadge(){if(!need())return;post("/badge/me").then(function(d){if(!d.ok){vfSheet('<h3>Badge</h3><p>Xatolik'+(d&&d.error?' ('+esc(d.error)+')':'')+'. Qayta urinib ko\'ring.</p>');return}VB=d;var h='<h3>Badge</h3><div class="vfc">Hisobga olingan buyurtmalar: <b>'+d.orders+'</b><br>Rasmiy verifikatsiya: '+(d.verified?"✅ bor":"yo'q")+'</div>';
+h+='<div class="vtg">';d.tiers.forEach(function(t){var cur=d.tier&&d.tier.k===t.k;h+='<div class="vtc'+(t.unlocked?'':' lk')+(cur?' on':'')+'">'+tierIcon(t.color,48,t.k)+'<b>'+esc(t.name)+'</b><small>'+t.min+'+ buyurtma</small>'+(t.unlocked?'<button data-vf="pick" data-k="'+esc(t.k)+'">'+(cur?"✔ Tanlangan":"Tanlash")+'</button>':'<em>🔒</em>')+'</div>'});h+='</div>';
+vfSheet(h)}).catch(function(){vfSheet('<h3>Badge</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
 function stars(n){return '<span class="vfs">'+"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n)+'</span>'}
-function openReviews(){openSheet('<h3>Sharhlar</h3><p>Yuklanmoqda...</p>');
+function openReviews(){vfSheet('<h3>Sharhlar</h3><p>Yuklanmoqda...</p>');
 var a=fetch(W()+"/reviews").then(function(r){return r.json()}),b=tok()?post("/review/pending"):Promise.resolve({rows:[]});
 Promise.all([a,b]).then(function(x){var h='<h3>Sharhlar</h3>',el=(x[1]&&x[1].rows)||[];
 if(el.length){window._vfq=el;h+='<div class="vfc"><b>Baholash kutayotgan tovarlar</b>'+el.map(function(o,i){return '<div class="vfr">'+esc(o.name)+' <button data-vf="rate" data-i="'+i+'">⭐ Baholash</button></div>'}).join("")+'</div>'}
 else h+='<p style="font-size:13px;opacity:.7">Sharh yozish uchun kerakli tovar sahifasini oching.</p>';
 (x[0].rows||[]).forEach(function(r){h+='<div class="vfr"><b>'+esc(r.name)+'</b>'+badge(r.verified,r.tier)+' <span class="vfb" style="font-size:11px;color:#16a34a">✔ Tasdiqlangan xarid</span><div>'+stars(r.rating)+'</div><div>'+esc(r.text)+'</div>'+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'</div>'});
-openSheet(h);var f=$("rvi");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u})}}).catch(function(){})}
+vfSheet(h);var f=$("rvi");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u})}}).catch(function(){})}
 function sendReview(){var e=$("rve");e.textContent="Yuborilmoqda...";post("/review/add",{oid:$("rvo").value,rating:Number($("rvr").value),text:$("rvt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;openReviews();return}e.textContent={order:"Faqat yetkazilgan buyurtmaga sharh yoziladi.",dup:"Bu buyurtmaga sharh yozilgan.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
 function prRender(p){var sp=$("sp"),old=$("vfpr");if(old)old.remove();if(!sp||!p||!p.id)return;window._vfp=p;
 var box=document.createElement("div");box.id="vfpr";box.className="vfc";box.innerHTML="<h3 style='margin:0 0 6px'>⭐ Sharhlar</h3><div style='opacity:.7'>Yuklanmoqda...</div>";var op=sp.querySelector(".opt");if(op&&op.parentNode)op.parentNode.insertBefore(box,op);else sp.appendChild(box);
@@ -4773,13 +4823,13 @@ else h+="<div style='opacity:.7;font-size:13px'>Sharhni faqat shu tovarni sotib 
 if(!(d.rows||[]).length)h+="<div style='opacity:.7;font-size:13px;margin-top:6px'>Hozircha sharh yo'q.</div>";
 box.innerHTML=h;var f=$("pri");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u})}}).catch(function(){})}
 window.vfProdReviews=prRender;
-function prSend(){var p=window._vfp,e=$("pre");if(!p)return;if(!Number($("prr").dataset.r)){e.textContent="Yulduzni tanlang.";return}e.textContent="Yuborilmoqda...";post("/review/add",{pid:p.id,pn:p.n,rating:Number($("prr").dataset.r),text:$("prt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;prRender(p);if(d.coupon){window._vfc=null;try{openSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>'+cpMsg(d.coupon))}catch(e){}}try{if(typeof loadRef==="function")loadRef()}catch(e){}return}e.textContent={order:"Sharhni faqat shu tovarni olib, yetkazilgan xaridorlar yoza oladi.",dup:"Siz bu tovarga sharh yozgansiz.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
+function prSend(){var p=window._vfp,e=$("pre");if(!p)return;if(!Number($("prr").dataset.r)){e.textContent="Yulduzni tanlang.";return}e.textContent="Yuborilmoqda...";post("/review/add",{pid:p.id,pn:p.n,rating:Number($("prr").dataset.r),text:$("prt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;prRender(p);if(d.coupon){window._vfc=null;try{vfSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>'+cpMsg(d.coupon))}catch(e){}}try{if(typeof loadRef==="function")loadRef()}catch(e){}return}e.textContent={order:"Sharhni faqat shu tovarni olib, yetkazilgan xaridorlar yoza oladi.",dup:"Siz bu tovarga sharh yozgansiz.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
 function starsIn(id){var s='<div class="vfsi" id="'+id+'" data-r="0">';for(var i=1;i<=5;i++)s+='<span data-vf="star" data-n="'+i+'">☆</span>';return s+'</div>'}
 function rateSheet(q,i){var it=q[i];if(!it)return;window._vfq=q;window._vfi=i;window._rvImg=null;try{localStorage.setItem("vf.seen."+it.pid,"1")}catch(e){}
-openSheet('<h3>⭐ Tovarni baholang</h3><div class="vfc"><b>'+esc(it.name)+'</b><div style="opacity:.7;font-size:13px">Buyurtma #'+esc(it.oid)+' topshirildi. Baholang va <b>10% kupon</b> sovg\'a oling 🎁</div>'+starsIn("rsr")+'<textarea id="rst" rows="3" maxlength="800" placeholder="Tovar qanday? (ixtiyoriy)"></textarea><input id="rsi" type="file" accept="image/*"><div id="rse" style="color:#d6246e;font-size:13px;min-height:18px"></div><button class="btn" data-vf="rssend">Yuborish</button><button data-a="shclose" style="margin-top:8px">Keyinroq</button></div>');
+vfSheet('<h3>⭐ Tovarni baholang</h3><div class="vfc"><b>'+esc(it.name)+'</b><div style="opacity:.7;font-size:13px">Buyurtma #'+esc(it.oid)+' topshirildi. Baholang va <b>10% kupon</b> sovg\'a oling 🎁</div>'+starsIn("rsr")+'<textarea id="rst" rows="3" maxlength="800" placeholder="Tovar qanday? (ixtiyoriy)"></textarea><input id="rsi" type="file" accept="image/*"><div id="rse" style="color:#d6246e;font-size:13px;min-height:18px"></div><button class="btn" data-vf="rssend">Yuborish</button><button data-a="shclose" style="margin-top:8px">Keyinroq</button></div>');
 var f=$("rsi");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(x){window._rvImg=x;if(!x)$("rse").textContent="Rasm juda katta."})}}
 function cpMsg(c){return c?'<div class="vfc" style="margin-top:8px"><b>🎁 Sovg\'a kuponingiz: '+esc(c.code)+'</b><div style="font-size:13px;opacity:.8">'+esc(c.pct)+'% chegirma, bir martalik. Savatda avtomatik chiqadi.</div></div>':""}
-function rsNext(){var q=window._vfq||[],i=(window._vfi||0)+1;if(i<q.length)rateSheet(q,i);else{var c=window._vfc;window._vfc=null;openSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>'+cpMsg(c))}try{if(typeof loadRef==="function")loadRef()}catch(e){}}
+function rsNext(){var q=window._vfq||[],i=(window._vfi||0)+1;if(i<q.length)rateSheet(q,i);else{var c=window._vfc;window._vfc=null;vfSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>'+cpMsg(c))}try{if(typeof loadRef==="function")loadRef()}catch(e){}}
 function rsSend(){var it=(window._vfq||[])[window._vfi||0],e=$("rse");if(!it)return;var r=Number($("rsr").dataset.r);if(!r){e.textContent="Yulduzni tanlang.";return}e.textContent="Yuborilmoqda...";
 post("/review/add",{pid:it.pid,pn:it.name,rating:r,text:$("rst").value,image:window._rvImg||""}).then(function(d){if(d.ok||d.error==="dup"){if(d.coupon)window._vfc=d.coupon;rsNext();return}e.textContent={order:"Bu tovarga sharh yozib bo'lmaydi.",image:"Rasm juda katta.",rating:"Yulduzni tanlang."}[d.error]||"Xatolik. Qayta urinib ko'ring."}).catch(function(){e.textContent="Tarmoq xatosi."})}
 function showPending(force){if(!tok())return;if(!force&&$("sh")&&$("sh").classList.contains("open"))return;post("/review/pending").then(function(d){if(!d.ok)return;var q=d.rows||[];if(!force)q=q.filter(function(r){try{return !localStorage.getItem("vf.seen."+r.pid)}catch(e){return true}});if(q.length)rateSheet(q,0)}).catch(function(){})}
