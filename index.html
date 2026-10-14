@@ -3201,7 +3201,7 @@ var QA=[
 function answer(q){var w=q.toLowerCase(),hits=[];QA.forEach(function(x){var sc=0;x[0].forEach(function(k){if(w.indexOf(k)>-1)sc+=k.length>3?2:1});if(sc>0)hits.push([sc,x[1]])});if(!hits.length)return "Bu savolga aniq javob topmadim. Masalan: avia, avto, to'lov, filial, qaytarish yoki narx haqida so'rang. Odam bilan gaplashish uchun \"operator\" deb yozing.";hits.sort(function(a,b){return b[0]-a[0]});var out=[hits[0][1]];if(hits[1]&&hits[1][0]>=hits[0][0])out.push(hits[1][1]);return out.join(" ")}
 var BOT={};
 var ST=["To'lov tekshirilmoqda","Xitoyda sotib olindi","Cargo yo'lda","O'zbekistonga yetdi","UzPostga topshirildi","Filialga yetdi"];
-function stLabel(o){if(o.srv){if(o.st==="bekor")return "❌ To'lov tasdiqlanmadi (bekor qilindi)";if(o.st==="tasdiqlandi")return "✅ To'lov tasdiqlandi, tovar sotib olinmoqda";if(o.st==="yetkazildi")return "✅ Filialga yetdi"}return ST[o.s]}
+function stLabel(o){if(o.srv){if(o.st==="bekor")return "❌ To'lov tasdiqlanmadi (bekor qilindi)";if(o.st==="tasdiqlandi")return "✅ To'lov tasdiqlandi, tovar sotib olinmoqda";if(o.st==="yetkazildi")return "✅ Filialga yetdi";if(o.st==="topshirildi")return "🎁 Buyurtma sizga topshirildi"}return ST[o.s]}
 
 var fbY=null,fbMoved=false,dragJust=false,fbB=86;
 document.addEventListener("pointerdown",function(e){var f=e.target.closest&&e.target.closest("#fab");if(!f)return;fbY={y:e.clientY,b:fbB};fbMoved=false});
@@ -3367,7 +3367,7 @@ function mapZ(d){var z=parseFloat(localStorage.getItem('sarbon.mz')||'1')+d*0.1;
 /* ===== BUYURTMALARIM: Saqlanganlar · Savat · To'lov kutilmoqda · Yuborildi ===== */
 function hubFav(){return Object.keys(S.fav).filter(function(i){return S.fav[i]&&P[i]})}
 function hubWait(o){return o.srv?o.st==="yangi":o.s===0}
-function hubSent(o){return o.srv?(["yolda","uzb","uzpost","yetkazildi"].indexOf(o.st)>-1):o.s>=2}
+function hubSent(o){return o.srv?(["yolda","uzb","uzpost","yetkazildi","topshirildi"].indexOf(o.st)>-1):o.s>=2}
 function hubMine(){return S.user?S.orders.filter(function(o){return o.ph===S.user.phone}):[]}
 function hubPayPanel(){
   var h='<h2 class="sec">To\'lov kutilmoqda</h2>';
@@ -3922,7 +3922,7 @@ function loadMyOrders(){
   if(!S.sess||!S.sess.token)return;
   fetch(WORKER+"/my-orders?token="+S.sess.token).then(function(r){return r.json()}).then(function(list){
     if(!Array.isArray(list))return;
-    var map={yangi:0,tasdiqlandi:1,yolda:2,uzb:3,uzpost:4,yetkazildi:5,bekor:0};
+    var map={yangi:0,tasdiqlandi:1,yolda:2,uzb:3,uzpost:4,yetkazildi:5,topshirildi:5,bekor:0};
     var ph=(S.user&&S.user.phone)||"";
     var nl=list.map(function(o){return {id:o.id,ph:ph,t:o.total,c:0,kg:0,w:0,s:map[o.status]||0,st:o.status||"yangi",chek:true,a:o.uzp?("UzPost: "+o.uzp):"",srv:true,trk:o.trk||""}});
     var sig=JSON.stringify(nl);
@@ -4733,18 +4733,18 @@ var mh=document.getElementById("mh");if(mh)new MutationObserver(inject).observe(
 var lastTok=null;setInterval(function(){var t=tok();if(t!==lastTok){lastTok=t;VB=null;if(t){refresh();setTimeout(function(){showPending(false)},2500)}}},1500);
 
 function openVerify(){if(!need())return;openSheet('<h3>Verifikatsiya</h3><p>Yuklanmoqda...</p>');
-post("/verify/status").then(function(d){if(!d.ok){openSheet('<h3>Verifikatsiya</h3><p>Xatolik. Qayta urinib ko\'ring.</p>');return}
+post("/verify/status").then(function(d){if(!d.ok){openSheet('<h3>Verifikatsiya</h3><p>Xatolik'+(d&&d.error?' ('+esc(d.error)+')':'')+'. Qayta urinib ko\'ring.</p>');return}
 var h='<h3>Verifikatsiya</h3><div class="vfc"><b>Holat:</b> '+ST[d.status]+(d.verified?badge(1,null):'')+(d.reason?'<div style="margin-top:6px">Sabab: '+esc(d.reason)+'</div>':'')+'</div>';
 if(d.status==="approved"){h+='<p>Profilingizda rasmiy belgi ko\'rinadi.</p>'}
 else if(d.status==="pending"){h+='<p>So\'rovingiz #'+d.id+' admin tomonidan tekshirilmoqda. Natija Telegram botga ham yuboriladi.</p>'}
 else{h+='<div class="vfc"><input id="vfn" placeholder="Pasport seriyasi va raqami (masalan AB1234567)" maxlength="14" autocomplete="off"><input id="vff" type="file" accept="image/*"><div id="vfpv"></div><label style="display:block;font-size:13px"><input id="vfk" type="checkbox" style="width:auto;margin-right:6px">Hujjat faqat shaxsni tasdiqlash uchun ishlatilishiga roziman. Pasport rasmi shifrlanib saqlanadi va tekshiruvdan keyin o\'chiriladi.</label><div id="vfe" style="color:#d6246e;min-height:18px;font-size:13px"></div><button class="btn" data-vf="send">Yuborish</button></div>'}
-openSheet(h);var f=$("vff");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],1400,1150000,function(u){window._vfImg=u;$("vfpv").innerHTML=u?'<img class="vfp" src="'+u+'">':'<span style="color:#d6246e">Rasm o\'qilmadi</span>'})}}).catch(function(){})}
+openSheet(h);var f=$("vff");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],1400,1150000,function(u){window._vfImg=u;$("vfpv").innerHTML=u?'<img class="vfp" src="'+u+'">':'<span style="color:#d6246e">Rasm o\'qilmadi</span>'})}}).catch(function(){openSheet('<h3>Verifikatsiya</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
 function sendVerify(){var e=$("vfe"),n=($("vfn").value||"").trim();if(n.replace(/[^A-Za-z0-9]/g,"").length<7){e.textContent="Pasport raqamini to'liq yozing.";return}if(!window._vfImg){e.textContent="Pasport rasmini tanlang.";return}if(!$("vfk").checked){e.textContent="Rozilik belgisini qo'ying.";return}
 e.textContent="Yuborilmoqda...";post("/verify/submit",{number:n,image:window._vfImg}).then(function(d){if(d.ok){window._vfImg=null;openVerify();return}
 e.textContent={used:"Bu hujjat bilan tasdiqlash mumkin emas.",pending:"So'rov allaqachon yuborilgan.",already:"Siz allaqachon tasdiqlangansiz.",limit:"Bugungi urinishlar limiti tugadi.",image:"Rasm noto'g'ri yoki juda katta.",number:"Pasport raqami noto'g'ri.",auth:"Sessiya tugagan, qayta kiring.",config:"Xizmat hali sozlanmagan."}[d.error]||"Xatolik. Qayta urinib ko'ring."}).catch(function(){e.textContent="Tarmoq xatosi."})}
-function openBadge(){if(!need())return;post("/badge/me").then(function(d){if(!d.ok)return;VB=d;var h='<h3>Badge</h3><div class="vfc">Hisobga olingan buyurtmalar: <b>'+d.orders+'</b><br>Rasmiy verifikatsiya: '+(d.verified?"✅ bor":"yo'q")+'</div>';
+function openBadge(){if(!need())return;post("/badge/me").then(function(d){if(!d.ok){openSheet('<h3>Badge</h3><p>Xatolik'+(d&&d.error?' ('+esc(d.error)+')':'')+'. Qayta urinib ko\'ring.</p>');return}VB=d;var h='<h3>Badge</h3><div class="vfc">Hisobga olingan buyurtmalar: <b>'+d.orders+'</b><br>Rasmiy verifikatsiya: '+(d.verified?"✅ bor":"yo'q")+'</div>';
 d.tiers.forEach(function(t){h+='<div class="vfr" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+tierIcon(t.color,28)+'<b style="color:'+esc(t.color)+'">'+esc(t.name)+'</b> '+t.min+'+ buyurtma '+(t.unlocked?'<button data-vf="pick" data-k="'+esc(t.k)+'">'+(d.tier&&d.tier.k===t.k?"✔ Tanlangan":"Tanlash")+'</button>':'🔒')+'</div>'});
-openSheet(h)}).catch(function(){})}
+openSheet(h)}).catch(function(){openSheet('<h3>Badge</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
 function stars(n){return '<span class="vfs">'+"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n)+'</span>'}
 function openReviews(){openSheet('<h3>Sharhlar</h3><p>Yuklanmoqda...</p>');
 var a=fetch(W()+"/reviews").then(function(r){return r.json()}),b=tok()?post("/review/pending"):Promise.resolve({rows:[]});
@@ -4769,7 +4769,7 @@ window.vfProdReviews=prRender;
 function prSend(){var p=window._vfp,e=$("pre");if(!p)return;if(!Number($("prr").dataset.r)){e.textContent="Yulduzni tanlang.";return}e.textContent="Yuborilmoqda...";post("/review/add",{pid:p.id,pn:p.n,rating:Number($("prr").dataset.r),text:$("prt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;prRender(p);if(d.coupon){window._vfc=null;try{openSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>'+cpMsg(d.coupon))}catch(e){}}try{if(typeof loadRef==="function")loadRef()}catch(e){}return}e.textContent={order:"Sharhni faqat shu tovarni olib, yetkazilgan xaridorlar yoza oladi.",dup:"Siz bu tovarga sharh yozgansiz.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
 function starsIn(id){var s='<div class="vfsi" id="'+id+'" data-r="0">';for(var i=1;i<=5;i++)s+='<span data-vf="star" data-n="'+i+'">☆</span>';return s+'</div>'}
 function rateSheet(q,i){var it=q[i];if(!it)return;window._vfq=q;window._vfi=i;window._rvImg=null;try{localStorage.setItem("vf.seen."+it.pid,"1")}catch(e){}
-openSheet('<h3>⭐ Tovarni baholang</h3><div class="vfc"><b>'+esc(it.name)+'</b><div style="opacity:.7;font-size:13px">Buyurtma #'+esc(it.oid)+' yetkazildi. Baholang va <b>10% kupon</b> sovg\'a oling 🎁</div>'+starsIn("rsr")+'<textarea id="rst" rows="3" maxlength="800" placeholder="Tovar qanday? (ixtiyoriy)"></textarea><input id="rsi" type="file" accept="image/*"><div id="rse" style="color:#d6246e;font-size:13px;min-height:18px"></div><button class="btn" data-vf="rssend">Yuborish</button><button data-a="shclose" style="margin-top:8px">Keyinroq</button></div>');
+openSheet('<h3>⭐ Tovarni baholang</h3><div class="vfc"><b>'+esc(it.name)+'</b><div style="opacity:.7;font-size:13px">Buyurtma #'+esc(it.oid)+' topshirildi. Baholang va <b>10% kupon</b> sovg\'a oling 🎁</div>'+starsIn("rsr")+'<textarea id="rst" rows="3" maxlength="800" placeholder="Tovar qanday? (ixtiyoriy)"></textarea><input id="rsi" type="file" accept="image/*"><div id="rse" style="color:#d6246e;font-size:13px;min-height:18px"></div><button class="btn" data-vf="rssend">Yuborish</button><button data-a="shclose" style="margin-top:8px">Keyinroq</button></div>');
 var f=$("rsi");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(x){window._rvImg=x;if(!x)$("rse").textContent="Rasm juda katta."})}}
 function cpMsg(c){return c?'<div class="vfc" style="margin-top:8px"><b>🎁 Sovg\'a kuponingiz: '+esc(c.code)+'</b><div style="font-size:13px;opacity:.8">'+esc(c.pct)+'% chegirma, bir martalik. Savatda avtomatik chiqadi.</div></div>':""}
 function rsNext(){var q=window._vfq||[],i=(window._vfi||0)+1;if(i<q.length)rateSheet(q,i);else{var c=window._vfc;window._vfc=null;openSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>'+cpMsg(c))}try{if(typeof loadRef==="function")loadRef()}catch(e){}}
