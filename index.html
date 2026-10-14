@@ -3524,6 +3524,7 @@ function product(i,mode){
   '<details class="ban"'+(m==="avia"?' open':'')+'><summary>⚠️ Avia cargoda taqiqlangan tovarlar</summary><div class="note">Avia cargo qoidasi (06.12.2025). Bu turdagi buyumlarni avia kargoga buyurtma qilish taqiqlanadi:</div><ul>'+BU.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><div class="note">Заказывать такие товары через авиа-карго запрещено:</div><ul>'+BR.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul></details>'+
   '<div class="pricebox"><div class="ln"><span>Tovar narxi</span><b>'+fmt(goods(p))+'</b></div><div class="ln"><span>Cargo ~'+p.kg+' kg × $'+CG[m]+'</span><span>~'+fmt(cargo(p,m))+'</span></div><div class="ln uzl"><span>UzPost uchun to\'lov<small>1 kg gacha 15 000 so\'m, keyingi kg uchun +3 000 so\'m</small></span><b>'+fmt(uzp(p.kg))+'</b></div><div class="note">Cargo alohida hisoblanadi: tovar omborga kelganda haqiqiy og\'irlik o\'lchanadi.</div></div>'+
   simBox(i));
+  if(window.vfProdReviews)vfProdReviews(p);
   setProdBar(i);
   if(again)$("sp").scrollTop=st0;
   setTimeout(function(){(p.rang||[]).forEach(function(c){galList(p,c).forEach(function(m){if(m.t!=="v"){var im=new Image();im.decoding="async";im.src=m.u}})})},900);
@@ -4711,7 +4712,7 @@ setInterval(function(){try{if(document.hidden)return;var H=document.documentElem
 /* ===== Verifikatsiya / Badge / Sharh interfeysi (qo'shimcha, mavjud kodga tegmaydi) ===== */
 (function(){
 var ST={none:"Verifikatsiyadan o'tmagan",pending:"⏳ Tekshirilmoqda",approved:"✅ Tasdiqlangan",rejected:"❌ Rad etilgan",need_info:"📝 Qo'shimcha ma'lumot talab qilinadi"};
-var css=document.createElement("style");css.textContent=".vfb{display:inline-flex;align-items:center;gap:3px;margin-left:5px;vertical-align:middle}.vfo{width:16px;height:16px;border-radius:50%;background:#1d9bf0;color:#fff;font-size:11px;line-height:16px;text-align:center;font-weight:700}.vft{font-size:10px;font-weight:700;color:#fff;padding:1px 7px;border-radius:99px}.vfx button{margin:6px 6px 0 0}.vfc{background:rgba(127,127,127,.12);border-radius:12px;padding:12px;margin:10px 0}.vfc input,.vfc textarea,.vfc select{width:100%;margin:6px 0;padding:10px;border-radius:10px;border:1px solid rgba(127,127,127,.35);background:transparent;color:inherit;font:inherit}.vfs{color:#f5a623;font-size:16px}.vfr{border-top:1px solid rgba(127,127,127,.25);padding:10px 0}.vfp{max-width:100%;border-radius:10px;margin-top:8px}.vfpill{position:fixed;left:10px;bottom:120px;z-index:40;border:0;border-radius:99px;padding:8px 13px;background:#1d9bf0;color:#fff;font:600 13px system-ui;box-shadow:0 2px 8px rgba(0,0,0,.3)}";document.head.appendChild(css);
+var css=document.createElement("style");css.textContent=".vfb{display:inline-flex;align-items:center;gap:3px;margin-left:5px;vertical-align:middle}.vfo{width:16px;height:16px;border-radius:50%;background:#1d9bf0;color:#fff;font-size:11px;line-height:16px;text-align:center;font-weight:700}.vft{font-size:10px;font-weight:700;color:#fff;padding:1px 7px;border-radius:99px}.vfx button{margin:6px 6px 0 0}.vfc{background:rgba(127,127,127,.12);border-radius:12px;padding:12px;margin:10px 0}.vfc input,.vfc textarea,.vfc select{width:100%;margin:6px 0;padding:10px;border-radius:10px;border:1px solid rgba(127,127,127,.35);background:transparent;color:inherit;font:inherit}.vfs{color:#f5a623;font-size:16px}.vfr{border-top:1px solid rgba(127,127,127,.25);padding:10px 0}.vfsi{margin:8px 0}.vfsi span{font-size:36px;color:#f5a623;padding:0 5px;cursor:pointer}.vfp{max-width:100%;border-radius:10px;margin-top:8px}";document.head.appendChild(css);
 function W(){return window.WORKER}
 function tok(){return S&&S.sess&&S.sess.token}
 function post(p,b){b=b||{};b.token=tok();return fetch(W()+p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json()})}
@@ -4723,8 +4724,8 @@ var VB=null;
 function refresh(){if(!tok())return;post("/badge/me").then(function(d){if(d.ok){VB=d;deco()}}).catch(function(){})}
 function deco(){var h=document.querySelector("#mh .me h3");if(h&&VB&&!h.querySelector(".vfb")&&(VB.verified||VB.tier))h.insertAdjacentHTML("beforeend",badge(VB.verified,VB.tier))}
 function inject(){var me=document.querySelector("#mh .me");if(!me)return;if(!me.querySelector(".vfx")){me.insertAdjacentHTML("beforeend",'<div class="vfx"><button data-vf="verify">🪪 Verifikatsiya</button><button data-vf="badge">🏅 Badge</button><button data-vf="rev">⭐ Sharhlar</button></div>')}deco()}
-var mh=document.getElementById("mh");if(mh)new MutationObserver(inject).observe(mh,{childList:true,subtree:true});inject();if(!document.querySelector('.vfpill')){var pl=document.createElement('button');pl.className='vfpill';pl.setAttribute('data-vf','rev');pl.textContent='⭐ Sharhlar';document.body.appendChild(pl)}
-var lastTok=null;setInterval(function(){var t=tok();if(t!==lastTok){lastTok=t;VB=null;if(t)refresh()}},1500);
+var mh=document.getElementById("mh");if(mh)new MutationObserver(inject).observe(mh,{childList:true,subtree:true});inject();
+var lastTok=null;setInterval(function(){var t=tok();if(t!==lastTok){lastTok=t;VB=null;if(t){refresh();setTimeout(function(){showPending(false)},2500)}}},1500);
 
 function openVerify(){if(!need())return;openSheet('<h3>Verifikatsiya</h3><p>Yuklanmoqda...</p>');
 post("/verify/status").then(function(d){if(!d.ok){openSheet('<h3>Verifikatsiya</h3><p>Xatolik. Qayta urinib ko\'ring.</p>');return}
@@ -4741,17 +4742,39 @@ d.tiers.forEach(function(t){h+='<div class="vfr"><span class="vft" style="backgr
 openSheet(h)}).catch(function(){})}
 function stars(n){return '<span class="vfs">'+"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n)+'</span>'}
 function openReviews(){openSheet('<h3>Sharhlar</h3><p>Yuklanmoqda...</p>');
-var a=fetch(W()+"/reviews").then(function(r){return r.json()}),b=tok()?post("/review/eligible"):Promise.resolve({rows:[]});
+var a=fetch(W()+"/reviews").then(function(r){return r.json()}),b=tok()?post("/review/pending"):Promise.resolve({rows:[]});
 Promise.all([a,b]).then(function(x){var h='<h3>Sharhlar</h3>',el=(x[1]&&x[1].rows)||[];
-if(el.length){h+='<div class="vfc"><b>Sharh yozing</b><select id="rvo">'+el.map(function(o){return '<option value="'+esc(o.oid)+'">#'+esc(o.oid)+' '+esc(o.s)+'</option>'}).join("")+'</select><select id="rvr"><option value="5">★★★★★ 5</option><option value="4">★★★★ 4</option><option value="3">★★★ 3</option><option value="2">★★ 2</option><option value="1">★ 1</option></select><textarea id="rvt" rows="3" maxlength="800" placeholder="Fikringiz"></textarea><input id="rvi" type="file" accept="image/*"><div id="rve" style="color:#d6246e;font-size:13px"></div><button class="btn" data-vf="rvsend">Yuborish</button></div>'}
-else h+='<p style="font-size:13px;opacity:.7">Sharh faqat yetkazilgan buyurtma uchun yoziladi.</p>';
+if(el.length){window._vfq=el;h+='<div class="vfc"><b>Baholash kutayotgan tovarlar</b>'+el.map(function(o,i){return '<div class="vfr">'+esc(o.name)+' <button data-vf="rate" data-i="'+i+'">⭐ Baholash</button></div>'}).join("")+'</div>'}
+else h+='<p style="font-size:13px;opacity:.7">Sharh yozish uchun kerakli tovar sahifasini oching.</p>';
 (x[0].rows||[]).forEach(function(r){h+='<div class="vfr"><b>'+esc(r.name)+'</b>'+badge(r.verified,r.tier)+' <span class="vfb" style="font-size:11px;color:#16a34a">✔ Tasdiqlangan xarid</span><div>'+stars(r.rating)+'</div><div>'+esc(r.text)+'</div>'+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'</div>'});
 openSheet(h);var f=$("rvi");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u})}}).catch(function(){})}
 function sendReview(){var e=$("rve");e.textContent="Yuborilmoqda...";post("/review/add",{oid:$("rvo").value,rating:Number($("rvr").value),text:$("rvt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;openReviews();return}e.textContent={order:"Faqat yetkazilgan buyurtmaga sharh yoziladi.",dup:"Bu buyurtmaga sharh yozilgan.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
+function prRender(p){var sp=$("sp"),old=$("vfpr");if(old)old.remove();if(!sp||!p||!p.id)return;window._vfp=p;
+var box=document.createElement("div");box.id="vfpr";box.className="vfc";box.innerHTML="<h3 style='margin:0 0 6px'>⭐ Sharhlar</h3><div style='opacity:.7'>Yuklanmoqda...</div>";sp.appendChild(box);
+var a=fetch(W()+"/reviews?pid="+p.id).then(function(r){return r.json()}),b=tok()?post("/review/eligible",{pid:p.id,pn:p.n}):Promise.resolve({});
+Promise.all([a,b]).then(function(x){if(!box.isConnected)return;var d=x[0],e=x[1]||{},h="<h3 style='margin:0 0 6px'>⭐ Sharhlar"+(d.count?" · "+d.avg+" ("+d.count+")":"")+"</h3>";
+if(!tok())h+="<div style='opacity:.7;font-size:13px'>Sharh yozish uchun avval kiring.</div>";
+else if(e.can)h+='<div class="vfc"><b>Sharh yozing</b>'+starsIn("prr")+'<textarea id="prt" rows="3" maxlength="800" placeholder="Fikringiz"></textarea><input id="pri" type="file" accept="image/*"><div id="pre" style="color:#d6246e;font-size:13px"></div><button class="btn" data-vf="prsend">Yuborish</button></div>';
+else if(e.reason==="dup")h+="<div style='opacity:.7;font-size:13px'>Siz bu tovarga sharh yozgansiz.</div>";
+else h+="<div style='opacity:.7;font-size:13px'>Sharhni faqat shu tovarni sotib olib, yetkazilgan xaridorlar yoza oladi.</div>";
+(d.rows||[]).forEach(function(r){h+='<div class="vfr"><b>'+esc(r.name)+'</b>'+badge(r.verified,r.tier)+' <span class="vfb" style="font-size:11px;color:#16a34a">✔ Tasdiqlangan xarid</span><div>'+stars(r.rating)+'</div><div>'+esc(r.text)+'</div>'+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'</div>'});
+if(!(d.rows||[]).length)h+="<div style='opacity:.7;font-size:13px;margin-top:6px'>Hozircha sharh yo'q.</div>";
+box.innerHTML=h;var f=$("pri");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u})}}).catch(function(){})}
+window.vfProdReviews=prRender;
+function prSend(){var p=window._vfp,e=$("pre");if(!p)return;if(!Number($("prr").dataset.r)){e.textContent="Yulduzni tanlang.";return}e.textContent="Yuborilmoqda...";post("/review/add",{pid:p.id,pn:p.n,rating:Number($("prr").dataset.r),text:$("prt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;prRender(p);return}e.textContent={order:"Sharhni faqat shu tovarni olib, yetkazilgan xaridorlar yoza oladi.",dup:"Siz bu tovarga sharh yozgansiz.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
+function starsIn(id){var s='<div class="vfsi" id="'+id+'" data-r="0">';for(var i=1;i<=5;i++)s+='<span data-vf="star" data-n="'+i+'">☆</span>';return s+'</div>'}
+function rateSheet(q,i){var it=q[i];if(!it)return;window._vfq=q;window._vfi=i;window._rvImg=null;try{localStorage.setItem("vf.seen."+it.pid,"1")}catch(e){}
+openSheet('<h3>⭐ Tovarni baholang</h3><div class="vfc"><b>'+esc(it.name)+'</b><div style="opacity:.7;font-size:13px">Buyurtma #'+esc(it.oid)+' yetkazildi. Fikringiz boshqa xaridorlarga yordam beradi.</div>'+starsIn("rsr")+'<textarea id="rst" rows="3" maxlength="800" placeholder="Tovar qanday? (ixtiyoriy)"></textarea><input id="rsi" type="file" accept="image/*"><div id="rse" style="color:#d6246e;font-size:13px;min-height:18px"></div><button class="btn" data-vf="rssend">Yuborish</button><button data-a="shclose" style="margin-top:8px">Keyinroq</button></div>');
+var f=$("rsi");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(x){window._rvImg=x;if(!x)$("rse").textContent="Rasm juda katta."})}}
+function rsNext(){var q=window._vfq||[],i=(window._vfi||0)+1;if(i<q.length)rateSheet(q,i);else openSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>')}
+function rsSend(){var it=(window._vfq||[])[window._vfi||0],e=$("rse");if(!it)return;var r=Number($("rsr").dataset.r);if(!r){e.textContent="Yulduzni tanlang.";return}e.textContent="Yuborilmoqda...";
+post("/review/add",{pid:it.pid,pn:it.name,rating:r,text:$("rst").value,image:window._rvImg||""}).then(function(d){if(d.ok||d.error==="dup"){rsNext();return}e.textContent={order:"Bu tovarga sharh yozib bo'lmaydi.",image:"Rasm juda katta.",rating:"Yulduzni tanlang."}[d.error]||"Xatolik. Qayta urinib ko'ring."}).catch(function(){e.textContent="Tarmoq xatosi."})}
+function showPending(force){if(!tok())return;if(!force&&$("sh")&&$("sh").classList.contains("open"))return;post("/review/pending").then(function(d){if(!d.ok)return;var q=d.rows||[];if(!force)q=q.filter(function(r){try{return !localStorage.getItem("vf.seen."+r.pid)}catch(e){return true}});if(q.length)rateSheet(q,0)}).catch(function(){})}
 document.addEventListener("click",function(ev){var t=ev.target.closest&&ev.target.closest("[data-vf]");if(!t)return;var a=t.getAttribute("data-vf");
-if(a==="verify")openVerify();else if(a==="badge")openBadge();else if(a==="rev")openReviews();else if(a==="send")sendVerify();else if(a==="rvsend")sendReview();
+if(a==="verify")openVerify();else if(a==="badge")openBadge();else if(a==="rev")openReviews();else if(a==="send")sendVerify();else if(a==="prsend")prSend();else if(a==="rssend")rsSend();else if(a==="rate")rateSheet(window._vfq,Number(t.getAttribute("data-i")));else if(a==="star"){var bx=t.parentNode,nn=Number(t.getAttribute("data-n"));bx.dataset.r=nn;[].forEach.call(bx.children,function(c,j){c.textContent=j<nn?"★":"☆"})}
 else if(a==="pick")post("/badge/choose",{tier:t.getAttribute("data-k")}).then(function(){refresh();openBadge()})},true);
-if(/[?&]verify=1/.test(location.search)){var n=0,iv=setInterval(function(){if(tok()){clearInterval(iv);openVerify()}else if(++n>12)clearInterval(iv)},500)}
+if(/[?&]verify=1/.test(location.search)){try{var uu=new URL(location.href);uu.searchParams.delete("verify");history.replaceState(null,"",uu.pathname+uu.search+uu.hash)}catch(e){}var n=0,iv=setInterval(function(){if(tok()){clearInterval(iv);openVerify()}else if(++n>12)clearInterval(iv)},500)}
+if(/[?&]review=1/.test(location.search)){try{var ur=new URL(location.href);ur.searchParams.delete("review");history.replaceState(null,"",ur.pathname+ur.search+ur.hash)}catch(e){}var n2=0,iv2=setInterval(function(){if(tok()){clearInterval(iv2);showPending(true)}else if(++n2>12)clearInterval(iv2)},500)}
 })();
 </script>
 </body>
