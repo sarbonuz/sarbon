@@ -3806,7 +3806,7 @@ document.addEventListener("click",function(e){
       save();(window.sheetCloseAnim?sheetCloseAnim():closeSheet());render();
     }).catch(function(){t.disabled=false;pe.textContent="Internet xatosi. Qayta urinib ko'ring."});
     return}
-  if(a==="logout"){try{if(S.sess&&S.sess.token)fetch(WORKER+"/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:S.sess.token})})}catch(e){}S.user=null;S.sess=null;S.orders=[];MYREF=null;MYREF_SIG="";S._osig=S._rsig=undefined;try{localStorage.removeItem("sarbon.sess");localStorage.removeItem("sarbon.lid")}catch(e){}save();$("mv").classList.remove("open");if($("sh").classList.contains("open")){window.sheetCloseAnim?sheetCloseAnim():closeSheet()}render();return}
+  if(a==="logout"){if(!window._lgGo){vfConfirmOut();return}window._lgGo=0;try{if(S.sess&&S.sess.token)fetch(WORKER+"/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:S.sess.token})})}catch(e){}S.user=null;S.sess=null;S.orders=[];MYREF=null;MYREF_SIG="";S._osig=S._rsig=undefined;try{localStorage.removeItem("sarbon.sess");localStorage.removeItem("sarbon.lid")}catch(e){}save();$("mv").classList.remove("open");if($("sh").classList.contains("open")){window.sheetCloseAnim?sheetCloseAnim():closeSheet()}render();return}
   if(a==="dl"){delivery();return}
   if(a==="rg"){S.dr=v;UZP.user=null;document.querySelectorAll("[data-a=rg]").forEach(function(b){b.classList.toggle("on",b.dataset.v===v)});if(UZP.cur&&UZP.cur.r!==v)UZP.cur=null;uzpDraw(REG.indexOf(v),true);return}
   if(a==="bsel"){uzpPick(+v);return}
@@ -4896,5 +4896,22 @@ if(/[?&]review=1/.test(location.search)){try{var ur=new URL(location.href);ur.se
 .sp{transition:transform .5s cubic-bezier(.32,.72,0,1)!important}
 .sh{transition:opacity .4s ease!important}
 </style>
+<style id="lgcss">
+#lgo{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .22s}
+#lgo.on{opacity:1}
+#lgo .lgb{width:min(280px,80vw);border-radius:22px;padding:20px 16px 14px;text-align:center;color:#fff;background:rgba(40,40,60,.55);-webkit-backdrop-filter:blur(24px) saturate(1.6);backdrop-filter:blur(24px) saturate(1.6);border:1px solid rgba(255,255,255,.22);box-shadow:0 16px 50px rgba(0,0,0,.45);transform:scale(.9);transition:transform .25s cubic-bezier(.32,.72,0,1)}
+#lgo.on .lgb{transform:scale(1)}
+#lgo .lgt{font-size:16px;font-weight:700;margin-bottom:16px}
+#lgo .lgr{display:flex;gap:10px}
+#lgo button{flex:1;border:0;border-radius:14px;padding:11px 0;font-size:15px;font-weight:700;color:#fff}
+#lgo .lgn{background:rgba(255,255,255,.18)}#lgo .lgy{background:#ef4444}
+html[data-day] #lgo .lgb{background:rgba(255,255,255,.6);color:#111;border-color:rgba(255,255,255,.8)}
+html[data-day] #lgo .lgn{background:rgba(0,0,0,.08);color:#111}
+</style>
+<script>
+function vfConfirmOut(){if(document.getElementById("lgo"))return;var o=document.createElement("div");o.id="lgo";o.innerHTML='<div class="lgb"><div class="lgt">Haqiqatdan ham chiqmoqchimisiz?</div><div class="lgr"><button class="lgn">Yo\'q</button><button class="lgy">Ha</button></div></div>';document.body.appendChild(o);requestAnimationFrame(function(){o.classList.add("on")});function cl(){o.classList.remove("on");setTimeout(function(){o.remove()},230)}
+o.querySelector(".lgn").onclick=cl;o.onclick=function(e){if(e.target===o)cl()};
+o.querySelector(".lgy").onclick=function(){cl();window._lgGo=1;var b=document.createElement("button");b.setAttribute("data-a","logout");document.body.appendChild(b);b.click();b.remove()}}
+</script>
 </body>
 </html>
