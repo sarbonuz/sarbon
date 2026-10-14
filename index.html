@@ -2922,38 +2922,6 @@ init();
 })();
 <\/script>
 <style id="vtcss">
-.vt{position:relative;display:inline-block;width:1em;height:1em;vertical-align:middle;flex:none;line-height:0;filter:drop-shadow(0 0 .1em var(--g));animation:vtGlow 2.6s ease-in-out infinite}
-.vt svg{position:relative;z-index:1;display:block}
-.vts{position:absolute;inset:0;border-radius:28%;overflow:hidden;z-index:2;pointer-events:none}
-.vts::after{content:"";position:absolute;top:-20%;bottom:-20%;left:0;width:45%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.85),transparent);transform:translateX(-160%) skewX(-18deg);animation:vtSheen 3.4s ease-in-out infinite}
-.vtk{position:absolute;width:.17em;height:.17em;border-radius:50%;background:#fff;box-shadow:0 0 .12em .03em var(--g);opacity:0;z-index:3;animation:vtTwk 1.9s ease-in-out infinite}
-.vtk.k1{top:-.06em;left:.12em}.vtk.k2{top:.28em;right:-.06em;animation-delay:.6s}.vtk.k3{bottom:.08em;left:-.06em;animation-delay:1.2s}
-/* Subscriber: yumshoq yashil puls + yulduz miltillashi */
-.vt-green{animation-duration:3.2s}.vt-green .vts{display:none}
-.vt-green svg polygon{transform-box:fill-box;transform-origin:center;animation:vtStar 2.2s ease-in-out infinite}
-/* Gold: iliq oltin yaltirash */
-.vt-gold{animation-duration:2.4s}.vt-gold .vts::after{animation-duration:2.8s}
-/* Platinum: tez sovuq yaltirash + uchqunlar */
-.vt-plat{animation-duration:2.8s}.vt-plat .vts::after{animation-duration:2.2s}
-/* Diamond: kamalak rang almashishi */
-.vt-sky{animation-duration:2.2s}.vt-sky svg{animation:vtHue 5s ease-in-out infinite}.vt-sky .vts::after{animation-duration:2.6s}
-/* Elite: aylanuvchi aura halqa */
-.vt-elite{animation-duration:1.8s}
-.vt-elite::before{content:"";position:absolute;inset:-.11em;border-radius:36%;background:conic-gradient(from 0deg,transparent 0 50%,var(--g) 78%,#fff 90%,transparent);filter:blur(.05em);animation:vtSpin 2.2s linear infinite;z-index:0}
-.vt-elite svg polygon{transform-box:fill-box;transform-origin:center;animation:vtStar 1.6s ease-in-out infinite}
-/* Legend: olov va uchqunlar */
-.vt-red{animation:vtFlame 1.3s ease-in-out infinite}.vt-red .vts::after{animation-duration:3.8s}
-.vt-red .vtk{background:#ffe2b8;top:auto;right:auto;bottom:.12em;animation:vtEmber 1.7s ease-out infinite}
-.vt-red .vtk.k1{left:.18em}.vt-red .vtk.k2{left:.5em;animation-delay:.55s}.vt-red .vtk.k3{left:.78em;animation-delay:1.05s}
-@keyframes vtGlow{0%,100%{filter:drop-shadow(0 0 .08em var(--g))}50%{filter:drop-shadow(0 0 .36em var(--g))}}
-@keyframes vtFlame{0%,100%{filter:drop-shadow(0 0 .12em var(--g))}20%{filter:drop-shadow(0 0 .42em #ff5a1f)}45%{filter:drop-shadow(0 0 .2em var(--g))}70%{filter:drop-shadow(0 0 .5em #ffb02e)}}
-@keyframes vtSheen{0%,35%{transform:translateX(-160%) skewX(-18deg)}75%,100%{transform:translateX(330%) skewX(-18deg)}}
-@keyframes vtTwk{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1)}}
-@keyframes vtStar{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
-@keyframes vtHue{0%,100%{filter:hue-rotate(0)}50%{filter:hue-rotate(75deg)}}
-@keyframes vtSpin{to{transform:rotate(360deg)}}
-@keyframes vtEmber{0%{opacity:0;transform:translateY(0) scale(1)}15%{opacity:1}100%{opacity:0;transform:translateY(-.95em) scale(.3)}}
-@media(prefers-reduced-motion:reduce){.vt,.vt *,.vt::before{animation:none!important}}
 .vtg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
 .vtc{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 6px 10px;border-radius:20px;background:rgba(127,127,127,.12);text-align:center}
 .vtc.on{box-shadow:inset 0 0 0 2px #7b5cf0}.vtc small{opacity:.7;font-size:11px}.vtc em{font-style:normal;font-size:13px;padding:6px}
@@ -4763,7 +4731,7 @@ setInterval(function(){try{if(document.hidden)return;var H=document.documentElem
 /* ===== Verifikatsiya / Badge / Sharh interfeysi (qo'shimcha, mavjud kodga tegmaydi) ===== */
 (function(){
 var ST={none:"Verifikatsiyadan o'tmagan",pending:"⏳ Tekshirilmoqda",approved:"✅ Tasdiqlangan",rejected:"❌ Rad etilgan",need_info:"📝 Qo'shimcha ma'lumot talab qilinadi"};
-var css=document.createElement("style");css.textContent=".vfi{display:inline-block;vertical-align:middle;flex:none}@media(prefers-reduced-motion:reduce){.vfsh,.vfg{display:none}}.vfb{display:inline-flex;align-items:center;gap:3px;margin-left:5px;vertical-align:middle}.vfo{width:16px;height:16px;border-radius:50%;background:#1d9bf0;color:#fff;font-size:11px;line-height:16px;text-align:center;font-weight:700}.vft{font-size:10px;font-weight:700;color:#fff;padding:1px 7px;border-radius:99px}.vfx button{margin:6px 6px 0 0}.vfc{background:rgba(127,127,127,.12);border-radius:12px;padding:12px;margin:10px 0}.vfc input,.vfc textarea,.vfc select{width:100%;margin:6px 0;padding:10px;border-radius:10px;border:1px solid rgba(127,127,127,.35);background:transparent;color:inherit;font:inherit}.vfs{color:#f5a623;font-size:16px}.vfr{border-top:1px solid rgba(127,127,127,.25);padding:10px 0}.vfsi{margin:8px 0}.vfsi span{font-size:36px;color:#f5a623;padding:0 5px;cursor:pointer}.vfp{max-width:100%;border-radius:10px;margin-top:8px}";document.head.appendChild(css);
+var css=document.createElement("style");css.textContent=".vfi{display:inline-block;vertical-align:middle;flex:none}@media(prefers-reduced-motion:reduce){.vfsh,.vfg{display:none}}.vfb{display:inline-flex;align-items:center;gap:3px;margin-left:5px;vertical-align:middle}.vfo{width:16px;height:16px;border-radius:50%;background:#1d9bf0;color:#fff;font-size:11px;line-height:16px;text-align:center;font-weight:700}.vft{font-size:10px;font-weight:700;color:#fff;padding:1px 7px;border-radius:99px}.vfx button{margin:6px 6px 0 0}.vfc{background:rgba(127,127,127,.12);border-radius:12px;padding:12px;margin:10px 0}.vfc input,.vfc textarea,.vfc select{width:100%;margin:6px 0;padding:10px;border-radius:10px;border:1px solid rgba(127,127,127,.35);background:transparent;color:inherit;font:inherit}.vfs{color:#f5a623;font-size:16px}.vfbuy{display:inline-block;font-size:10px;font-weight:700;color:#16a34a;background:rgba(22,163,74,.14);border-radius:99px;padding:1px 8px;margin-bottom:4px}.vfnm{display:flex;align-items:center;margin-bottom:2px}.vfr{border-top:1px solid rgba(127,127,127,.25);padding:10px 0}.vfsi{margin:8px 0}.vfsi span{font-size:36px;color:#f5a623;padding:0 5px;cursor:pointer}.vfp{max-width:100%;border-radius:10px;margin-top:8px}";document.head.appendChild(css);
 function vfSheet(x){window._fullSh=1;openSheet(x)}
 function W(){return window.WORKER}
 function tok(){return S&&S.sess&&S.sess.token}
@@ -4772,13 +4740,42 @@ var _vgi=0;
 function vMix(h,t){var n=parseInt(h.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255,k=t<0?0:255,p=Math.abs(t);function m(c){return Math.round(c+(k-c)*p)}return "#"+((1<<24)+(m(r)<<16)+(m(g)<<8)+m(b)).toString(16).slice(1)}
 function vHsl(h){var n=parseInt(h.slice(1),16),r=(n>>16)/255,g=((n>>8)&255)/255,b=(n&255)/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn,H=0,S=0;if(d){S=d/(1-Math.abs(2*l-1));H=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;H*=60;if(H<0)H+=360}return[H,S,l]}
 function vHex(H,S,L){var c=(1-Math.abs(2*L-1))*S,x=c*(1-Math.abs((H/60)%2-1)),m=L-c/2,r=0,g=0,b=0;if(H<60){r=c;g=x}else if(H<120){r=x;g=c}else if(H<180){g=c;b=x}else if(H<240){g=x;b=c}else if(H<300){r=x;b=c}else{r=c;b=x}function h2(v){return("0"+Math.round((v+m)*255).toString(16)).slice(-2)}return"#"+h2(r)+h2(g)+h2(b)}
-var VP={green:["#ecfccb","#84cc16","#365314","#a3e635"],gold:["#fef3c7","#f59e0b","#78350f","#fbbf24"],plat:["#f8fafc","#8fb8de","#1e3a5f","#93c5fd"],sky:["#e0e7ff","#6366f1","#1e1b4b","#818cf8"],elite:["#f5d0fe","#a21caf","#3b0764","#d946ef"],red:["#fed7aa","#ea580c","#7c1d0b","#fb923c"]};
-function tierIcon(color,size,k){var p=VP[k],n=++_vgi;
-if(!p){var c0=/^#[0-9a-fA-F]{6}$/.test(color||"")?color:"#22c55e";p=[vMix(c0,.75),c0,vMix(c0,-.65),c0];k="x"}
-var pts=[];for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,r=i%2?2.8:6.3;pts.push((12+r*Math.cos(a)).toFixed(2)+","+(12.4+r*Math.sin(a)).toFixed(2))}
-var sp=(k==="plat"||k==="sky"||k==="elite"||k==="red")?'<b class="vtk k1"></b><b class="vtk k2"></b><b class="vtk k3"></b>':'';
-return '<span class="vt vt-'+k+'" style="font-size:'+size+'px;--g:'+p[3]+'"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><defs><linearGradient id="vo'+n+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+p[0]+'"/><stop offset=".5" stop-color="'+p[1]+'"/><stop offset="1" stop-color="'+p[2]+'"/></linearGradient><linearGradient id="vi'+n+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+vMix(p[2],.12)+'"/><stop offset="1" stop-color="'+vMix(p[2],-.5)+'"/></linearGradient><linearGradient id="vq'+n+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+p[0]+'"/><stop offset="1" stop-color="'+p[1]+'"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#vo'+n+')"/><rect x="3.3" y="3.3" width="17.4" height="17.4" rx="4.6" fill="url(#vi'+n+')" stroke="'+p[1]+'" stroke-opacity=".6" stroke-width=".5"/><polygon points="'+pts.join(" ")+'" fill="url(#vq'+n+')" stroke="'+p[0]+'" stroke-width=".5" stroke-linejoin="round"/></svg><i class="vts"></i>'+sp+'</span>'}
-function badge(v,t){return (v?'<span class="vfb" title="Rasmiy tasdiqlangan"><span class="vfo">✓</span></span>':'')+(t?'<span class="vfb" title="'+esc(t.name)+'">'+tierIcon(t.color,20,t.k)+'</span>':'')}
+var VP={
+green:{r:["#e4ff7a","#9be41f","#4a7a0c"],i:["#2f4f0b","#122305"],s:["#fff7a8","#c8f03a"],g:"#a3e635",sp:5.5},
+gold:{r:["#ffeaa0","#e8a417","#8a5a07"],i:["#4f360a","#221602"],s:["#fff3b0","#f5b82e"],g:"#fbbf24",sp:4.6},
+plat:{r:["#f2fbff","#a9cde6","#5d86a6"],i:["#2d4660","#101c2b"],s:["#ffffff","#a9d4ee"],g:"#9fd2f5",sp:4},
+sky:{r:["#eef0ff","#8f86f5","#4a3fb5"],i:["#302c74","#13113a"],s:["#ffffff","#b9b2ff"],g:"#8b7cf7",sp:3.4},
+elite:{r:["#f0c8ff","#a63cf0","#43189c"],i:["#3d1778","#180839"],s:["#f6d7ff","#a768ff"],g:"#c04bff",sp:2.8},
+red:{r:["#ffd9a0","#f2722a","#8c2a0c"],i:["#7d2a10","#350e05"],s:["#fff0b8","#ff9a3a"],g:"#ff7a1f",sp:2.4}};
+function tierIcon(color,size,k,still){var p=VP[k],n=++_vgi,A=!still,id="v"+n;
+if(!p){var c0=/^#[0-9a-fA-F]{6}$/.test(color||"")?color:"#22c55e";p={r:[vMix(c0,.7),c0,vMix(c0,-.55)],i:[vMix(c0,-.6),vMix(c0,-.82)],s:[vMix(c0,.85),c0],g:c0,sp:4};k="x"}
+var R=p.r,I=p.i,S=p.s,G=p.g,pts=[];
+for(var j=0;j<10;j++){var an=-Math.PI/2+j*Math.PI/5,rr=j%2?2.9:6.5;pts.push((rr*Math.cos(an)).toFixed(2)+","+(rr*Math.sin(an)).toFixed(2))}
+var PER=72.9;
+function run(dur,from,w,col,sw){return A?'<rect x="1.9" y="1.9" width="20.2" height="20.2" rx="5.9" fill="none" stroke="'+col+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+w+' '+(PER-w).toFixed(2)+'" opacity=".95"><animate attributeName="stroke-dashoffset" from="'+from+'" to="'+(from-PER).toFixed(2)+'" dur="'+dur+'s" repeatCount="indefinite"/></rect>':''}
+function spark(x,y,d,sc){return A?'<g transform="translate('+x+' '+y+')"><path d="M0 -2 L.55 -.55 L2 0 L.55 .55 L0 2 L-.55 .55 L-2 0 L-.55 -.55Z" fill="#fff" opacity="0"><animateTransform attributeName="transform" type="scale" values="0;'+sc+';0" dur="1.5s" begin="'+d+'s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="'+d+'s" repeatCount="indefinite"/></path></g>':''}
+function ember(x,d){return A?'<circle cx="'+x+'" cy="22" r=".8" fill="#ffd9a0" opacity="0"><animate attributeName="cy" values="22;3" dur="1.5s" begin="'+d+'s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="'+d+'s" repeatCount="indefinite"/></circle>':''}
+var mid='<stop offset=".5" stop-color="'+R[1]+'">'+(A&&k==="sky"?'<animate attributeName="stop-color" values="'+R[1]+';#22d3ee;#e879f9;'+R[1]+'" dur="3s" repeatCount="indefinite"/>':'')+'</stop>';
+var glowA=A?(k==="red"?'<animate attributeName="opacity" values=".5;1;.6;1;.45;.9;.5" dur="1.3s" repeatCount="indefinite"/><animate attributeName="r" values="12;17;14;18;12" dur="1.3s" repeatCount="indefinite"/>':'<animate attributeName="opacity" values=".4;1;.4" dur="1.6s" repeatCount="indefinite"/><animate attributeName="r" values="12;17;12" dur="1.6s" repeatCount="indefinite"/>'):'';
+var out='<svg class="vfi vt" width="'+size+'" height="'+size+'" viewBox="0 0 24 24" overflow="visible" style="filter:drop-shadow(0 0 '+(still?0:3)+'px '+G+')" aria-hidden="true"><defs>'
++'<linearGradient id="'+id+'o" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+R[0]+'"/>'+mid+'<stop offset="1" stop-color="'+R[2]+'"/></linearGradient>'
++'<linearGradient id="'+id+'i" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+I[0]+'"/><stop offset="1" stop-color="'+I[1]+'"/></linearGradient>'
++'<linearGradient id="'+id+'s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+S[0]+'"/><stop offset="1" stop-color="'+S[1]+'"/></linearGradient>'
++'<radialGradient id="'+id+'r"><stop offset="0" stop-color="'+G+'" stop-opacity=".9"/><stop offset="1" stop-color="'+G+'" stop-opacity="0"/></radialGradient>'
++'<linearGradient id="'+id+'h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
++'<clipPath id="'+id+'c"><rect x="1" y="1" width="22" height="22" rx="6.5"/></clipPath></defs>'
++'<circle cx="12" cy="12" r="13" fill="url(#'+id+'r)" opacity="'+(still?0:.6)+'">'+glowA+'</circle>'
++'<rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#'+id+'o)"/>'
++'<rect x="1.5" y="1.5" width="21" height="21" rx="6.1" fill="none" stroke="'+R[0]+'" stroke-opacity=".9" stroke-width=".6"/>'
++'<rect x="3.4" y="3.4" width="17.2" height="17.2" rx="4.4" fill="url(#'+id+'i)" stroke="'+R[2]+'" stroke-width=".6"/>'
++'<g transform="translate(12 12.3)"><g>'+(A?'<animateTransform attributeName="transform" type="scale" values="1;1.18;1" dur="1.4s" repeatCount="indefinite"/>':'')+'<g>'+(A?'<animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="'+p.sp+'s" repeatCount="indefinite"/>':'')+'<polygon points="'+pts.join(" ")+'" fill="url(#'+id+'s)" stroke="'+S[0]+'" stroke-width=".5" stroke-linejoin="round"/></g></g></g>'
++run(k==="red"?1.2:k==="elite"?1.5:2.2,0,12,"#fff",1)
++((k==="elite"||k==="red")?run(k==="red"?1.2:1.5,-36.4,9,G,1):'')
++(A?'<g clip-path="url(#'+id+'c)"><g transform="rotate(20 12 12)"><rect x="0" y="-8" width="8" height="40" fill="url(#'+id+'h)"><animateTransform attributeName="transform" type="translate" values="-12 0;32 0;32 0" keyTimes="0;.4;1" dur="2s" repeatCount="indefinite"/></rect><rect x="0" y="-8" width="3" height="40" fill="url(#'+id+'h)"><animateTransform attributeName="transform" type="translate" values="-18 0;38 0;38 0" keyTimes="0;.45;1" dur="2s" begin=".14s" repeatCount="indefinite"/></rect></g></g>':'')
++((k==="plat"||k==="sky"||k==="elite")?spark(2.5,3,0,1.5)+spark(22,9,.5,1.2)+spark(5,22,1,1.3):'')
++(k==="red"?ember(6,0)+ember(12,.5)+ember(18,1):'')
++'</svg>';return out}
+function badge(v,t){return (v?'<span class="vfb" title="Rasmiy tasdiqlangan"><span class="vfo">✓</span></span>':'')+(t?'<span class="vfb" title="'+esc(t.name)+'">'+tierIcon(t.color,22,t.k)+'</span>':'')}
 window.vfBadge=badge;
 function need(){if(tok())return true;vfSheet('<h3>Avval kiring</h3><p>Bu bo\'lim uchun saytda «Telegram orqali kirish» tugmasini bosing.</p>');return false}
 function shrink(file,max,cap,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);var q=.85,u=c.toDataURL("image/jpeg",q);while(u.length>cap&&q>.35){q-=.1;u=c.toDataURL("image/jpeg",q)}cb(u.length>cap?null:u)};im.onerror=function(){cb(null)};im.src=r.result};r.onerror=function(){cb(null)};r.readAsDataURL(file)}
@@ -4800,15 +4797,16 @@ function sendVerify(){var e=$("vfe"),n=($("vfn").value||"").trim();if(n.replace(
 e.textContent="Yuborilmoqda...";post("/verify/submit",{number:n,image:window._vfImg}).then(function(d){if(d.ok){window._vfImg=null;openVerify();return}
 e.textContent={used:"Bu hujjat bilan tasdiqlash mumkin emas.",pending:"So'rov allaqachon yuborilgan.",already:"Siz allaqachon tasdiqlangansiz.",limit:"Bugungi urinishlar limiti tugadi.",image:"Rasm noto'g'ri yoki juda katta.",number:"Pasport raqami noto'g'ri.",auth:"Sessiya tugagan, qayta kiring.",config:"Xizmat hali sozlanmagan."}[d.error]||"Xatolik. Qayta urinib ko'ring."}).catch(function(){e.textContent="Tarmoq xatosi."})}
 function openBadge(){if(!need())return;post("/badge/me").then(function(d){if(!d.ok){vfSheet('<h3>Badge</h3><p>Xatolik'+(d&&d.error?' ('+esc(d.error)+')':'')+'. Qayta urinib ko\'ring.</p>');return}VB=d;var h='<h3>Badge</h3><div class="vfc">Hisobga olingan buyurtmalar: <b>'+d.orders+'</b><br>Rasmiy verifikatsiya: '+(d.verified?"✅ bor":"yo'q")+'</div>';
-h+='<div class="vtg">';d.tiers.forEach(function(t){var cur=d.tier&&d.tier.k===t.k;h+='<div class="vtc'+(t.unlocked?'':' lk')+(cur?' on':'')+'">'+tierIcon(t.color,48,t.k)+'<b>'+esc(t.name)+'</b><small>'+t.min+'+ buyurtma</small>'+(t.unlocked?'<button data-vf="pick" data-k="'+esc(t.k)+'">'+(cur?"✔ Tanlangan":"Tanlash")+'</button>':'<em>🔒</em>')+'</div>'});h+='</div>';
+h+='<div class="vtg">';d.tiers.forEach(function(t){var cur=d.tier&&d.tier.k===t.k;h+='<div class="vtc'+(t.unlocked?'':' lk')+(cur?' on':'')+'">'+tierIcon(t.color,48,t.k,!t.unlocked)+'<b>'+esc(t.name)+'</b><small>'+t.min+'+ buyurtma</small>'+(t.unlocked?'<button data-vf="pick" data-k="'+esc(t.k)+'">'+(cur?"✔ Tanlangan":"Tanlash")+'</button>':'<em>🔒</em>')+'</div>'});h+='</div>';
 vfSheet(h)}).catch(function(){vfSheet('<h3>Badge</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
+function revRow(r){return '<div class="vfr">'+(r.purchase?'<div class="vfbuy">🛍 Sotib olgan</div>':'')+'<div class="vfnm"><b>'+esc(r.name)+'</b>'+badge(r.verified,r.tier)+'</div><div>'+stars(r.rating)+'</div><div>'+esc(r.text)+'</div>'+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'</div>'}
 function stars(n){return '<span class="vfs">'+"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n)+'</span>'}
 function openReviews(){vfSheet('<h3>Sharhlar</h3><p>Yuklanmoqda...</p>');
 var a=fetch(W()+"/reviews").then(function(r){return r.json()}),b=tok()?post("/review/pending"):Promise.resolve({rows:[]});
 Promise.all([a,b]).then(function(x){var h='<h3>Sharhlar</h3>',el=(x[1]&&x[1].rows)||[];
 if(el.length){window._vfq=el;h+='<div class="vfc"><b>Baholash kutayotgan tovarlar</b>'+el.map(function(o,i){return '<div class="vfr">'+esc(o.name)+' <button data-vf="rate" data-i="'+i+'">⭐ Baholash</button></div>'}).join("")+'</div>'}
-else h+='<p style="font-size:13px;opacity:.7">Sharh yozish uchun kerakli tovar sahifasini oching.</p>';
-(x[0].rows||[]).forEach(function(r){h+='<div class="vfr"><b>'+esc(r.name)+'</b>'+badge(r.verified,r.tier)+' <span class="vfb" style="font-size:11px;color:#16a34a">✔ Tasdiqlangan xarid</span><div>'+stars(r.rating)+'</div><div>'+esc(r.text)+'</div>'+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'</div>'});
+else h+='<p style="font-size:13px;opacity:.7">Sharh yozish uchun tovar sahifasini oching.</p>';
+(x[0].rows||[]).forEach(function(r){h+=revRow(r)});
 vfSheet(h);var f=$("rvi");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u})}}).catch(function(){})}
 function sendReview(){var e=$("rve");e.textContent="Yuborilmoqda...";post("/review/add",{oid:$("rvo").value,rating:Number($("rvr").value),text:$("rvt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;openReviews();return}e.textContent={order:"Faqat yetkazilgan buyurtmaga sharh yoziladi.",dup:"Bu buyurtmaga sharh yozilgan.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
 function prRender(p){var sp=$("sp"),old=$("vfpr");if(old)old.remove();if(!sp||!p||!p.id)return;window._vfp=p;
@@ -4816,14 +4814,13 @@ var box=document.createElement("div");box.id="vfpr";box.className="vfc";box.inne
 var a=fetch(W()+"/reviews?pid="+p.id).then(function(r){return r.json()}),b=tok()?post("/review/eligible",{pid:p.id,pn:p.n}):Promise.resolve({});
 Promise.all([a,b]).then(function(x){if(!box.isConnected)return;var d=x[0],e=x[1]||{},h="<h3 style='margin:0 0 6px'>⭐ Sharhlar"+(d.count?" · "+d.avg+" ("+d.count+")":"")+"</h3>";
 if(!tok())h+="<div style='opacity:.7;font-size:13px'>Sharh yozish uchun avval kiring.</div>";
-else if(e.can)h+='<div class="vfc"><b>Sharh yozing</b>'+starsIn("prr")+'<textarea id="prt" rows="3" maxlength="800" placeholder="Fikringiz"></textarea><input id="pri" type="file" accept="image/*"><div id="pre" style="color:#d6246e;font-size:13px"></div><button class="btn" data-vf="prsend">Yuborish</button></div>';
+else if(e.can)h+='<div class="vfc"><b>Sharh yozing</b>'+(e.bought?'<div style="font-size:12px;color:#16a34a;margin-top:2px">🛍 Siz bu tovarni sotib olgansiz — sharhingizda «Sotib olgan» belgisi chiqadi</div>':'')+''+starsIn("prr")+'<textarea id="prt" rows="3" maxlength="800" placeholder="Fikringiz"></textarea><input id="pri" type="file" accept="image/*"><div id="pre" style="color:#d6246e;font-size:13px"></div><button class="btn" data-vf="prsend">Yuborish</button></div>';
 else if(e.reason==="dup")h+="<div style='opacity:.7;font-size:13px'>Siz bu tovarga sharh yozgansiz.</div>";
-else h+="<div style='opacity:.7;font-size:13px'>Sharhni faqat shu tovarni sotib olib, yetkazilgan xaridorlar yoza oladi.</div>";
-(d.rows||[]).forEach(function(r){h+='<div class="vfr"><b>'+esc(r.name)+'</b>'+badge(r.verified,r.tier)+' <span class="vfb" style="font-size:11px;color:#16a34a">✔ Tasdiqlangan xarid</span><div>'+stars(r.rating)+'</div><div>'+esc(r.text)+'</div>'+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'</div>'});
+(d.rows||[]).forEach(function(r){h+=revRow(r)});
 if(!(d.rows||[]).length)h+="<div style='opacity:.7;font-size:13px;margin-top:6px'>Hozircha sharh yo'q.</div>";
 box.innerHTML=h;var f=$("pri");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u})}}).catch(function(){})}
 window.vfProdReviews=prRender;
-function prSend(){var p=window._vfp,e=$("pre");if(!p)return;if(!Number($("prr").dataset.r)){e.textContent="Yulduzni tanlang.";return}e.textContent="Yuborilmoqda...";post("/review/add",{pid:p.id,pn:p.n,rating:Number($("prr").dataset.r),text:$("prt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;prRender(p);if(d.coupon){window._vfc=null;try{vfSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>'+cpMsg(d.coupon))}catch(e){}}try{if(typeof loadRef==="function")loadRef()}catch(e){}return}e.textContent={order:"Sharhni faqat shu tovarni olib, yetkazilgan xaridorlar yoza oladi.",dup:"Siz bu tovarga sharh yozgansiz.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
+function prSend(){var p=window._vfp,e=$("pre");if(!p)return;if(!Number($("prr").dataset.r)){e.textContent="Yulduzni tanlang.";return}e.textContent="Yuborilmoqda...";post("/review/add",{pid:p.id,pn:p.n,rating:Number($("prr").dataset.r),text:$("prt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;prRender(p);if(d.coupon){window._vfc=null;try{vfSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>'+cpMsg(d.coupon))}catch(e){}}try{if(typeof loadRef==="function")loadRef()}catch(e){}return}e.textContent={dup:"Siz bu tovarga sharh yozgansiz.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
 function starsIn(id){var s='<div class="vfsi" id="'+id+'" data-r="0">';for(var i=1;i<=5;i++)s+='<span data-vf="star" data-n="'+i+'">☆</span>';return s+'</div>'}
 function rateSheet(q,i){var it=q[i];if(!it)return;window._vfq=q;window._vfi=i;window._rvImg=null;try{localStorage.setItem("vf.seen."+it.pid,"1")}catch(e){}
 vfSheet('<h3>⭐ Tovarni baholang</h3><div class="vfc"><b>'+esc(it.name)+'</b><div style="opacity:.7;font-size:13px">Buyurtma #'+esc(it.oid)+' topshirildi. Baholang va <b>10% kupon</b> sovg\'a oling 🎁</div>'+starsIn("rsr")+'<textarea id="rst" rows="3" maxlength="800" placeholder="Tovar qanday? (ixtiyoriy)"></textarea><input id="rsi" type="file" accept="image/*"><div id="rse" style="color:#d6246e;font-size:13px;min-height:18px"></div><button class="btn" data-vf="rssend">Yuborish</button><button data-a="shclose" style="margin-top:8px">Keyinroq</button></div>');
