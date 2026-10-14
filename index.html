@@ -2921,23 +2921,6 @@ init();
   setTimeout(ok,5500);
 })();
 <\/script>
-<style id="vtcss">
-.vtg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
-.vtc{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 6px 10px;border-radius:20px;background:rgba(127,127,127,.12);text-align:center}
-.vtc.on{box-shadow:inset 0 0 0 2px #7b5cf0}.vtc small{opacity:.7;font-size:11px}.vtc em{font-style:normal;font-size:13px;padding:6px}
-.vtc button{border:0;border-radius:999px;padding:6px 12px;font-weight:700;font-size:12px;background:#7b5cf0;color:#fff}
-.vtc.lk .vt,.vtc.lk .vt *{animation:none!important}.vtc.lk .vt{opacity:.35;filter:grayscale(1)}
-.pfm{margin:18px 0 6px;border-radius:18px;overflow:hidden;background:rgba(127,127,127,.12)}
-.sp .pfm button{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:0!important;background:transparent!important;color:inherit;padding:15px 16px;font-size:16px;font-weight:600;text-align:left;box-shadow:none!important}
-.sp .pfm button+button{border-top:1px solid rgba(127,127,127,.22)}
-.pfm button i{font-style:normal;width:26px;text-align:center;font-size:19px}.pfm button span{flex:1}.pfm button s{text-decoration:none;opacity:.45;font-size:22px}
-.sp .pfm button.out{color:#ff453a}
-/* iOS uslubidagi silliq oynalar */
-.ov .menu{transition:transform .5s cubic-bezier(.32,.72,0,1)!important}
-.ov{transition:opacity .4s ease!important}
-.sp{transition:transform .5s cubic-bezier(.32,.72,0,1)!important}
-.sh{transition:opacity .4s ease!important}
-</style>
 </body>
 </html>
 </script>
@@ -3798,13 +3781,14 @@ document.addEventListener("click",function(e){
     var u0=S.user||{},sp0=String(u0.name||"").split(" ");
     var fv=u0.first!==undefined?u0.first:(sp0[0]||""),lv=u0.last!==undefined?u0.last:sp0.slice(1).join(" ");
     window._fullSh=1;openSheet('<h3 style="margin:6px 0 12px">Profil</h3>'
-      +'<input id="pf1" placeholder="Ism" autocomplete="given-name" maxlength="30" value="'+esc(fv)+'">'
-      +'<input id="pf2" placeholder="Familya" autocomplete="family-name" maxlength="30" value="'+esc(lv)+'">'
-      +'<input id="pf3" type="tel" inputmode="tel" placeholder="Telefon (+998...)" autocomplete="tel" maxlength="20" value="'+esc(u0.phone||"")+'">'
-      +(u0.email?'<div class="mut" style="margin:0 0 10px">Akkaunt: '+esc(u0.email)+'</div>':'')
-      +'<div id="pfe" style="color:#D6246E;font-size:13px;min-height:18px;margin-bottom:6px"></div>'
+      +(window.vfPH?vfPH(u0):'')
+      +'<div class="pfgt">Shaxsiy ma\'lumotlar</div><div class="pff">'
+      +'<label><span>Ism</span><input id="pf1" placeholder="Ismingiz" autocomplete="given-name" maxlength="30" value="'+esc(fv)+'"></label>'
+      +'<label><span>Familya</span><input id="pf2" placeholder="Familyangiz" autocomplete="family-name" maxlength="30" value="'+esc(lv)+'"></label>'
+      +'<label><span>Telefon</span><input id="pf3" type="tel" inputmode="tel" placeholder="+998..." autocomplete="tel" maxlength="20" value="'+esc(u0.phone||"")+'"></label></div>'
+      +'<div id="pfe" style="color:#D6246E;font-size:13px;min-height:18px;margin:8px 4px 4px"></div>'
       +'<button class="btn" data-a="profsave">Saqlash</button>'
-      +'<div class="pfm"><button data-vf="verify"><i>🪪</i><span>Verifikatsiya</span><s>›</s></button><button data-vf="badge"><i>🏅</i><span>Badge</span><s>›</s></button><button data-vf="rev"><i>⭐</i><span>Sharhlar</span><s>›</s></button><button data-a="logout" class="out"><i>🚪</i><span>Chiqish</span></button></div>');
+      +(window.vfPR?vfPR():''));
     return}
   if(a==="profsave"){
     var f1=$("pf1").value.trim(),l1=$("pf2").value.trim(),p1=$("pf3").value.replace(/\D/g,""),pe=$("pfe");
@@ -4741,41 +4725,59 @@ function vMix(h,t){var n=parseInt(h.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255,k=
 function vHsl(h){var n=parseInt(h.slice(1),16),r=(n>>16)/255,g=((n>>8)&255)/255,b=(n&255)/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn,H=0,S=0;if(d){S=d/(1-Math.abs(2*l-1));H=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;H*=60;if(H<0)H+=360}return[H,S,l]}
 function vHex(H,S,L){var c=(1-Math.abs(2*L-1))*S,x=c*(1-Math.abs((H/60)%2-1)),m=L-c/2,r=0,g=0,b=0;if(H<60){r=c;g=x}else if(H<120){r=x;g=c}else if(H<180){g=c;b=x}else if(H<240){g=x;b=c}else if(H<300){r=x;b=c}else{r=c;b=x}function h2(v){return("0"+Math.round((v+m)*255).toString(16)).slice(-2)}return"#"+h2(r)+h2(g)+h2(b)}
 var VP={
-green:{r:["#e4ff7a","#9be41f","#4a7a0c"],i:["#2f4f0b","#122305"],s:["#fff7a8","#c8f03a"],g:"#a3e635",sp:5.5},
-gold:{r:["#ffeaa0","#e8a417","#8a5a07"],i:["#4f360a","#221602"],s:["#fff3b0","#f5b82e"],g:"#fbbf24",sp:4.6},
-plat:{r:["#f2fbff","#a9cde6","#5d86a6"],i:["#2d4660","#101c2b"],s:["#ffffff","#a9d4ee"],g:"#9fd2f5",sp:4},
-sky:{r:["#eef0ff","#8f86f5","#4a3fb5"],i:["#302c74","#13113a"],s:["#ffffff","#b9b2ff"],g:"#8b7cf7",sp:3.4},
-elite:{r:["#f0c8ff","#a63cf0","#43189c"],i:["#3d1778","#180839"],s:["#f6d7ff","#a768ff"],g:"#c04bff",sp:2.8},
-red:{r:["#ffd9a0","#f2722a","#8c2a0c"],i:["#7d2a10","#350e05"],s:["#fff0b8","#ff9a3a"],g:"#ff7a1f",sp:2.4}};
+green:{r:["#eaff8a","#8fe81a","#3f7a08"],i:["#2f5a0b","#0f2204"],s:["#fffbb0","#c8f03a"],g:"#a3e635",n:1},
+gold:{r:["#fff0b0","#f0a410","#8a5006"],i:["#583a08","#201402"],s:["#fff6b8","#f7b92a"],g:"#fbbf24",n:2},
+plat:{r:["#f6fdff","#a2d0ee","#4f7fa6"],i:["#2d4a68","#0f1c2c"],s:["#ffffff","#a9dcf5"],g:"#8fd0ff",n:3},
+sky:{r:["#f2f3ff","#8a80ff","#4036c0"],i:["#322e80","#11103a"],s:["#ffffff","#bdb6ff"],g:"#8b7cff",n:4},
+elite:{r:["#f6d0ff","#b03cf5","#44169f"],i:["#421782","#16073a"],s:["#fbe0ff","#b070ff"],g:"#c850ff",n:4},
+red:{r:["#ffe0a8","#ff7424","#8c260a"],i:["#852a10","#330d04"],s:["#fff3c0","#ffa03c"],g:"#ff7a1f",n:3}};
+var NK={subscriber:"green",gold:"gold",platinum:"plat",diamond:"sky",elite:"elite",legend:"red"};
+function vEase(t){return .5-.5*Math.cos(Math.PI*t)}
+function vSeq(a,b,N,f){var kt=[],vs=[];if(a>0){kt.push("0");vs.push(f(0))}for(var i=0;i<=N;i++){kt.push((a+(b-a)*i/N).toFixed(4));vs.push(f(vEase(i/N)))}if(b<1){kt.push("1");vs.push(f(1))}return{k:kt.join(";"),v:vs.join(";")}}
+/* 4 soniyalik sikl: ramka chapdan o'ngga 3D burilish (0-1.6s), yulduz tepadan pastga sekinroq 3D burilish (0.6-3s) */
+var FA=0,FB=.4,SA=.15,SB=.75;
 function tierIcon(color,size,k,still){var p=VP[k],n=++_vgi,A=!still,id="v"+n;
-if(!p){var c0=/^#[0-9a-fA-F]{6}$/.test(color||"")?color:"#22c55e";p={r:[vMix(c0,.7),c0,vMix(c0,-.55)],i:[vMix(c0,-.6),vMix(c0,-.82)],s:[vMix(c0,.85),c0],g:c0,sp:4};k="x"}
-var R=p.r,I=p.i,S=p.s,G=p.g,pts=[];
-for(var j=0;j<10;j++){var an=-Math.PI/2+j*Math.PI/5,rr=j%2?2.9:6.5;pts.push((rr*Math.cos(an)).toFixed(2)+","+(rr*Math.sin(an)).toFixed(2))}
-var PER=72.9;
-function run(dur,from,w,col,sw){return A?'<rect x="1.9" y="1.9" width="20.2" height="20.2" rx="5.9" fill="none" stroke="'+col+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+w+' '+(PER-w).toFixed(2)+'" opacity=".95"><animate attributeName="stroke-dashoffset" from="'+from+'" to="'+(from-PER).toFixed(2)+'" dur="'+dur+'s" repeatCount="indefinite"/></rect>':''}
-function spark(x,y,d,sc){return A?'<g transform="translate('+x+' '+y+')"><path d="M0 -2 L.55 -.55 L2 0 L.55 .55 L0 2 L-.55 .55 L-2 0 L-.55 -.55Z" fill="#fff" opacity="0"><animateTransform attributeName="transform" type="scale" values="0;'+sc+';0" dur="1.5s" begin="'+d+'s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="'+d+'s" repeatCount="indefinite"/></path></g>':''}
+if(!p){var c0=/^#[0-9a-fA-F]{6}$/.test(color||"")?color:"#22c55e";p={r:[vMix(c0,.7),c0,vMix(c0,-.55)],i:[vMix(c0,-.6),vMix(c0,-.82)],s:[vMix(c0,.85),c0],g:c0,n:2};k="x"}
+var R=p.r,I=p.i,S=p.s,G=p.g,pts=[],cp=[];
+for(var j=0;j<10;j++){var an=-Math.PI/2+j*Math.PI/5,rr=j%2?2.9:6.5,rc=j%2?1.4:3.2;pts.push((rr*Math.cos(an)).toFixed(2)+","+(rr*Math.sin(an)).toFixed(2));cp.push((rc*Math.cos(an)).toFixed(2)+","+(rc*Math.sin(an)).toFixed(2))}
+var B='-'+((Date.now()/1000)%4).toFixed(2)+'s',T='dur="4s" begin="'+B+'" repeatCount="indefinite"';
+function sg(x){return Math.abs(x)<.03?(x<0?-.03:.03):x}
+var F=vSeq(FA,FB,28,function(e){var t=2*Math.PI*e;return sg(Math.cos(t)).toFixed(3)+" "+(1-.07*Math.abs(Math.sin(t))).toFixed(3)});
+var FS=vSeq(FA,FB,28,function(e){return (.55*Math.abs(Math.sin(2*Math.PI*e))).toFixed(3)});
+var Z=vSeq(SA,SB,32,function(e){var t=2*Math.PI*e;return (1-.08*Math.abs(Math.sin(t))).toFixed(3)+" "+sg(Math.cos(t)).toFixed(3)});
+var ZS=vSeq(SA,SB,32,function(e){return (.5*Math.abs(Math.sin(2*Math.PI*e))).toFixed(3)});
+function spark(x,y,d,sc){return A?'<g transform="translate('+x+' '+y+')"><path d="M0 -2 L.55 -.55 L2 0 L.55 .55 L0 2 L-.55 .55 L-2 0 L-.55 -.55Z" fill="#fff" opacity="0"><animateTransform attributeName="transform" type="scale" values="0;'+sc+';0" dur="1.6s" begin="'+d+'s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.6s" begin="'+d+'s" repeatCount="indefinite"/></path></g>':''}
 function ember(x,d){return A?'<circle cx="'+x+'" cy="22" r=".8" fill="#ffd9a0" opacity="0"><animate attributeName="cy" values="22;3" dur="1.5s" begin="'+d+'s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="'+d+'s" repeatCount="indefinite"/></circle>':''}
-var mid='<stop offset=".5" stop-color="'+R[1]+'">'+(A&&k==="sky"?'<animate attributeName="stop-color" values="'+R[1]+';#22d3ee;#e879f9;'+R[1]+'" dur="3s" repeatCount="indefinite"/>':'')+'</stop>';
-var glowA=A?(k==="red"?'<animate attributeName="opacity" values=".5;1;.6;1;.45;.9;.5" dur="1.3s" repeatCount="indefinite"/><animate attributeName="r" values="12;17;14;18;12" dur="1.3s" repeatCount="indefinite"/>':'<animate attributeName="opacity" values=".4;1;.4" dur="1.6s" repeatCount="indefinite"/><animate attributeName="r" values="12;17;12" dur="1.6s" repeatCount="indefinite"/>'):'';
-var out='<svg class="vfi vt" width="'+size+'" height="'+size+'" viewBox="0 0 24 24" overflow="visible" style="filter:drop-shadow(0 0 '+(still?0:3)+'px '+G+')" aria-hidden="true"><defs>'
+var mid='<stop offset=".5" stop-color="'+R[1]+'">'+(A&&k==="sky"?'<animate attributeName="stop-color" values="'+R[1]+';#22d3ee;#e879f9;'+R[1]+'" dur="4s" begin="'+B+'" repeatCount="indefinite"/>':'')+'</stop>';
+var fr='<rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#'+id+'o)"/>'
++'<rect x="1.5" y="1.5" width="21" height="21" rx="6.1" fill="none" stroke="'+R[0]+'" stroke-opacity=".95" stroke-width=".7"/>'
++'<rect x="3.4" y="3.4" width="17.2" height="17.2" rx="4.4" fill="url(#'+id+'i)" stroke="'+R[2]+'" stroke-width=".7"/>'
++'<rect x="3.9" y="3.9" width="16.2" height="16.2" rx="4" fill="none" stroke="'+G+'" stroke-opacity=".55" stroke-width=".5"/>'
++'<g clip-path="url(#'+id+'c)"><ellipse cx="12" cy="5.2" rx="9.5" ry="3.6" fill="url(#'+id+'g)"/></g>';
+var frame=A?'<g transform="translate(12 12)"><g><animateTransform attributeName="transform" type="scale" values="'+F.v+'" keyTimes="'+F.k+'" '+T+'/><g transform="translate(-12 -12)">'+fr+'</g><rect x="-11" y="-11" width="22" height="22" rx="6.5" fill="#000" opacity="0"><animate attributeName="opacity" values="'+FS.v+'" keyTimes="'+FS.k+'" '+T+'/></rect></g></g>':fr;
+var st='<polygon points="'+pts.join(" ")+'" fill="url(#'+id+'s)" stroke="'+S[0]+'" stroke-width=".5" stroke-linejoin="round"/><polygon points="'+cp.join(" ")+'" fill="#fff" fill-opacity=".5"/>'
++(A?'<g clip-path="url(#'+id+'k)"><rect x="-8" y="-3" width="16" height="3.4" fill="url(#'+id+'v)"><animateTransform attributeName="transform" type="translate" values="0 -9;0 -9;0 10;0 10" keyTimes="0;'+SA+';'+SB+';1" '+T+'/></rect></g>':'');
+var star='<g transform="translate(12 12.3)">'+(A?'<g><animateTransform attributeName="transform" type="scale" values="'+Z.v+'" keyTimes="'+Z.k+'" '+T+'/><polygon points="'+pts.join(" ")+'" fill="'+G+'" filter="url(#'+id+'b)" opacity=".9"/>'+st+'<polygon points="'+pts.join(" ")+'" fill="#000" opacity="0"><animate attributeName="opacity" values="'+ZS.v+'" keyTimes="'+ZS.k+'" '+T+'/></polygon></g>':st)+'</g>';
+var out='<svg class="vfi vt" width="'+size+'" height="'+size+'" viewBox="0 0 24 24" overflow="visible" style="'+(still?'':'filter:saturate(1.4) drop-shadow(0 0 3px '+G+')'+(size>=30?' drop-shadow(0 0 10px '+G+'aa)':''))+'" aria-hidden="true"><defs>'
 +'<linearGradient id="'+id+'o" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+R[0]+'"/>'+mid+'<stop offset="1" stop-color="'+R[2]+'"/></linearGradient>'
 +'<linearGradient id="'+id+'i" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+I[0]+'"/><stop offset="1" stop-color="'+I[1]+'"/></linearGradient>'
 +'<linearGradient id="'+id+'s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+S[0]+'"/><stop offset="1" stop-color="'+S[1]+'"/></linearGradient>'
-+'<radialGradient id="'+id+'r"><stop offset="0" stop-color="'+G+'" stop-opacity=".9"/><stop offset="1" stop-color="'+G+'" stop-opacity="0"/></radialGradient>'
++'<linearGradient id="'+id+'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
++'<linearGradient id="'+id+'v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
++'<radialGradient id="'+id+'r"><stop offset="0" stop-color="'+G+'" stop-opacity=".95"/><stop offset="1" stop-color="'+G+'" stop-opacity="0"/></radialGradient>'
 +'<linearGradient id="'+id+'h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
++'<filter id="'+id+'b" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="1.3"/></filter>'
++'<clipPath id="'+id+'k"><polygon points="'+pts.join(" ")+'"/></clipPath>'
 +'<clipPath id="'+id+'c"><rect x="1" y="1" width="22" height="22" rx="6.5"/></clipPath></defs>'
-+'<circle cx="12" cy="12" r="13" fill="url(#'+id+'r)" opacity="'+(still?0:.6)+'">'+glowA+'</circle>'
-+'<rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#'+id+'o)"/>'
-+'<rect x="1.5" y="1.5" width="21" height="21" rx="6.1" fill="none" stroke="'+R[0]+'" stroke-opacity=".9" stroke-width=".6"/>'
-+'<rect x="3.4" y="3.4" width="17.2" height="17.2" rx="4.4" fill="url(#'+id+'i)" stroke="'+R[2]+'" stroke-width=".6"/>'
-+'<g transform="translate(12 12.3)"><g>'+(A?'<animateTransform attributeName="transform" type="scale" values="1;1.18;1" dur="1.4s" repeatCount="indefinite"/>':'')+'<g>'+(A?'<animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="'+p.sp+'s" repeatCount="indefinite"/>':'')+'<polygon points="'+pts.join(" ")+'" fill="url(#'+id+'s)" stroke="'+S[0]+'" stroke-width=".5" stroke-linejoin="round"/></g></g></g>'
-+run(k==="red"?1.2:k==="elite"?1.5:2.2,0,12,"#fff",1)
-+((k==="elite"||k==="red")?run(k==="red"?1.2:1.5,-36.4,9,G,1):'')
-+(A?'<g clip-path="url(#'+id+'c)"><g transform="rotate(20 12 12)"><rect x="0" y="-8" width="8" height="40" fill="url(#'+id+'h)"><animateTransform attributeName="transform" type="translate" values="-12 0;32 0;32 0" keyTimes="0;.4;1" dur="2s" repeatCount="indefinite"/></rect><rect x="0" y="-8" width="3" height="40" fill="url(#'+id+'h)"><animateTransform attributeName="transform" type="translate" values="-18 0;38 0;38 0" keyTimes="0;.45;1" dur="2s" begin=".14s" repeatCount="indefinite"/></rect></g></g>':'')
-+((k==="plat"||k==="sky"||k==="elite")?spark(2.5,3,0,1.5)+spark(22,9,.5,1.2)+spark(5,22,1,1.3):'')
-+(k==="red"?ember(6,0)+ember(12,.5)+ember(18,1):'')
++'<circle cx="12" cy="12" r="15" fill="url(#'+id+'r)" opacity="'+(still?0:.55)+'">'+(A?'<animate attributeName="opacity" values=".4;1;.4" keyTimes="0;.3;1" '+T+'/><animate attributeName="r" values="13;19;13" keyTimes="0;.3;1" '+T+'/>':'')+'</circle>'
++frame
++'<circle cx="12" cy="12.3" r="8" fill="url(#'+id+'r)" opacity="'+(still?0:.35)+'">'+(A?'<animate attributeName="opacity" values=".25;.8;.25" '+T+'/>':'')+'</circle>'
++star
++(A?'<g clip-path="url(#'+id+'c)"><g transform="rotate(20 12 12)"><rect x="0" y="-8" width="8" height="40" fill="url(#'+id+'h)"><animateTransform attributeName="transform" type="translate" values="-14 0;-14 0;34 0;34 0" keyTimes="0;'+FA+';'+(FB+.06)+';1" '+T+'/></rect><rect x="0" y="-8" width="3" height="40" fill="url(#'+id+'h)"><animateTransform attributeName="transform" type="translate" values="-20 0;-20 0;40 0;40 0" keyTimes="0;'+(FA+.04)+';'+(FB+.1)+';1" '+T+'/></rect></g></g>':'')
++(still?'':(p.n>=1?spark(3,3.5,0,1.4):'')+(p.n>=2?spark(21.5,8,.55,1.2):'')+(p.n>=3?spark(5,21.5,1,1.3):'')+(p.n>=4?spark(20,20.5,.3,1.1):''))
++(k==="red"&&A?ember(6,0)+ember(12,.5)+ember(18,1):'')
 +'</svg>';return out}
-function badge(v,t){return (v?'<span class="vfb" title="Rasmiy tasdiqlangan"><span class="vfo">✓</span></span>':'')+(t?'<span class="vfb" title="'+esc(t.name)+'">'+tierIcon(t.color,22,t.k)+'</span>':'')}
+function badge(v,t,sz){return (v?'<span class="vfb" title="Rasmiy tasdiqlangan"><span class="vfo">✓</span></span>':'')+(t?'<span class="vfb" title="'+esc(t.name)+'">'+tierIcon(t.color,sz||22,t.k||NK[String(t.name||"").toLowerCase()])+'</span>':'')}
 window.vfBadge=badge;
 function need(){if(tok())return true;vfSheet('<h3>Avval kiring</h3><p>Bu bo\'lim uchun saytda «Telegram orqali kirish» tugmasini bosing.</p>');return false}
 function shrink(file,max,cap,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);var q=.85,u=c.toDataURL("image/jpeg",q);while(u.length>cap&&q>.35){q-=.1;u=c.toDataURL("image/jpeg",q)}cb(u.length>cap?null:u)};im.onerror=function(){cb(null)};im.src=r.result};r.onerror=function(){cb(null)};r.readAsDataURL(file)}
@@ -4783,6 +4785,18 @@ var VB=null;
 function refresh(){if(!tok())return;post("/badge/me").then(function(d){if(d.ok){VB=d;deco()}}).catch(function(){})}
 function deco(){var h=document.querySelector("#mh .me h3");if(h&&VB&&!h.querySelector(".vfb")&&(VB.verified||VB.tier))h.insertAdjacentHTML("beforeend",badge(VB.verified,VB.tier))}
 function inject(){deco()}
+var IC={id:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M6 16.5c.7-1.7 4.3-1.7 6 0M14.5 10H18M14.5 14H17"/>',star:'<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/>',msg:'<path d="M20.5 12a8 8 0 0 1-11.6 7.1L4 20l1-4.5A8 8 0 1 1 20.5 12z"/>',out:'<path d="M9 4H6.5A2.5 2.5 0 0 0 4 6.5v11A2.5 2.5 0 0 0 6.5 20H9M15.5 8L20 12l-4.5 4M20 12H9"/>'};
+function sv(d){return '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>'}
+var CH='<svg class="pfc" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+function pfi(bg,d){return '<span class="pfi" style="background:'+bg+'">'+sv(d)+'</span>'}
+function pfRows(){var v=VB||{},bi=v.tier?'<span class="pfi pfib">'+tierIcon(v.tier.color,32,v.tier.k||NK[String(v.tier.name||"").toLowerCase()])+'</span>':pfi("linear-gradient(135deg,#f59e0b,#ef4444)",IC.star);
+return '<div class="pfgt">Hisob</div><div class="pfg">'
++'<div class="pfr" data-vf="verify">'+pfi("linear-gradient(135deg,#3b82f6,#6366f1)",IC.id)+'<span class="pft"><b>Verifikatsiya</b><small'+(v.verified?' class="ok"':'')+'>'+(VB?(v.verified?"Tasdiqlangan":"Tasdiqlanmagan"):"")+'</small></span>'+CH+'</div>'
++'<div class="pfr" data-vf="badge">'+bi+'<span class="pft"><b>Badge</b><small>'+(v.tier?esc(v.tier.name)+" · "+v.orders+" buyurtma":(VB?"Hali ochilmagan":""))+'</small></span>'+CH+'</div>'
++'<div class="pfr" data-vf="rev">'+pfi("linear-gradient(135deg,#f59e0b,#fbbf24)",IC.msg)+'<span class="pft"><b>Sharhlar</b><small>Barcha sharhlar va baholash</small></span>'+CH+'</div></div>'
++'<div class="pfg" style="margin-top:18px"><div class="pfr out" data-a="logout">'+pfi("linear-gradient(135deg,#ef4444,#dc2626)",IC.out)+'<span class="pft"><b>Chiqish</b></span></div></div>'}
+window.vfPH=function(u){u=u||{};var nm=String(u.name||""),ini=(nm.trim().charAt(0)||"?").toUpperCase();return '<div class="pfh"><div class="pfav">'+esc(ini)+'</div><div class="pfhi"><div class="pfn">'+esc(nm)+'<span id="pfbd">'+(VB?badge(VB.verified,VB.tier,24):'')+'</span></div><div class="pfs">'+esc(u.email||u.phone||"")+'</div></div></div>'};
+window.vfPR=function(){if(tok())post("/badge/me").then(function(d){if(d&&d.ok){VB=d;var el=document.getElementById("pfm");if(el)el.innerHTML=pfRows();var bd=document.getElementById("pfbd");if(bd)bd.innerHTML=badge(VB.verified,VB.tier,24)}}).catch(function(){});return '<div id="pfm">'+pfRows()+'</div>'};
 var mh=document.getElementById("mh");if(mh)new MutationObserver(inject).observe(mh,{childList:true,subtree:true});inject();
 var lastTok=null;setInterval(function(){var t=tok();if(t!==lastTok){lastTok=t;VB=null;if(t){refresh();setTimeout(function(){showPending(false)},2500)}}},1500);
 
@@ -4799,7 +4813,9 @@ e.textContent={used:"Bu hujjat bilan tasdiqlash mumkin emas.",pending:"So'rov al
 function openBadge(){if(!need())return;post("/badge/me").then(function(d){if(!d.ok){vfSheet('<h3>Badge</h3><p>Xatolik'+(d&&d.error?' ('+esc(d.error)+')':'')+'. Qayta urinib ko\'ring.</p>');return}VB=d;var h='<h3>Badge</h3><div class="vfc">Hisobga olingan buyurtmalar: <b>'+d.orders+'</b><br>Rasmiy verifikatsiya: '+(d.verified?"✅ bor":"yo'q")+'</div>';
 h+='<div class="vtg">';d.tiers.forEach(function(t){var cur=d.tier&&d.tier.k===t.k;h+='<div class="vtc'+(t.unlocked?'':' lk')+(cur?' on':'')+'">'+tierIcon(t.color,48,t.k,!t.unlocked)+'<b>'+esc(t.name)+'</b><small>'+t.min+'+ buyurtma</small>'+(t.unlocked?'<button data-vf="pick" data-k="'+esc(t.k)+'">'+(cur?"✔ Tanlangan":"Tanlash")+'</button>':'<em>🔒</em>')+'</div>'});h+='</div>';
 vfSheet(h)}).catch(function(){vfSheet('<h3>Badge</h3><p>Server javob bermadi (worker yoki baza xatosi). Cloudflare loglarini tekshiring.</p>')})}
-function revRow(r){return '<div class="vfr">'+(r.purchase?'<div class="vfbuy">🛍 Sotib olgan</div>':'')+'<div class="vfnm"><b>'+esc(r.name)+'</b>'+badge(r.verified,r.tier)+'</div><div>'+stars(r.rating)+'</div><div>'+esc(r.text)+'</div>'+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'</div>'}
+function cmRow(c){return '<div class="vfcmi"><b>'+esc(c.n)+'</b>'+badge(c.verified,c.tier,16)+' '+esc(c.t)+'</div>'}
+function revRow(r){return '<div class="vfr">'+(r.purchase?'<div class="vfbuy">🛍 Sotib olgan</div>':'')+'<div class="vfnm"><b>'+esc(r.name)+'</b>'+badge(r.verified,r.tier)+'</div><div>'+stars(r.rating)+'</div><div>'+esc(r.text)+'</div>'+(r.img?'<img class="vfp" src="'+W()+esc(r.img)+'">':'')+(r.reply?'<div class="vfc"><b>Do\'kon javobi:</b> '+esc(r.reply)+'</div>':'')+'<div class="vfcm">'+(r.comments||[]).map(cmRow).join("")+'<div class="vfcmw"><input maxlength="400" placeholder="Izoh yozing..."><span class="vfcs" data-vf="cmsend" data-rid="'+r.id+'">➤</span></div></div></div>'}
+function cmSend(t){var w=t.closest(".vfcm"),i=w.querySelector("input"),tx=i.value.trim();if(!tx||t._b)return;if(!tok()){i.value="";i.placeholder="Izoh yozish uchun avval kiring";return}t._b=1;post("/review/comment",{rid:Number(t.getAttribute("data-rid")),text:tx}).then(function(d){t._b=0;if(d.ok){i.value="";i.placeholder="Izoh yozing...";i.parentNode.insertAdjacentHTML("beforebegin",cmRow(d.c))}else{i.value="";i.placeholder=d.error==="limit"?"Izohlar limiti tugadi":"Xatolik, qayta urinib ko'ring"}}).catch(function(){t._b=0;i.placeholder="Tarmoq xatosi"})}
 function stars(n){return '<span class="vfs">'+"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n)+'</span>'}
 function openReviews(){vfSheet('<h3>Sharhlar</h3><p>Yuklanmoqda...</p>');
 var a=fetch(W()+"/reviews").then(function(r){return r.json()}),b=tok()?post("/review/pending"):Promise.resolve({rows:[]});
@@ -4807,18 +4823,18 @@ Promise.all([a,b]).then(function(x){var h='<h3>Sharhlar</h3>',el=(x[1]&&x[1].row
 if(el.length){window._vfq=el;h+='<div class="vfc"><b>Baholash kutayotgan tovarlar</b>'+el.map(function(o,i){return '<div class="vfr">'+esc(o.name)+' <button data-vf="rate" data-i="'+i+'">⭐ Baholash</button></div>'}).join("")+'</div>'}
 else h+='<p style="font-size:13px;opacity:.7">Sharh yozish uchun tovar sahifasini oching.</p>';
 (x[0].rows||[]).forEach(function(r){h+=revRow(r)});
-vfSheet(h);var f=$("rvi");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u})}}).catch(function(){})}
+vfSheet(h);var f=$("rvi");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u;var pv=$("prpv");if(pv)pv.innerHTML=u?'<img class="vfp" style="max-height:130px" src="'+u+'">':'<span style="color:#d6246e;font-size:12px">Rasm o\'qilmadi</span>'})}}).catch(function(){})}
 function sendReview(){var e=$("rve");e.textContent="Yuborilmoqda...";post("/review/add",{oid:$("rvo").value,rating:Number($("rvr").value),text:$("rvt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;openReviews();return}e.textContent={order:"Faqat yetkazilgan buyurtmaga sharh yoziladi.",dup:"Bu buyurtmaga sharh yozilgan.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
-function prRender(p){var sp=$("sp"),old=$("vfpr");if(old)old.remove();if(!sp||!p||!p.id)return;window._vfp=p;
+function prRender(p){window._rvImg=null;var sp=$("sp"),old=$("vfpr");if(old)old.remove();if(!sp||!p||!p.id)return;window._vfp=p;
 var box=document.createElement("div");box.id="vfpr";box.className="vfc";box.innerHTML="<h3 style='margin:0 0 6px'>⭐ Sharhlar</h3><div style='opacity:.7'>Yuklanmoqda...</div>";var op=sp.querySelector(".opt");if(op&&op.parentNode)op.parentNode.insertBefore(box,op);else sp.appendChild(box);
 var a=fetch(W()+"/reviews?pid="+p.id).then(function(r){return r.json()}),b=tok()?post("/review/eligible",{pid:p.id,pn:p.n}):Promise.resolve({});
 Promise.all([a,b]).then(function(x){if(!box.isConnected)return;var d=x[0],e=x[1]||{},h="<h3 style='margin:0 0 6px'>⭐ Sharhlar"+(d.count?" · "+d.avg+" ("+d.count+")":"")+"</h3>";
 if(!tok())h+="<div style='opacity:.7;font-size:13px'>Sharh yozish uchun avval kiring.</div>";
-else if(e.can)h+='<div class="vfc"><b>Sharh yozing</b>'+(e.bought?'<div style="font-size:12px;color:#16a34a;margin-top:2px">🛍 Siz bu tovarni sotib olgansiz — sharhingizda «Sotib olgan» belgisi chiqadi</div>':'')+''+starsIn("prr")+'<textarea id="prt" rows="3" maxlength="800" placeholder="Fikringiz"></textarea><input id="pri" type="file" accept="image/*"><div id="pre" style="color:#d6246e;font-size:13px"></div><button class="btn" data-vf="prsend">Yuborish</button></div>';
+else if(e.reason!=="dup")h+='<div class="vfc"><b>Sharh yozing</b>'+(e.bought?'<div style="font-size:12px;color:#16a34a;margin-top:2px">🛍 Siz bu tovarni sotib olgansiz — sharhingizda «Sotib olgan» belgisi chiqadi</div>':'')+''+starsIn("prr")+'<textarea id="prt" rows="3" maxlength="800" placeholder="Fikringiz"></textarea><label class="vfph"><span>📷 Rasm qo\'shish</span><input id="pri" type="file" accept="image/*" hidden></label><div id="prpv"></div><div id="pre" style="color:#d6246e;font-size:13px"></div><button class="btn" data-vf="prsend">Yuborish</button></div>';
 else if(e.reason==="dup")h+="<div style='opacity:.7;font-size:13px'>Siz bu tovarga sharh yozgansiz.</div>";
 (d.rows||[]).forEach(function(r){h+=revRow(r)});
 if(!(d.rows||[]).length)h+="<div style='opacity:.7;font-size:13px;margin-top:6px'>Hozircha sharh yo'q.</div>";
-box.innerHTML=h;var f=$("pri");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u})}}).catch(function(){})}
+box.innerHTML=h;var f=$("pri");if(f)f.onchange=function(){if(!f.files[0])return;shrink(f.files[0],900,400000,function(u){window._rvImg=u;var pv=$("prpv");if(pv)pv.innerHTML=u?'<img class="vfp" style="max-height:130px" src="'+u+'">':'<span style="color:#d6246e;font-size:12px">Rasm o\'qilmadi</span>'})}}).catch(function(){})}
 window.vfProdReviews=prRender;
 function prSend(){var p=window._vfp,e=$("pre");if(!p)return;if(!Number($("prr").dataset.r)){e.textContent="Yulduzni tanlang.";return}e.textContent="Yuborilmoqda...";post("/review/add",{pid:p.id,pn:p.n,rating:Number($("prr").dataset.r),text:$("prt").value,image:window._rvImg||""}).then(function(d){if(d.ok){window._rvImg=null;prRender(p);if(d.coupon){window._vfc=null;try{vfSheet('<h3>Rahmat! 🙏</h3><p>Sharhingiz saqlandi.</p>'+cpMsg(d.coupon))}catch(e){}}try{if(typeof loadRef==="function")loadRef()}catch(e){}return}e.textContent={dup:"Siz bu tovarga sharh yozgansiz.",image:"Rasm juda katta.",rating:"Baho tanlang."}[d.error]||"Xatolik."})}
 function starsIn(id){var s='<div class="vfsi" id="'+id+'" data-r="0">';for(var i=1;i<=5;i++)s+='<span data-vf="star" data-n="'+i+'">☆</span>';return s+'</div>'}
@@ -4832,10 +4848,42 @@ post("/review/add",{pid:it.pid,pn:it.name,rating:r,text:$("rst").value,image:win
 function showPending(force){if(!tok())return;if(!force&&$("sh")&&$("sh").classList.contains("open"))return;post("/review/pending").then(function(d){if(!d.ok)return;var q=d.rows||[];if(!force)q=q.filter(function(r){try{return !localStorage.getItem("vf.seen."+r.pid)}catch(e){return true}});if(q.length)rateSheet(q,0)}).catch(function(){})}
 document.addEventListener("click",function(ev){var t=ev.target.closest&&ev.target.closest("[data-vf]");if(!t)return;var a=t.getAttribute("data-vf");
 if(a==="verify")openVerify();else if(a==="badge")openBadge();else if(a==="rev")openReviews();else if(a==="send")sendVerify();else if(a==="prsend")prSend();else if(a==="rssend")rsSend();else if(a==="rate")rateSheet(window._vfq,Number(t.getAttribute("data-i")));else if(a==="star"){var bx=t.parentNode,nn=Number(t.getAttribute("data-n"));bx.dataset.r=nn;[].forEach.call(bx.children,function(c,j){c.textContent=j<nn?"★":"☆"})}
-else if(a==="pick")post("/badge/choose",{tier:t.getAttribute("data-k")}).then(function(){refresh();openBadge()})},true);
+else if(a==="cmsend")cmSend(t);else if(a==="pick")post("/badge/choose",{tier:t.getAttribute("data-k")}).then(function(){refresh();openBadge()})},true);
 if(/[?&]verify=1/.test(location.search)){try{var uu=new URL(location.href);uu.searchParams.delete("verify");history.replaceState(null,"",uu.pathname+uu.search+uu.hash)}catch(e){}var n=0,iv=setInterval(function(){if(tok()){clearInterval(iv);openVerify()}else if(++n>12)clearInterval(iv)},500)}
 if(/[?&]review=1/.test(location.search)){try{var ur=new URL(location.href);ur.searchParams.delete("review");history.replaceState(null,"",ur.pathname+ur.search+ur.hash)}catch(e){}var n2=0,iv2=setInterval(function(){if(tok()){clearInterval(iv2);showPending(true)}else if(++n2>12)clearInterval(iv2)},500)}
 })();
 </script>
+<style id="vtcss">
+.vtg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.vtc{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 6px 10px;border-radius:20px;background:rgba(127,127,127,.12);text-align:center}
+.vtc.on{box-shadow:inset 0 0 0 2px #7b5cf0}.vtc small{opacity:.7;font-size:11px}.vtc em{font-style:normal;font-size:13px;padding:6px}
+.vtc button{border:0;border-radius:999px;padding:6px 12px;font-weight:700;font-size:12px;background:#7b5cf0;color:#fff}
+.vtc.lk .vt,.vtc.lk .vt *{animation:none!important}.vtc.lk .vt{opacity:.35;filter:grayscale(1)}
+.pfh{display:flex;align-items:center;gap:14px;padding:6px 2px 14px}
+.pfav{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#7b5cf0,#ff6fae);color:#fff;font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 6px 18px rgba(123,92,240,.4)}
+.pfhi{min-width:0}.pfn{font-size:19px;font-weight:800;display:flex;align-items:center;flex-wrap:wrap;gap:2px}.pfs{font-size:13px;opacity:.6;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pfgt{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.55;margin:18px 6px 8px}
+.pff,.pfg{border-radius:18px;background:rgba(127,127,127,.12);overflow:hidden}
+.sp .pff label{display:flex;align-items:center;gap:10px;padding:0 16px;min-height:50px;margin:0}
+.sp .pff label+label{border-top:1px solid rgba(127,127,127,.2)}
+.pff label span{width:84px;flex:none;font-size:15px;opacity:.6}
+.sp .pff input{flex:1;min-width:0;width:auto!important;height:auto!important;margin:0!important;padding:14px 0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;outline:0;font-size:16px!important;color:inherit!important;text-align:right}
+.pfr{display:flex;align-items:center;gap:12px;padding:11px 14px;min-height:54px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pfr+.pfr{border-top:1px solid rgba(127,127,127,.2)}.pfr:active{background:rgba(127,127,127,.14)}
+.pfi{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}.pfi.pfib{background:none;width:34px}
+.pft{flex:1;min-width:0;display:flex;flex-direction:column}.pft b{font-size:16px;font-weight:600}.pft small{font-size:12.5px;opacity:.6;margin-top:1px}.pft small.ok{color:#16a34a;opacity:1}
+.pfc{opacity:.4;flex:none}.pfr.out .pft b{color:#ff453a}
+.vfph{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:12px;background:rgba(127,127,127,.16);font-size:14px;font-weight:600;cursor:pointer;margin:4px 0}
+.vfcm{margin:10px 0 0 6px;padding-left:10px;border-left:2px solid rgba(127,127,127,.25)}
+.vfcmi{font-size:13px;margin:6px 0;line-height:1.4;display:flex;align-items:center;flex-wrap:wrap;gap:2px}.vfcmi b{margin-right:2px}
+.vfcmw{display:flex;gap:6px;align-items:center;margin-top:8px}
+.vfc .vfcmw input,.vfcmw input{flex:1;min-width:0;width:auto!important;margin:0!important;padding:8px 14px!important;border-radius:99px!important;font-size:13px!important}
+.vfcs{width:34px;height:34px;border-radius:50%;background:#7b5cf0;color:#fff;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer;font-size:14px}
+/* iOS uslubidagi silliq oynalar */
+.ov .menu{transition:transform .5s cubic-bezier(.32,.72,0,1)!important}
+.ov{transition:opacity .4s ease!important}
+.sp{transition:transform .5s cubic-bezier(.32,.72,0,1)!important}
+.sh{transition:opacity .4s ease!important}
+</style>
 </body>
 </html>
