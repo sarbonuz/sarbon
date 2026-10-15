@@ -4932,5 +4932,23 @@ function vfConfirmOut(){if(document.getElementById("lgo"))return;var o=document.
 o.querySelector(".lgn").onclick=cl;o.onclick=function(e){if(e.target===o)cl()};
 o.querySelector(".lgy").onclick=function(){cl();window._lgGo=1;var b=document.createElement("button");b.setAttribute("data-a","logout");document.body.appendChild(b);b.click();b.remove()}}
 </script>
+<script id="sb-gsap">(function(){
+if(window.__lite||window.__sbGsap)return;window.__sbGsap=1;
+function go(){var g=window.gsap;if(!g)return;
+var seen=new WeakSet();
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;io.unobserve(e.target);
+g.to(e.target,{opacity:1,y:0,scale:1,duration:.6,ease:"power3.out",clearProps:"opacity,transform"})})},{threshold:.08});
+function prep(root){
+var list=(root.querySelectorAll?root.querySelectorAll("#app .card"):[]);
+if(root.matches&&root.matches("#app .card"))list=[root];
+Array.prototype.forEach.call(list,function(c,i){if(seen.has(c))return;seen.add(c);
+g.set(c,{opacity:0,y:28,scale:.97});io.observe(c)})}
+var app=document.getElementById("app");if(!app)return;
+prep(app);
+new MutationObserver(function(ms){ms.forEach(function(m){Array.prototype.forEach.call(m.addedNodes,function(n){if(n.nodeType===1)prep(n)})})}).observe(app,{childList:true,subtree:true});
+document.addEventListener("pointerdown",function(e){var b=e.target.closest&&e.target.closest("button,.card");if(!b)return;g.fromTo(b,{scale:.96},{scale:1,duration:.35,ease:"back.out(3)",clearProps:"transform"})},{passive:true});
+}
+var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js";s.onload=go;document.head.appendChild(s);
+})();</script>
 </body>
 </html>
