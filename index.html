@@ -3553,6 +3553,7 @@ function pollLogin(id){
     fetch(WORKER+"/login-status?id="+encodeURIComponent(id)+"&_="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(x){
       busyF=false;
       if(!x||!x.ok)return;
+      if(x.needPhone){done=true;clearInterval(LTIMER);gPhone(x);return}
       if(!x.token){done=true;clearInterval(LTIMER);hint("Server kirish tokenini bermadi (Worker xatosi). Admin bilan bog'laning.");return}
       done=true;clearInterval(LTIMER);finishLogin(x);
     }).catch(function(){busyF=false});
@@ -3579,6 +3580,7 @@ function resumeLogin(){
 }
 function login(){
   var id=(function(){var a=new Uint8Array(12);try{crypto.getRandomValues(a)}catch(e){for(var i=0;i<12;i++)a[i]=Math.floor(Math.random()*256)}return Array.prototype.map.call(a,function(b){return("0"+b.toString(16)).slice(-2)}).join("")})();
+  window._glid=id;
   try{localStorage.setItem("sarbon.lid",JSON.stringify({id:id,t:Date.now()}))}catch(e){}
   openSheet('<h3 style="margin:0 0 6px">Kirish</h3><div class="note">Telegram botimizda telefon raqamingizni yuboring. Bot tasdiqlagach, bu yerga qaytsangiz avtomatik kirasiz.</div><a id="tgl" class="btn" href="#" target="_blank" rel="noopener" onclick="if(this.getAttribute(\'href\')===\'#\'){return false}" style="display:block;text-align:center;text-decoration:none;opacity:.6">Tayyorlanmoqda...</a><div class="note" id="tgs"></div><div class="note" style="text-align:center;margin:14px 0 8px">yoki</div><div id="gbtn" style="display:flex;justify-content:center;min-height:44px"></div><div class="note" id="gs" style="text-align:center">Telegram ichidagi brauzerda Google ishlamasa, Telegram orqali kiring.</div>');
   gInit();
@@ -3601,7 +3603,19 @@ function gLoad(cb){
   s.addEventListener("load",function(){cb()});
   s.addEventListener("error",function(){try{s.remove()}catch(e){}cb(1)});
 }
+function gTg(){
+  var b=$("gbtn");if(!b)return;
+  b.innerHTML='<button type="button" id="gtg" style="display:flex;align-items:center;justify-content:center;gap:10px;width:280px;max-width:100%;height:44px;border-radius:22px;border:1px solid #dadce0;background:#fff;color:#3c4043;font:600 15px system-ui,sans-serif;cursor:pointer"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 010-9.4l-7.9-6.1a24 24 0 000 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Google orqali kirish</button>';
+  gMsg("Google brauzerda ochiladi. Kirgach, Telegramga qaytsangiz do'kon avtomatik kiradi.");
+  $("gtg").onclick=function(){
+    var id=window._glid;if(!id){gMsg("Xatolik. Oynani yopib, qaytadan oching.");return}
+    var u=WORKER+"/google-start?id="+encodeURIComponent(id);
+    pollLoginLater(id);
+    try{Telegram.WebApp.openLink(u,{try_instant_view:false})}catch(e){window.open(u,"_blank")}
+  };
+}
 function gInit(){
+  if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData){gTg();return}
   gLoad(function(err){
     var b=$("gbtn");if(!b)return;
     if(err||!window.google||!google.accounts||!google.accounts.id){b.style.display="none";gMsg("Google yuklanmadi. Telegram orqali kiring.");return}
