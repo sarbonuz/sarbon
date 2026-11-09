@@ -5741,5 +5741,59 @@ html body .top .ib{background:var(--v3-s2)!important;color:var(--v3-ink)!importa
 #totop{background:var(--v3-s)!important;color:var(--v3-ink)!important;border:1px solid var(--v3-line)!important;box-shadow:var(--v3-sh)!important}
 </style>
 
+<style id="sb-layout-v3b">
+/* V3b: tovar oynasi, sotib olish oynasi (#vs), menyudagi kirish */
+/* tovar oynasi: katta galereya + tekis bloklar */
+#sp .gal{width:100%!important;max-width:none!important;aspect-ratio:1/1;border-radius:26px!important;margin:0 0 12px!important;background:var(--v3-s2)!important}
+#sp .gal .gi img,#sp .gal .gi video{object-fit:contain!important;padding:10px;box-sizing:border-box}
+#sp .gal .gb{background:var(--v3-s)!important;color:var(--v3-ink)!important;border:1px solid var(--v3-line)!important;box-shadow:none!important}
+#sp .gal .gc{background:var(--v3-s)!important;color:var(--v3-ink)!important;border-radius:999px!important;font-weight:700}
+#sp h3{font-size:20px!important;font-weight:800;letter-spacing:-.3px;color:var(--v3-ink)!important}
+#sp .sold{color:var(--v3-mute)!important;font-size:12.5px}
+#sp .pdesc{color:var(--v3-mute)!important;opacity:1!important}
+#sp .plk{background:var(--v3-soft)!important;color:var(--v3-acc)!important;border:0!important;border-radius:999px!important;padding:7px 12px!important;font-size:12px;font-weight:700;white-space:nowrap}
+#sp .opt{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 6px}
+#sp .opt button{border-radius:18px!important;padding:12px!important;text-align:left;line-height:1.35;font-size:12.5px;font-weight:500}
+#sp .opt button b{font-size:14px;font-weight:800}
+#sp .pricebox{background:var(--v3-s)!important;border:1px solid var(--v3-line)!important;border-radius:22px!important;padding:6px 16px!important;box-shadow:none!important}
+#sp .pricebox .ln{border-bottom:1px solid var(--v3-line);color:var(--v3-ink)!important;font-size:14px!important}
+#sp .pricebox .ln:last-of-type{border-bottom:0}
+#sp .pricebox .ln b{font-size:17px!important;font-weight:800}
+#sp .pricebox small{display:block;color:var(--v3-mute);font-size:11px;font-weight:500}
+#sp .ban,#sp details{background:var(--v3-s)!important;border:1px solid var(--v3-line)!important;border-radius:18px!important;padding:12px 14px;color:var(--v3-ink)!important}
+#sp .warn{background:var(--v3-soft)!important;color:var(--v3-acc)!important;border:0!important;border-radius:16px!important}
+/* tovar pastki paneli */
+#sh .pbf,#pbf{background:var(--v3-s)!important;border-top:1px solid var(--v3-line)!important;box-shadow:0 -10px 30px rgba(0,0,0,.10)!important;padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px))!important}
+#pbf .pbr{gap:10px}
+#pbf .pbi{background:var(--v3-s2)!important;color:var(--v3-ink)!important;border:0!important;border-radius:16px!important;min-width:54px;height:54px}
+#pbf .pbi.on{color:var(--v3-acc)!important;background:var(--v3-soft)!important}
+#pbf .pbi span{font-size:10px;font-weight:600}
+#pbf .pbi i{background:var(--v3-acc)!important;color:#fff}
+#pbf .pbb{flex:1;height:54px!important;border:0!important;border-radius:999px!important;background:linear-gradient(135deg,var(--v3-acc2),var(--v3-acc))!important;color:#fff!important;font-size:16px!important;font-weight:800!important;box-shadow:0 10px 22px rgba(124,58,237,.28)!important}
+/* #vs: savatga qo'shish / sotib olish oynasi */
+#vs .vsb{background:rgba(8,6,16,.55)!important}
+#vs .vsp,html[data-theme] #vs .vsp{background:var(--v3-bg)!important;color:var(--v3-ink)!important;border-radius:28px 28px 0 0!important;border:1px solid var(--v3-line);border-bottom:0}
+#vs .vsimg{width:96px!important;height:96px!important;border-radius:20px!important;background:var(--v3-s2)!important}
+#vs .vsimg img{object-fit:contain!important}
+#vs .vsp1{color:var(--v3-ink)!important;font-size:22px!important}
+#vs .vss{color:var(--v3-ink)!important}
+#vs .vsm,#vs .vsn,#vs .vst{color:var(--v3-mute)!important}
+#vs .vsx{background:var(--v3-s2)!important;color:var(--v3-ink)!important}
+#vs .vsq{background:var(--v3-s2);border:0!important;border-radius:999px!important}
+#vs .vsq button{color:var(--v3-ink)!important}
+#vs .vsc,#vs .vsf{border-color:var(--v3-line)!important}
+#vs .vsg{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px}
+#vs .vsv{border-radius:14px!important;background:var(--v3-s)!important;border:1.5px solid var(--v3-line)!important;color:var(--v3-ink)!important}
+#vs .vsv[aria-pressed="true"]{background:var(--v3-acc)!important;border-color:var(--v3-acc)!important;color:#fff!important}
+#vs .vse,#vs .vsmu{color:var(--v3-acc)!important}
+#vs .vsgo,#vs .vsgo.c{height:54px!important;border-radius:999px!important;background:linear-gradient(135deg,var(--v3-acc2),var(--v3-acc))!important;box-shadow:0 10px 22px rgba(124,58,237,.28)!important}
+/* menyudagi kirish bloki */
+#mn .me{padding:18px!important}
+#mn .me h3{color:#fff!important;font-size:18px!important;margin:0 0 4px}
+#mn .me p{color:rgba(255,255,255,.8)!important;margin:0 0 12px;font-size:13px}
+#mn .me button{background:#fff!important;color:var(--v3-acc)!important;border:0!important;border-radius:999px!important;padding:11px 18px!important;font-weight:800!important;font-size:14px!important;box-shadow:none!important;width:100%}
+#mn #mh button,#mn .me button[data-a="login"]{background:#fff!important;color:#6d28d9!important}
+</style>
+
 </body>
 </html>
