@@ -3873,18 +3873,26 @@ document.addEventListener("click",function(e){
     $("rsend").onclick=function(){var b=$("rsend");b.disabled=true;$("rerr").textContent="Yuborilmoqda...";gPost("/password-reset-request",{phone:$("rphone").value}).then(function(d){b.disabled=false;$("rerr").textContent=(d&&d.message)||"Telegram botga telefon raqamini tasdiqlash so‘rovi yuborildi. Botdagi kontakt tugmasini bosing."}).catch(function(){b.disabled=false;$("rerr").textContent="Tarmoq xatosi."})};
     $("rconfirm").onclick=function(){var b=$("rconfirm");b.disabled=true;gPost("/password-reset-confirm",{phone:$("rphone").value,code:$("rcode").value,newPassword:$("rpass").value,confirmPassword:$("rpass2").value}).then(function(d){b.disabled=false;if(d&&d.ok){$("rerr").textContent="Parol yangilandi. Endi telefon va yangi parol bilan kiring.";return}$("rerr").textContent=({code:"Kod noto'g'ri.",expired:"Kod eskirgan yoki urinishlar tugagan.",weak:"Parol kamida 8 belgidan iborat bo'lsin.",mismatch:"Parollar bir xil emas."}[d&&d.error]||"Tiklash amalga oshmadi.")}).catch(function(){b.disabled=false;$("rerr").textContent="Tarmoq xatosi."})};return}
   if(a==="pwmanage"){
-    if(!S.sess||!S.sess.token)return;
-    t.disabled=true;gPost("/password-status",{token:S.sess.token}).then(function(d){t.disabled=false;if(!d||!d.ok){gMsg("Parol holatini tekshirib bo‘lmadi.");return}
+    if(!S.sess||!S.sess.token){gMsg("Sessiya topilmadi. Akkauntdan chiqib, qayta kiring.");return}
+    var pwBtn=t;pwBtn.disabled=true;pwBtn.textContent="Tekshirilmoqda…";
+    // Modal darhol ochiladi; Worker javobi kelgach birinchi o'rnatish/o'zgartirish holati aniqlanadi.
+    openSheet('<div class="lgn"><div class="lg-hd"><h3>Akkaunt paroli</h3><p id="pwloadmsg">Parol holati tekshirilmoqda…</p></div><div class="lg-st" aria-live="polite"></div></div>');
+    gPost("/password-status",{token:S.sess.token}).then(function(d){
+      pwBtn.disabled=false;pwBtn.textContent="🔒 Parolni o‘zgartirish";
+      if(!d||!d.ok){var m=$("pwloadmsg");if(m)m.textContent=(d&&d.error==="auth")?"Sessiya muddati tugagan. Qayta kiring.":"Parol holatini tekshirib bo‘lmadi. Worker sozlamalarini tekshiring.";return}
       var html='<div class="lgn"><div class="lg-hd"><h3>Parolni '+(d.hasPassword?'o‘zgartirish':'o‘rnatish')+'</h3><p>'+(d.hasPassword?'Yangi parol o‘rnatish uchun avval joriy parolni kiriting.':'Akkauntingiz uchun birinchi parolni yarating.')+'</p></div>';
       if(d.hasPassword)html+='<input class="lg-in" id="pfcurr" type="password" autocomplete="current-password" placeholder="Joriy parol">';
       html+='<input class="lg-in" id="pfnew" type="password" autocomplete="new-password" placeholder="Yangi parol (kamida 8 belgi)"><input class="lg-in" id="pfnew2" type="password" autocomplete="new-password" placeholder="Yangi parolni takrorlang">';
       if(d.hasPassword)html+='<button type="button" data-a="pwforgot" class="btn ghost" style="margin-top:4px">Parolni esdan chiqardingizmi?</button>';
-      html+='<div id="pwpe" class="lg-st"></div><button type="button" class="btn" data-a="pwset" style="margin-top:10px">Parolni saqlash</button></div>';openSheet(html);
-    }).catch(function(){t.disabled=false;gMsg("Server bilan aloqa yo‘q.")});return}
+      html+='<div id="pwpe" class="lg-st" aria-live="polite"></div><button type="button" class="btn" data-a="pwset" style="margin-top:10px">Parolni saqlash</button></div>';openSheet(html);
+    }).catch(function(err){
+      pwBtn.disabled=false;pwBtn.textContent="🔒 Parolni o‘zgartirish";
+      var m=$("pwloadmsg");if(m)m.textContent="Server bilan aloqa yo‘q. Internet va Worker manzilini tekshiring.";
+    });return}
   if(a==="pwset"){
     var curp=$("pfcurr")?$("pfcurr").value:"",np=$("pfnew").value,np2=$("pfnew2").value,pepw=$("pwpe");
     if(np!==np2){pepw.textContent="Yangi parollar bir xil emas.";return}if(np.length<8){pepw.textContent="Parol kamida 8 belgidan iborat bo'lsin.";return}
-    t.disabled=true;pepw.textContent="Saqlanmoqda...";gPost("/password-set",{token:S.sess&&S.sess.token,currentPassword:curp,newPassword:np,confirmPassword:np2}).then(function(d){t.disabled=false;pepw.textContent=d&&d.ok?"Parol muvaffaqiyatli saqlandi.":({current:"Joriy parol noto'g'ri.",weak:"Parol kamida 8 belgidan iborat bo'lsin.",mismatch:"Parollar bir xil emas.",taken:"Bu telefon boshqa akkauntga biriktirilgan.",phone_or_identity:"Telefonni saqlang va Telegram/Google akkauntini ulang."}[d&&d.error]||"Saqlanmadi. Qayta urinib ko'ring.");if(d&&d.ok){$("pfcurr").value="";$("pfnew").value="";$("pfnew2").value=""}}).catch(function(){t.disabled=false;pepw.textContent="Tarmoq xatosi."});return}
+    t.disabled=true;pepw.textContent="Saqlanmoqda...";gPost("/password-set",{token:S.sess&&S.sess.token,currentPassword:curp,newPassword:np,confirmPassword:np2}).then(function(d){t.disabled=false;pepw.textContent=d&&d.ok?"Parol muvaffaqiyatli saqlandi.":({current:"Joriy parol noto'g'ri.",weak:"Parol kamida 8 belgidan iborat bo'lsin.",mismatch:"Parollar bir xil emas.",taken:"Bu telefon boshqa akkauntga biriktirilgan.",phone_or_identity:"Telefonni saqlang va Telegram/Google akkauntini ulang."}[d&&d.error]||"Saqlanmadi. Qayta urinib ko'ring.");if(d&&d.ok){if($("pfcurr"))$("pfcurr").value="";if($("pfnew"))$("pfnew").value="";if($("pfnew2"))$("pfnew2").value=""}}).catch(function(){t.disabled=false;pepw.textContent="Tarmoq xatosi."});return}
   if(a==="sendcode"){var ph=$("lp").value.replace(/\D/g,"");if(ph.length<9){$("le").textContent="Telefon raqamini to'liq kiriting.";return}login(2,"+"+(ph.length===9?"998"+ph:ph));return}
   if(a==="verify"){var code=$("lc").value.trim(),nm=$("ln").value.trim();if(code!=="1234"){$("le").textContent="Kod noto'g'ri. Demo kod: 1234";return}if(nm.length<2){$("le").textContent="Ismingizni yozing.";return}S.user={name:nm,phone:v};save();closeSheet();render();return}
   if(a==="editprof"){
