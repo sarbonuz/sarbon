@@ -3548,15 +3548,17 @@ function aiChat(inline){
   return '<div class="aibox glass'+(inline?'':' apin')+'">'+'<div class="aihd"><span class="dot"></span><div><b>Sarbon AI yordamchi</b><small>Onlayn · odatda darhol javob beradi</small></div>'+(inline?'':'<button class="xb" data-a="aiclose" aria-label="Yopish">×</button>')+'</div><div class="ailog'+(inline?' tall':'')+'">'+S.chat.slice(-14).map(function(m,k,arr){var gi=S.chat.length-arr.length+k;return '<div class="bub '+(m.f==="me"?"me":"bot")+(gi>=S.fresh?" in":"")+'">'+esc(m.t)+'</div>'}).join("")+(S.typing?'<div class="bub bot typing"><i></i><i></i><i></i></div>':"")+'</div><div class="aich">'+CHIPS.map(function(q){return '<button data-a="bq" data-v="'+esc(q)+'">'+esc(q)+'</button>'}).join("")+'</div><div class="aiin"><input placeholder="Savol yozing..."><button data-a="ask" aria-label="Yuborish">➤</button></div></div>';
 }
 function support(){
+  var pn=window._hp||"ask";
   var tips=TIPS.map(function(t){return '<button class="tip" data-a="bq" data-v="'+esc(t[1])+'"><span>'+t[0]+'</span>'+esc(t[1])+'</button>'}).join("");
-  return '<div class="sup">'
+  var seg=[["ask","Savol-javob"],["calc","Narx va qoidalar"],["ref","Taklif"]].map(function(x){return '<button type="button" data-htab="'+x[0]+'" class="'+(pn===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("");
+  return '<div class="sup" data-p="'+pn+'">'
    +'<h1 class="sup-h">Yordam</h1>'
    +'<section class="sup-contact">'+(window.sbAdminBtn?window.sbAdminBtn():'')+'</section>'
-   +'<section class="sup-ai">'+aiChat(true)+'</section>'
-   +'<section class="sup-sec"><h2 class="sec">Tez savollar</h2><div class="tips">'+tips+'</div></section>'
-   +'<section class="sup-sec"><h2 class="sec">Narx kalkulyatori</h2><div class="kc"><div class="kc-in"><input id="kcw" type="number" inputmode="decimal" placeholder="Og\'irligi, kg"><select id="kcm"><option value="auto">Avto \u2014 $'+CG.auto+'/kg</option><option value="avia">Avia \u2014 $'+CG.avia+'/kg</option></select></div><div id="kcr" class="kc-out">'+kcalc(0,"auto")+'</div></div></section>'
-   +'<details class="op"><summary>Qaytarish va bekor qilish qoidalari</summary><div class="op-b">Buyurtmani Xitoyda sotib olinguncha bekor qilish mumkin, pul qaytariladi. Sotib olingandan keyin bekor qilib bo\'lmaydi. Nuqsonli yoki noto\'g\'ri tovar kelsa, filialda ochib ko\'rib, 3 kun ichida rasm bilan yozing. Cargo va UzPost to\'lovlari qaytarilmaydi.<br><small>Namuna matn: o\'zingizning qoidalaringizga moslab beraman.</small></div></details>'
-   +refCard()
+   +'<div class="sup-seg" role="tablist">'+seg+'</div>'
+   +'<div class="pane p-ask">'+aiChat(true)+'<h2 class="sec">Tez savollar</h2><div class="tips">'+tips+'</div></div>'
+   +'<div class="pane p-calc"><h2 class="sec">Narx kalkulyatori</h2><div class="kc"><div class="kc-in"><input id="kcw" type="number" inputmode="decimal" placeholder="Og\'irligi, kg"><select id="kcm"><option value="auto">Avto \u2014 $'+CG.auto+'/kg</option><option value="avia">Avia \u2014 $'+CG.avia+'/kg</option></select></div><div id="kcr" class="kc-out">'+kcalc(0,"auto")+'</div></div>'
+   +'<details class="op"><summary>Qaytarish va bekor qilish qoidalari</summary><div class="op-b">Buyurtmani Xitoyda sotib olinguncha bekor qilish mumkin, pul qaytariladi. Sotib olingandan keyin bekor qilib bo\'lmaydi. Nuqsonli yoki noto\'g\'ri tovar kelsa, filialda ochib ko\'rib, 3 kun ichida rasm bilan yozing. Cargo va UzPost to\'lovlari qaytarilmaydi.<br><small>Namuna matn: o\'zingizning qoidalaringizga moslab beraman.</small></div></details></div>'
+   +'<div class="pane p-ref">'+refCard()+'</div>'
    +'</div>';
 }
 
@@ -3864,9 +3866,25 @@ function gPhone(x){
 }
 var UZP={items:null,map:null,layer:null,mk:{},sel:null,cur:null,ri:-1,user:null,um:null};
 function loadLeaflet(cb){
-  if(window.L){cb();return}
-  if(!document.getElementById("lfcss")){var l=document.createElement("link");l.id="lfcss";l.rel="stylesheet";l.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css";document.head.appendChild(l)}
-  var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js";s.onload=function(){cb()};s.onerror=function(){cb(1)};document.head.appendChild(s)
+  if(window.L&&window.L.map){cb();return}
+  var SRC=[
+    ["https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js","https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"],
+    ["https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js","https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"],
+    ["https://unpkg.com/leaflet@1.9.4/dist/leaflet.js","https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"]
+  ],i=0,done=false;
+  function finish(f){if(done)return;done=true;cb(f)}
+  function addCss(u){var old=document.getElementById("lfcss");if(old)old.remove();var l=document.createElement("link");l.id="lfcss";l.rel="stylesheet";l.href=u;document.head.appendChild(l)}
+  function next(){
+    if(window.L&&window.L.map){finish();return}
+    if(i>=SRC.length){finish(1);return}
+    var src=SRC[i++],s=document.createElement("script"),t,ok=false;
+    addCss(src[1]);
+    function bad(){if(ok)return;ok=true;clearTimeout(t);try{s.remove()}catch(e){}next()}
+    s.onload=function(){if(ok)return;ok=true;clearTimeout(t);if(window.L&&window.L.map)finish();else{try{s.remove()}catch(e){}next()}};
+    s.onerror=bad;t=setTimeout(bad,7000);
+    s.src=src[0];document.head.appendChild(s)
+  }
+  next()
 }
 function uzpMsg(t){var b=$("umap");if(b)b.innerHTML='<div class="umsg">'+t+'</div>'}
 function uzpData(cb){
@@ -3876,13 +3894,15 @@ function uzpData(cb){
 function uzpInit(){
   loadLeaflet(function(fail){
     var box=$("umap");if(!box)return;
-    if(fail||!window.L){uzpMsg("Xarita yuklanmadi. Filial nomini pastda qo'lda yozing.");return}
+    if(fail||!window.L||!window.L.map){uzpMsg('Xarita yuklanmadi. Filial nomini pastda qo\'lda yozing.<br><button class="ugeo" style="margin-top:10px;padding:10px 16px" onclick="uzpInit()">Qayta urinish</button>');return}
     box.innerHTML="";
     if(UZP.map){try{UZP.map.remove()}catch(e){}}
     UZP.user=null;UZP.um=null;
     var m=L.map(box,{preferCanvas:true,renderer:L.canvas({tolerance:10})}).setView([41.3,64.6],5);
     UZP.map=m;
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(m);
+    var TL=[["https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}],["https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",{maxZoom:18,subdomains:"abcd",attribution:"© OpenStreetMap © CARTO"}],["https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",{maxZoom:18,subdomains:"abc",attribution:"© OpenStreetMap"}]],ti=0,te=0,tl=null;
+    function putTiles(){if(tl)m.removeLayer(tl);te=0;tl=L.tileLayer(TL[ti][0],TL[ti][1]).addTo(m);tl.on("tileerror",function(){if(++te===4&&ti<TL.length-1){ti++;putTiles()}})}
+    putTiles();
     UZP.layer=L.layerGroup().addTo(m);
     setTimeout(function(){m.invalidateSize()},400);setTimeout(function(){m.invalidateSize()},900);
     uzpData(function(){uzpDraw(S.dr?REG.indexOf(S.dr):-1,true)});
@@ -6132,7 +6152,19 @@ html:root:root:root body #app .sup .promo-row{margin:0 0 8px!important;padding:1
 html:root:root:root body #app .sup .promo-row:last-child{margin-bottom:0!important}
 html:root:root:root body #app .sup .promo-row b{color:var(--ink)}
 html:root:root:root body #app .sup .promo-row .btn{flex:none;height:40px!important;padding:0 16px!important;margin:0!important;font-size:13px!important;border-radius:999px!important;box-shadow:none!important}
+/* --- varaqlar --- */
+html:root:root:root body #app .sup{gap:16px}
+html:root:root:root body #app .sup .pane{display:none;flex-direction:column;gap:16px}
+html:root:root:root body #app .sup[data-p="ask"] .p-ask,html:root:root:root body #app .sup[data-p="calc"] .p-calc,html:root:root:root body #app .sup[data-p="ref"] .p-ref{display:flex}
+html:root:root:root body #app .sup .pane>.sec{margin:6px 2px -6px!important}
+html:root:root:root body #app .sup .sup-seg{display:grid;grid-template-columns:1fr 1.3fr .8fr;gap:4px;padding:4px;border-radius:18px;background:var(--s2);position:sticky;top:8px;z-index:3}
+html:root:root:root body #app .sup .sup-seg button{height:42px;border:0;border-radius:14px;background:none;color:var(--mute);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;padding:0 6px;white-space:nowrap}
+html:root:root:root body #app .sup .sup-seg button.on{background:var(--s);color:var(--ink);box-shadow:0 2px 10px rgba(30,20,60,.12)}
+html:root:root:root body #app .sup .refc{margin:0!important}
 </style>
+<script id="sb-help-tabs">
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-htab]");if(!b)return;e.stopPropagation();var w=b.closest(".sup");if(!w)return;window._hp=b.dataset.htab;w.dataset.p=window._hp;[].forEach.call(w.querySelectorAll("[data-htab]"),function(x){x.classList.toggle("on",x===b)});try{window.scrollTo({top:0,behavior:"smooth"})}catch(_){}},true);
+</script>
 <script id="sb-orange-js">
 (function(){
   if(typeof window.card!=="function"||typeof P==="undefined")return;
