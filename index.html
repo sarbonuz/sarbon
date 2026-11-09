@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://sarbon-orders.winncloudd.workers.dev" crossorigin>
 <link rel="dns-prefetch" href="https://sarbon-orders.winncloudd.workers.dev">
 <style>html.boot body>*{visibility:hidden!important}html.boot{background:#B4C2DC!important}html.boot:not([data-day]){background:#0B0D22!important}</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>(function(){try{var q=new URLSearchParams(location.search),c=q.get("lt");if(c&&/^[a-z0-9]{16,80}$/.test(c)){window.__lt=c;q.delete("lt");var s=q.toString();history.replaceState(null,"",location.pathname+(s?"?"+s:"")+location.hash)}}catch(e){}})();</script>
 <script>(function(){var d=document.documentElement;d.classList.add("boot");try{d.setAttribute("data-theme","dark");if(localStorage.getItem("sarbon.theme")!=="dark")d.setAttribute("data-day","1")}catch(e){}setTimeout(function(){d.classList.remove("boot")},3000)})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -3120,7 +3121,7 @@ html:not([data-theme="dark"]) #vs .vsx{background:rgba(37,48,143,.13)}
     <button class="li" data-a="tab" data-v="orders"><i class="mi a-box"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg></i>Hisobotlarim</button>
     <button class="li" data-a="tab" data-v="cart"><i class="mi a-cart"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC247" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H6.5"/><circle cx="9.5" cy="19.5" r="1.3" fill="#FFC247"/><circle cx="17" cy="19.5" r="1.3" fill="#FFC247"/></svg></i>Buyurtmalarim</button>
     <button class="li" data-a="tab" data-v="support"><i class="mi a-bot"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6FAE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 3.5V8"/><circle cx="12" cy="3" r="1" fill="#FF6FAE"/><circle class="eye" cx="9" cy="13.5" r="1.2" fill="#FF6FAE"/><circle class="eye" cx="15" cy="13.5" r="1.2" fill="#FF6FAE"/></svg></i>Yordam va AI bot</button>
-    <div class="ver">version 0.3.0</div>
+    <div class="ver">version 0.5.0</div>
   </aside>
 </div>
 
@@ -3520,6 +3521,7 @@ function product(i,mode){
   var again=$("sh").classList.contains("open")&&window._pid===i;window._pid=i;var st0=again?$("sp").scrollTop:0;$("sp").classList.toggle("nofx",again);
   window._galSig=galList(p,S.ocol).map(function(m){return m.u}).join("|");
   window._fullSh=1;openSheet(galHtml(p,S.ocol)+'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h3 style="margin:12px 0 2px">'+esc(p.n)+'</h3></div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan · ⭐ 4.8</div>'+
+  (p.d?'<div class="pdesc" style="font-size:13.5px;line-height:1.5;margin:8px 0 4px;white-space:pre-line;opacity:.85">'+esc(p.d)+'</div>':'')+
   '<div class="opt"><button data-a="mode" data-v="auto" data-i="'+i+'" class="'+(m==="auto"?"on":"")+'"><b>🚛 Avto</b><br>'+DAYS.auto+'<br>~'+fmt(cargo(p,"auto"))+'</button><button data-a="mode" data-v="avia" data-i="'+i+'" '+(p.av?"":"disabled")+' class="'+(m==="avia"?"on":"")+'"><b>✈️ Avia</b><br>'+DAYS.avia+'<br>~'+fmt(cargo(p,"avia"))+'</button></div>'+
   (!p.av?'<div class="warn">Bu tovar avia cargoda taqiqlangan (batareya, elektronika yoki suyuqlik). Faqat avto mumkin.</div>':'')+
   '<details class="ban"'+(m==="avia"?' open':'')+'><summary>⚠️ Avia cargoda taqiqlangan tovarlar</summary><div class="note">Avia cargo qoidasi (06.12.2025). Bu turdagi buyumlarni avia kargoga buyurtma qilish taqiqlanadi:</div><ul>'+BU.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><div class="note">Заказывать такие товары через авиа-карго запрещено:</div><ul>'+BR.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul></details>'+
@@ -3946,6 +3948,16 @@ var STATIC_N=0,lastSig="",srvFails=0;
     if(x&&x.pending&&n<4)setTimeout(go,1500)
   }).catch(function(){if(n<4)setTimeout(go,1500)})}
   go()})();
+/* Telegram Mini App: avtomatik kirish */
+(function(){var tg=window.Telegram&&window.Telegram.WebApp;if(!tg||!tg.initData)return;
+ document.documentElement.classList.add("tg-app");
+ try{tg.ready();tg.expand();if(tg.disableVerticalSwipes)tg.disableVerticalSwipes()}catch(e){}
+ var uid="";try{uid=String(tg.initDataUnsafe.user.id)}catch(e){}
+ try{if(S.sess&&uid&&localStorage.getItem("sarbon.tgid")===uid)return}catch(e){}
+ var n=0;function go(){n++;fetch(WORKER+"/tg-login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg.initData}),cache:"no-store"}).then(function(r){return r.json()}).then(function(x){
+  if(x&&x.ok&&x.token){try{localStorage.setItem("sarbon.tgid",String(x.tg||uid))}catch(e){}finishLogin({token:x.token,name:x.name});return}
+  if(n<3)setTimeout(go,1500)}).catch(function(){if(n<3)setTimeout(go,1500)})}
+ go()})();
 resumeLogin();function _ln(){if(S.sess||window._deferLogin)return;if(window._loginNow&&LTIMER){window._loginNow()}else resumeLogin()}document.addEventListener("visibilitychange",function(){if(!document.hidden)_ln()});window.addEventListener("focus",_ln);window.addEventListener("pageshow",_ln);
 /* Aqlli yangilash: faqat sahifa ochiq bo'lsa, faqat kerakli bo'limda (Worker limitini tejaydi) */
 function nowT(fn,key,min){var n=Date.now();if(n-(window["_t"+key]||0)>=min){window["_t"+key]=n;try{fn()}catch(e){}}}
@@ -3974,6 +3986,9 @@ function normP(x){if(!x||typeof x!=="object"||!x.n)return null;var o={},k;for(k 
   o.img=x.img?mdU(x.img):(fm?fm.u:"");return o}
 function getJ(path){return fetch(WORKER+path,{cache:"default"}).then(function(r){if(!r.ok)throw new Error(path+" "+r.status);return r.json()})}
 function busy(){var a=document.activeElement,sh=$("sh");return !!((a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))||(sh&&sh.classList.contains("open")))}
+var DEEP=(function(){try{var id=new URLSearchParams(location.search).get("p");if(!(id&&/^\d{1,7}$/.test(id))){var hm=(location.hash||"").match(/^#p(\d{1,7})$/);id=hm?hm[1]:""}
+ if(!id){var sp=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.start_param,m=sp&&String(sp).match(/^p(\d{1,7})$/);id=m?m[1]:""}return id||""}catch(e){return ""}})();
+function openDeepLink(){if(!DEEP)return;var id=DEEP,ix=-1;DEEP="";P.forEach(function(p,k){if(String(p.id)===id)ix=k});if(ix>=0)setTimeout(function(){try{product(ix,S.mode)}catch(e){}},400)}
 function loadServer(pre){
   return (pre&&pre.st?Promise.resolve([pre.st,pre.list]):Promise.all([getJ("/settings").catch(function(e){return {__e:e.message||"xato"}}),getJ("/products").catch(function(e){return {__e:e.message||"xato"}})])).then(function(res){
     var st=res[0],list=res[1],errs=[];
@@ -3997,7 +4012,7 @@ function loadServer(pre){
       S.rv=(S.rv||[]).map(re).filter(function(j){return j>=0});if(S.oi>=0)S.oi=re(S.oi)}
     S.cart=S.cart.filter(function(c){return P[c.i]});S.rv=(S.rv||[]).filter(function(j){return P[j]});
     try{save()}catch(e){}
-    lastSig=sig;LOADED=true;render();document.documentElement.classList.remove("boot")
+    lastSig=sig;LOADED=true;render();document.documentElement.classList.remove("boot");openDeepLink()
   }).catch(function(e){toast("srverr","Server javobini o'qib bo'lmadi: "+(e&&e.message||e),"Qayta urinish",function(){loadServer()})})
 }
 var GLB_FILES=["airpods_pro_3.glb","iphone_18_pro_max.glb","macbook_pro_m3_16_inch_2024.glb"]; var GLB_FALLBACK=["airpods_pro_3.glb","iphone_18_pro_max.glb","macbook_pro_m3_16_inch_2024.glb"]; /* API ishlamasa (limit) shu fayllar urinib ko'riladi */ /* ixtiyoriy: qo'lda yozish mumkin, masalan ["models/a.glb","models/b.glb","models/c.glb"] */
