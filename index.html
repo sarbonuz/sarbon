@@ -3616,18 +3616,36 @@ function login(){
 }
 
 /* ---------- Kirish usullarini ulash (Telegram + Google) ---------- */
-function lkRender(me){var b=$("lkbox");if(!b)return;
-  var s='<div class="pfgt">Kirish usullari</div><div class="note">Telegram: '+(me.lt?'✅ ulangan':'ulanmagan')+'</div><div class="note">Google yoki Yandex: '+(me.lg?'✅ ulangan':'ulanmagan')+'</div>';
-  if(!me.lt)s+='<button class="btn" data-a="lkt" style="margin-top:8px">Telegramni ulash</button>';
-  if(!me.lg)s+='<button class="btn" data-a="lkg" style="margin-top:8px">Google\'ni ulash</button>';
-  if(!me.lg&&window._ylk)s+='<button class="btn" data-a="lky" style="margin-top:8px">Yandex\'ni ulash</button>';
+function lkCss(){
+  if(document.getElementById("lkcss"))return;
+  var s=document.createElement("style");s.id="lkcss";
+  s.textContent=".lkl{margin-top:6px}.lkr{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.lkr:last-child{border-bottom:0}"
+  +".lki{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;text-align:center;font-style:normal}.lki svg{width:22px;height:22px}"
+  +".lkn{flex:1;min-width:0}.lkn b{display:block;font-size:15px;color:var(--ink)}.lkn small{display:block;font-size:12px;color:var(--mute);margin-top:2px}"
+  +".lkb{border:0;border-radius:12px;padding:10px 16px;font-family:inherit;font-weight:800;font-size:14px;background:var(--pink);color:#fff;cursor:pointer;flex:none}"
+  +".lkb.lkd{background:rgba(127,127,127,.18);color:var(--ink)}.lkb:disabled{opacity:.35}";
+  document.head.appendChild(s)}
+var LKI={t:'<span class="lki" style="background:#229ED9"><svg viewBox="0 0 24 24"><path fill="#fff" d="M21.6 3.4 2.9 10.6c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.9 5.7c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.2-15.1c.3-1.3-.5-1.9-1.5-1.5zM8.9 13.2l9.6-6c.5-.3.9-.1.5.2l-7.9 7.1-.3 3.4z"/></svg></span>',g:'<span class="lki" style="background:#fff;border:1px solid #dadce0"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 010-9.4l-7.9-6.1a24 24 0 000 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg></span>',y:'<span class="lki" style="background:#000;color:#FC3F1D;font:800 18px/40px system-ui,sans-serif">Я</span>'};
+function lkCnt(M){return(M.t?1:0)+(M.g?1:0)+(M.y?1:0)}
+function lkRender(me){var b=$("lkbox");if(!b)return;lkCss();
+  var M=me.m||{t:!!me.lt,g:!!me.lg,y:false},cnt=lkCnt(M),cur=me.cur||"";window._lkCnt=cnt;
+  var R=[["t","Telegram","lkt"],["g","Google","lkg"]];if(window._ylk||M.y)R.push(["y","Yandex","lky"]);
+  var s='<div class="pfgt">Kirish usullari</div><div class="lkl">';
+  R.forEach(function(r){var on=!!M[r[0]];
+    s+='<div class="lkr">'+LKI[r[0]]+'<div class="lkn"><b>'+r[1]+'</b><small>'+(on?'ulangan'+(cur===r[0]?' · hozir shu bilan kirgansiz':''):'ulanmagan')+'</small></div>'
+     +(on?'<button type="button" class="lkb lkd" data-a="lku" data-v="'+r[0]+'"'+(cnt<2?' disabled':'')+'>Uzish</button>':'<button type="button" class="lkb" data-a="'+r[2]+'">Ulash</button>')+'</div>'});
+  s+='</div>';
+  if(cnt<2)s+='<div class="note">Bitta usul qolgani uchun uzib bo\'lmaydi. Hisob yo\'qolmasligi uchun avval ikkinchi usulni ulang.</div>';
   s+='<div class="note" id="lkm"></div>';b.innerHTML=s}
-function lkLoad(){if(!S.sess||!S.sess.token)return;
-  fetch(WORKER+"/login-methods").then(function(r){return r.json()}).then(function(m){window._ylk=!!(m&&m.yandex);var b=$("lkbox");if(b&&window._ylk&&!b.querySelector('[data-a="lky"]')&&b.querySelector('[data-a="lkg"]')){var y=document.createElement("button");y.className="btn";y.setAttribute("data-a","lky");y.style.marginTop="8px";y.textContent="Yandex'ni ulash";var g=b.querySelector('[data-a="lkg"]');g.parentNode.insertBefore(y,g.nextSibling)}}).catch(function(){});
-  fetch(WORKER+"/me?token="+S.sess.token).then(function(r){return r.json()}).then(function(me){if(me.ok)lkRender(me)}).catch(function(){})}
-function lkWatch(){var n=0,iv=setInterval(function(){n++;if(n>50||!$("lkbox")){clearInterval(iv);return}
+function lkLoad(msg){if(!S.sess||!S.sess.token)return;
+  Promise.all([fetch(WORKER+"/login-methods").then(function(r){return r.json()}).catch(function(){return{}}),fetch(WORKER+"/me?token="+S.sess.token).then(function(r){return r.json()})]).then(function(a){
+    window._ylk=!!(a[0]&&a[0].yandex);if(a[1]&&a[1].ok){lkRender(a[1]);if(msg){var m=$("lkm");if(m)m.textContent=msg}}}).catch(function(){})}
+function lkWatch(){var n=0,c0=window._lkCnt||1,iv=setInterval(function(){n++;if(n>50||!$("lkbox")||!S.sess){clearInterval(iv);return}
   fetch(WORKER+"/me?token="+S.sess.token).then(function(r){return r.json()}).then(function(me){
-    if(me.ok&&me.lt&&me.lg){clearInterval(iv);lkRender(me);var m=$("lkm");if(m)m.textContent="Ulandi ✅"}}).catch(function(){})},2500)}
+    if(me.ok&&lkCnt(me.m||{})>c0){clearInterval(iv);lkRender(me);var m=$("lkm");if(m)m.textContent="Ulandi ✅"}}).catch(function(){})},2500)}
+function lkLoggedOut(){S.user=null;S.sess=null;S.orders=[];MYREF=null;MYREF_SIG="";S._osig=S._rsig=undefined;
+  try{localStorage.removeItem("sarbon.sess");localStorage.removeItem("sarbon.lid")}catch(e){}
+  save();closeSheet();render();alert("Ulanish uzildi. Boshqa usul bilan qaytadan kiring.")}
 function lkOpen(u,tg){try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData){if(tg)Telegram.WebApp.openTelegramLink(u);else Telegram.WebApp.openLink(u,{try_instant_view:false});return}}catch(e){}window.open(u,"_blank")}
 
 /* ---------- Google bilan kirish ---------- */
@@ -3845,15 +3863,24 @@ document.addEventListener("click",function(e){
       +(window.vfPR?vfPR():''));
     lkLoad();
     return}
-  if(a==="lkg"||a==="lkt"||a==="lky"){var kd=a==="lkt"?"t":"g",lm=$("lkm");if(!S.sess||!S.sess.token)return;if(lm)lm.textContent="Tayyorlanmoqda...";
+  if(a==="lkg"||a==="lkt"||a==="lky"){var kd=a==="lkt"?"t":a==="lky"?"y":"g",lm=$("lkm");if(!S.sess||!S.sess.token)return;if(lm)lm.textContent="Tayyorlanmoqda...";
     fetch(WORKER+"/link-start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:S.sess.token,kind:kd})}).then(function(r){return r.json()}).then(function(d){
       lm=$("lkm");
       if(!d.ok){if(lm)lm.textContent=d.error==="already"?"Allaqachon ulangan.":"Xatolik. Qayta urinib ko'ring.";return}
-      if(kd==="g"){lkOpen(WORKER+(a==="lky"?"/yandex-start?id=":"/google-start?id=")+d.id,0);if(lm)lm.textContent="Akkauntni tanlang, keyin shu yerga qayting.";lkWatch();return}
+      if(kd!=="t"){lkOpen(WORKER+(kd==="y"?"/yandex-start?id=":"/google-start?id=")+d.id,0);if(lm)lm.textContent="Akkauntni tanlang, keyin shu yerga qayting.";lkWatch();return}
       fetch(WORKER+"/customer-bot",{cache:"no-store"}).then(function(r){return r.json()}).then(function(b){
         lm=$("lkm");if(!b.username){if(lm)lm.textContent="Bot topilmadi.";return}
         lkOpen("https://t.me/"+b.username+"?start=l_"+d.id,1);if(lm)lm.textContent="Botda Start bosing va HA deb yozing, keyin shu yerga qayting.";lkWatch()});
     }).catch(function(){lm=$("lkm");if(lm)lm.textContent="Internet xatosi. Qayta urinib ko'ring."});
+    return}
+  if(a==="lku"){var kk=v,nm={t:"Telegram",g:"Google",y:"Yandex"}[kk];if(!S.sess||!S.sess.token||!nm)return;
+    if(!window.confirm(nm+" ulanishi uzilsinmi?"))return;
+    var lm2=$("lkm");if(lm2)lm2.textContent="Uzilmoqda...";
+    fetch(WORKER+"/unlink",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:S.sess.token,kind:kk})}).then(function(r){return r.json()}).then(function(d){
+      if(!d.ok){var e1=$("lkm");if(e1)e1.textContent=d.error==="last"?"Oxirgi usulni uzib bo'lmaydi. Avval ikkinchisini ulang.":"Xatolik. Qayta urinib ko'ring.";return}
+      if(d.loggedOut){lkLoggedOut();return}
+      lkLoad(nm+" uzildi ✅");
+    }).catch(function(){var e2=$("lkm");if(e2)e2.textContent="Internet xatosi. Qayta urinib ko'ring."});
     return}
   if(a==="profsave"){
     var f1=$("pf1").value.trim(),l1=$("pf2").value.trim(),p1=$("pf3").value.replace(/\D/g,""),pe=$("pfe");
@@ -4953,7 +4980,8 @@ if(/[?&]review=1/.test(location.search)){try{var ur=new URL(location.href);ur.se
 .sp .pff label{display:flex;align-items:center;gap:10px;padding:0 16px;min-height:50px;margin:0}
 .sp .pff label+label{border-top:1px solid rgba(127,127,127,.2)}
 .pff label span{width:84px;flex:none;font-size:15px;opacity:.6}
-.sp .pff input{flex:1;min-width:0;width:auto!important;height:auto!important;margin:0!important;padding:14px 0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;outline:0;font-size:16px!important;color:inherit!important;text-align:right}
+.sp .pff input{flex:1;min-width:0;width:auto!important;height:auto!important;margin:0!important;padding:14px 0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;outline:0;font-size:16px!important;color:inherit!important;text-align:center!important}
+.sp .pff input::placeholder{text-align:center}
 .pfr{display:flex;align-items:center;gap:12px;padding:11px 14px;min-height:54px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .pfr+.pfr{border-top:1px solid rgba(127,127,127,.2)}.pfr:active{background:rgba(127,127,127,.14)}
 .pfi{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}.pfi.pfib{background:none;width:34px}
