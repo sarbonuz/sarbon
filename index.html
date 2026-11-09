@@ -1659,6 +1659,64 @@ html[data-theme="dark"] .hero .info .card{
   contain:paint;
 }
 </style>
+<style id="sarbon-mobile-shop-refresh">
+/* SARBON MOBILE SHOP VISUAL REFRESH — CSS-only; keeps existing DOM, IDs and handlers */
+:root{
+ --sb-accent:#793cff;--sb-accent2:#a34cff;--sb-radius:20px;
+ --sb-shadow:0 12px 32px rgba(35,18,80,.10);
+}
+html[data-day]{
+ --ink:#171525;--mute:#777487;--brand:#783cff;--teal:#19b9b0;
+ --line:rgba(35,24,65,.09);
+}
+html[data-theme="dark"]:not([data-day]){
+ --ink:#f5f2ff;--mute:#aaa5bd;--brand:#8950ff;--teal:#55d7cf;
+ --line:rgba(255,255,255,.09);
+}
+/* clean mobile canvas */
+#app{max-width:760px;margin-left:auto;margin-right:auto;padding-left:14px;padding-right:14px}
+#app :where(input,select,textarea){border-radius:13px}
+#app :where(button,a,[role="button"]){-webkit-tap-highlight-color:transparent}
+#app :where(.card,.box,.panel,.tile,.product,.product-card,.item-card,.category-card,.shop-card){
+ border-radius:18px;box-shadow:var(--sb-shadow);overflow:hidden
+}
+html[data-day] body{background:#f5f5f8!important;color:#171525}
+html[data-day] #app :where(.card,.box,.panel,.tile,.product,.product-card,.item-card,.category-card,.shop-card){
+ background:#fff;border:1px solid rgba(38,25,70,.055)
+}
+html[data-theme="dark"]:not([data-day]) body{background:#0d0c13!important;color:#f5f2ff}
+html[data-theme="dark"]:not([data-day]) #app :where(.card,.box,.panel,.tile,.product,.product-card,.item-card,.category-card,.shop-card){
+ background:#191722;border:1px solid rgba(255,255,255,.075);box-shadow:0 14px 36px rgba(0,0,0,.24)
+}
+/* product image presentation */
+#app :where(.product img,.product-card img,.item-card img,.shop-card img){object-fit:contain}
+#app :where(.product img,.product-card img,.item-card img,.shop-card img){border-radius:14px}
+/* premium purple action language without hiding or replacing any controls */
+#app :where(button.primary,.primary-btn,.buy-btn,.add-btn,[data-action="buy"],[data-action="add-cart"]){
+ background:linear-gradient(135deg,#8a45ff,#6e32e8);color:#fff;border:0;
+ box-shadow:0 7px 18px rgba(121,60,255,.22);border-radius:14px;font-weight:700
+}
+#app :where(input,select,textarea){
+ transition:border-color .2s,box-shadow .2s
+}
+#app :where(input:focus,select:focus,textarea:focus){
+ outline:none;border-color:#8950ff!important;box-shadow:0 0 0 3px rgba(137,80,255,.13)
+}
+#nav{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+html[data-day] #nav{background:rgba(255,255,255,.94)!important;border-top:1px solid rgba(40,30,70,.08)}
+html[data-theme="dark"]:not([data-day]) #nav{background:rgba(22,20,31,.94)!important;border-top:1px solid rgba(255,255,255,.08)}
+/* consistent overlay layering for nested product/detail sheets */
+#app :where(.modal,.sheet,.popup,.dialog,.detail,.product-detail){
+ border-radius:24px 24px 0 0
+}
+@media(min-width:700px){#app{padding-left:22px;padding-right:22px}}
+@media(prefers-reduced-motion:no-preference){
+ #app :where(.card,.box,.panel,.tile,.product,.product-card,.item-card,.category-card,.shop-card){
+ transition:box-shadow .22s ease,transform .22s ease,border-color .22s ease
+ }
+ #app :where(.product,.product-card,.item-card,.shop-card):active{transform:scale(.985)}
+}
+</style>
 </head>
 <body class="dusk">
 <div class="lx-base" aria-hidden="true">
