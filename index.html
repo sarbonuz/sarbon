@@ -3578,28 +3578,52 @@ function resumeLogin(){
   try{var l=JSON.parse(localStorage.getItem("sarbon.lid")||"null");
     if(l&&l.id&&Date.now()-l.t<900000)pollLogin(l.id);else localStorage.removeItem("sarbon.lid")}catch(e){}
 }
+function lgCss(){
+  if(document.getElementById("lgcss"))return;
+  var s=document.createElement("style");s.id="lgcss";
+  s.textContent=".lg{padding:2px 2px 10px}.lg-hd{text-align:center;margin:0 0 18px}"
+  +".lg-badge{width:62px;height:62px;border-radius:21px;margin:2px auto 12px;display:grid;place-items:center;font-size:29px;background:linear-gradient(135deg,var(--brand),var(--pink));box-shadow:0 10px 24px rgba(37,48,143,.28)}"
+  +".lg-hd h3{margin:0 0 6px;font-size:24px;color:var(--ink)}.lg-hd p{margin:0 auto;max-width:290px;font-size:13.5px;line-height:1.45;color:var(--mute)}"
+  +".lg-b{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;box-sizing:border-box;height:54px;border-radius:16px;border:1px solid transparent;margin-top:10px;font-family:inherit;font-weight:800;font-size:16px;text-decoration:none;cursor:pointer;transition:transform .12s,opacity .2s;-webkit-tap-highlight-color:transparent}"
+  +".lg-b:active{transform:scale(.97)}.lg-b svg{width:22px;height:22px;flex:none}.lg-b.dis{opacity:.55;pointer-events:none}"
+  +".lg-tg{background:#229ED9;color:#fff;box-shadow:0 8px 20px rgba(34,158,217,.32)}"
+  +".lg-g{background:#fff;color:#1f1f1f;border-color:#dadce0;box-shadow:0 4px 14px rgba(0,0,0,.1)}"
+  +".lg-y{background:#000;color:#fff;border-color:rgba(255,255,255,.16);box-shadow:0 8px 20px rgba(0,0,0,.3)}"
+  +".lg-y i{width:22px;height:22px;border-radius:50%;background:#FC3F1D;color:#fff;font:800 14px/22px system-ui,sans-serif;text-align:center;font-style:normal;flex:none}"
+  +".lg-st{min-height:18px;text-align:center;margin-top:14px;font-size:12.5px;color:var(--mute);line-height:1.45}"
+  +".lg-ft{text-align:center;font-size:11.5px;color:var(--mute);line-height:1.5;margin-top:8px;opacity:.85}"
+  +".lg-in{width:100%;box-sizing:border-box;height:54px;border-radius:16px;border:1.5px solid var(--line);background:rgba(127,127,127,.08);color:var(--ink);padding:0 16px;font-size:17px;margin-top:16px;outline:0;font-family:inherit}.lg-in:focus{border-color:var(--brand)}";
+  document.head.appendChild(s)}
 function login(){
+  lgCss();
   var id=(function(){var a=new Uint8Array(12);try{crypto.getRandomValues(a)}catch(e){for(var i=0;i<12;i++)a[i]=Math.floor(Math.random()*256)}return Array.prototype.map.call(a,function(b){return("0"+b.toString(16)).slice(-2)}).join("")})();
   window._glid=id;
   try{localStorage.setItem("sarbon.lid",JSON.stringify({id:id,t:Date.now()}))}catch(e){}
-  openSheet('<h3 style="margin:0 0 6px">Kirish</h3><div class="note">Telegram botimizda telefon raqamingizni yuboring. Bot tasdiqlagach, bu yerga qaytsangiz avtomatik kirasiz.</div><a id="tgl" class="btn" href="#" target="_blank" rel="noopener" onclick="if(this.getAttribute(\'href\')===\'#\'){return false}" style="display:block;text-align:center;text-decoration:none;opacity:.6">Tayyorlanmoqda...</a><div class="note" id="tgs"></div><div class="note" style="text-align:center;margin:14px 0 8px">yoki</div><div id="gbtn" style="display:flex;justify-content:center;min-height:44px"></div><div class="note" id="gs" style="text-align:center">Telegram ichidagi brauzerda Google ishlamasa, Telegram orqali kiring.</div>');
-  gInit();
+  openSheet('<div class="lg"><div class="lg-hd"><div class="lg-badge">🛍</div><h3>Sarbonga kirish</h3><p>Buyurtmalaringizni kuzating, chat va yangiliklardan xabardor bo\'ling</p></div>'
+    +'<a id="tgl" class="lg-b lg-tg dis" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path fill="#fff" d="M21.6 3.4 2.9 10.6c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.9 5.7c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.2-15.1c.3-1.3-.5-1.9-1.5-1.5zM8.9 13.2l9.6-6c.5-.3.9-.1.5.2l-7.9 7.1-.3 3.4z"/></svg><span id="tgt">Tayyorlanmoqda...</span></a>'
+    +'<button id="gtg" type="button" class="lg-b lg-g"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 010-9.4l-7.9-6.1a24 24 0 000 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>Google orqali kirish</span></button>'
+    +'<button id="ytg" type="button" class="lg-b lg-y" style="display:none"><i>Я</i><span>Yandex ID orqali kirish</span></button>'
+    +'<div class="lg-st" id="tgs">Qulay usulni tanlang. Kirgach, shu yerga qaytsangiz avtomatik kirasiz.</div>'
+    +'<div class="lg-ft">Parolingiz bizga ko\'rinmaydi. Keyin Profildan usullarni bitta akkauntga ulashingiz mumkin.</div></div>');
+  gTg();
+  fetch(WORKER+"/login-methods").then(function(r){return r.json()}).then(function(m){var y=$("ytg");if(y&&m&&m.yandex)y.style.display="flex"}).catch(function(){});
   fetch(WORKER+"/customer-bot",{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
-    var l=$("tgl");if(!l)return;
-    if(!d.username){l.textContent="Bot topilmadi";if($("tgs"))$("tgs").textContent="Xato: mijoz boti sozlanmagan (admin: CUSTOMER_BOT_TOKEN va /setup-customer).";return}
-    l.href="https://t.me/"+d.username+"?start=s_"+id;l.textContent="Telegram orqali kirish";l.style.opacity="1";
-    if($("tgs"))$("tgs").textContent="Botni oching, Start bosing va raqamni yuboring. Keyin shu sahifaga qayting.";
+    var l=$("tgl"),t=$("tgt");if(!l||!t)return;
+    if(!d.username){t.textContent="Telegram (bot topilmadi)";gMsg("Telegram boti sozlanmagan. Google yoki Yandex orqali kiring.");return}
+    l.href="https://t.me/"+d.username+"?start=s_"+id;t.textContent="Telegram orqali kirish";l.classList.remove("dis");
     pollLoginLater(id);
-  }).catch(function(){var l=$("tgl");if(l)l.textContent="Aloqa yo'q";if($("tgs"))$("tgs").textContent="Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring."});
+  }).catch(function(){var t=$("tgt");if(t)t.textContent="Telegram (aloqa yo'q)";gMsg("Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.")});
 }
 
 /* ---------- Kirish usullarini ulash (Telegram + Google) ---------- */
 function lkRender(me){var b=$("lkbox");if(!b)return;
-  var s='<div class="pfgt">Kirish usullari</div><div class="note">Telegram: '+(me.lt?'✅ ulangan':'ulanmagan')+'</div><div class="note">Google: '+(me.lg?'✅ ulangan':'ulanmagan')+'</div>';
+  var s='<div class="pfgt">Kirish usullari</div><div class="note">Telegram: '+(me.lt?'✅ ulangan':'ulanmagan')+'</div><div class="note">Google yoki Yandex: '+(me.lg?'✅ ulangan':'ulanmagan')+'</div>';
   if(!me.lt)s+='<button class="btn" data-a="lkt" style="margin-top:8px">Telegramni ulash</button>';
   if(!me.lg)s+='<button class="btn" data-a="lkg" style="margin-top:8px">Google\'ni ulash</button>';
+  if(!me.lg&&window._ylk)s+='<button class="btn" data-a="lky" style="margin-top:8px">Yandex\'ni ulash</button>';
   s+='<div class="note" id="lkm"></div>';b.innerHTML=s}
 function lkLoad(){if(!S.sess||!S.sess.token)return;
+  fetch(WORKER+"/login-methods").then(function(r){return r.json()}).then(function(m){window._ylk=!!(m&&m.yandex);var b=$("lkbox");if(b&&window._ylk&&!b.querySelector('[data-a="lky"]')&&b.querySelector('[data-a="lkg"]')){var y=document.createElement("button");y.className="btn";y.setAttribute("data-a","lky");y.style.marginTop="8px";y.textContent="Yandex'ni ulash";var g=b.querySelector('[data-a="lkg"]');g.parentNode.insertBefore(y,g.nextSibling)}}).catch(function(){});
   fetch(WORKER+"/me?token="+S.sess.token).then(function(r){return r.json()}).then(function(me){if(me.ok)lkRender(me)}).catch(function(){})}
 function lkWatch(){var n=0,iv=setInterval(function(){n++;if(n>50||!$("lkbox")){clearInterval(iv);return}
   fetch(WORKER+"/me?token="+S.sess.token).then(function(r){return r.json()}).then(function(me){
@@ -3608,7 +3632,7 @@ function lkOpen(u,tg){try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.i
 
 /* ---------- Google bilan kirish ---------- */
 var GCID="241259146600-hjd3c7cq0m4op3rtg0emh9tpv8cn19l9.apps.googleusercontent.com",GREADY=false;
-function gMsg(t){var e=$("gs");if(e)e.textContent=t}
+function gMsg(t){var e=$("tgs");if(e)e.textContent=t}
 function gLoad(cb){
   if(window.google&&google.accounts&&google.accounts.id){cb();return}
   var s=document.getElementById("gsi");
@@ -3617,15 +3641,15 @@ function gLoad(cb){
   s.addEventListener("error",function(){try{s.remove()}catch(e){}cb(1)});
 }
 function gTg(){
-  var b=$("gbtn");if(!b)return;
-  b.innerHTML='<button type="button" id="gtg" style="display:flex;align-items:center;justify-content:center;gap:10px;width:280px;max-width:100%;height:44px;border-radius:22px;border:1px solid #dadce0;background:#fff;color:#3c4043;font:600 15px system-ui,sans-serif;cursor:pointer"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 010-9.4l-7.9-6.1a24 24 0 000 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Google orqali kirish</button>';
-  gMsg("Google brauzerda ochiladi. Kirgach, Telegramga qaytsangiz do'kon avtomatik kiradi.");
-  $("gtg").onclick=function(){
+  function go(path,name){
     var id=window._glid;if(!id){gMsg("Xatolik. Oynani yopib, qaytadan oching.");return}
-    var u=WORKER+"/google-start?id="+encodeURIComponent(id);
+    gMsg(name+" ochilmoqda. Kirgach, shu yerga qaytsangiz do'kon avtomatik kiradi.");
     pollLoginLater(id);
-    try{Telegram.WebApp.openLink(u,{try_instant_view:false})}catch(e){window.open(u,"_blank")}
-  };
+    lkOpen(WORKER+path+"?id="+encodeURIComponent(id),0);
+  }
+  var g=$("gtg"),y=$("ytg");
+  if(g)g.onclick=function(){go("/google-start","Google")};
+  if(y)y.onclick=function(){go("/yandex-start","Yandex")};
 }
 function gInit(){
   if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData){gTg();return}
@@ -3647,7 +3671,7 @@ function gCb(resp){
   }).catch(function(){gMsg("Serverga ulanib bo'lmadi. Qayta urinib ko'ring.")});
 }
 function gPhone(x){
-  openSheet('<h3 style="margin:0 0 6px">Telefon raqamingiz</h3><div class="note">Salom, '+esc(x.name)+'! Buyurtma uchun telefon raqamingizni bir marta kiriting.</div><input id="gph" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998 90 123 45 67"><div class="err" id="gpe"></div><button class="btn" id="gpb">Davom etish</button>');
+  lgCss();openSheet('<div class="lg"><div class="lg-hd"><div class="lg-badge">📱</div><h3>Telefon raqamingiz</h3><p>Salom, '+esc(x.name)+'! Buyurtma uchun raqamingizni bir marta kiriting.</p></div><input class="lg-in" id="gph" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998 90 123 45 67"><div class="err" id="gpe" style="min-height:18px;text-align:center;margin-top:8px"></div><button class="btn" id="gpb">Davom etish</button></div>');
   var b=$("gpb");
   b.onclick=function(){
     var v=$("gph").value.trim(),d=v.replace(/\D/g,"");
@@ -3821,11 +3845,11 @@ document.addEventListener("click",function(e){
       +(window.vfPR?vfPR():''));
     lkLoad();
     return}
-  if(a==="lkg"||a==="lkt"){var kd=a==="lkg"?"g":"t",lm=$("lkm");if(!S.sess||!S.sess.token)return;if(lm)lm.textContent="Tayyorlanmoqda...";
+  if(a==="lkg"||a==="lkt"||a==="lky"){var kd=a==="lkt"?"t":"g",lm=$("lkm");if(!S.sess||!S.sess.token)return;if(lm)lm.textContent="Tayyorlanmoqda...";
     fetch(WORKER+"/link-start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:S.sess.token,kind:kd})}).then(function(r){return r.json()}).then(function(d){
       lm=$("lkm");
       if(!d.ok){if(lm)lm.textContent=d.error==="already"?"Allaqachon ulangan.":"Xatolik. Qayta urinib ko'ring.";return}
-      if(kd==="g"){lkOpen(WORKER+"/google-start?id="+d.id,0);if(lm)lm.textContent="Google'da akkauntni tanlang, keyin shu yerga qayting.";lkWatch();return}
+      if(kd==="g"){lkOpen(WORKER+(a==="lky"?"/yandex-start?id=":"/google-start?id=")+d.id,0);if(lm)lm.textContent="Akkauntni tanlang, keyin shu yerga qayting.";lkWatch();return}
       fetch(WORKER+"/customer-bot",{cache:"no-store"}).then(function(r){return r.json()}).then(function(b){
         lm=$("lkm");if(!b.username){if(lm)lm.textContent="Bot topilmadi.";return}
         lkOpen("https://t.me/"+b.username+"?start=l_"+d.id,1);if(lm)lm.textContent="Botda Start bosing va HA deb yozing, keyin shu yerga qayting.";lkWatch()});
