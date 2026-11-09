@@ -3440,9 +3440,10 @@ function home(){var deals=sbShuf(P.map(function(_,i){return i}).filter(function(
     h+='<h2 class="sec">Natijalar <small>'+res.length+' ta</small></h2><div class="sortbar">'+[["pop","Mashhur"],["cheap","Arzon"],["exp","Qimmat"]].map(function(x){return '<button data-a="sort" data-v="'+x[0]+'" class="'+(S.sort===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("")+'</div>';
     h+=res.length?'<div class="grid">'+res.map(card).join("")+'</div>':'<div class="mut">'+(P.length?"Hech narsa topilmadi.":(LOADED?"Tovarlar hali qo\u2018shilmagan.":"Mahsulotlar serverdan yuklanmadi. Internetni tekshirib, qayta urinib ko\u2018ring."))+'</div>';
     return h}
-    h+='<div class="b3d" id="b3dslot"></div>';h+='<div class="cstrip">'+CATS.map(function(c){return '<button data-a="opencat" data-v="'+c[0]+'"><span>'+svg(ICON[c[0]],26)+'</span>'+c[1]+'</button>'}).join("")+'</div>';
+    h+=bannersHtml();h+='<div class="cstrip">'+CATS.map(function(c){return '<button data-a="opencat" data-v="'+c[0]+'"><span>'+svg(ICON[c[0]],26)+'</span>'+c[1]+'</button>'}).join("")+'</div>';
+  h+='<div class="b3d" id="b3dslot"></div>';
   var top=(function(){var all=P.map(function(_,i){return i}).sort(function(a,b){return P[b].s-P[a].s}),pool=all.slice(0,Math.max(24,8)),fresh=pool.filter(function(i){return deals.indexOf(i)<0});if(fresh.length<8)fresh=pool;var pick=sbShuf(fresh,2).slice(0,8);return pick})();
-  h+='<h2 class="sec">Arzon topilmalar <small>o\'ngga suring</small></h2><div class="hs">'+deals.map(dealCard).join("")+'</div>';h+='<h2 class="sec">Tavsiya etamiz <small>o\'ngga suring</small></h2><div class="hs">'+top.map(card).join("")+'</div>'+(S.rv&&S.rv.length?'<h2 class="sec">Yaqinda ko\'rilganlar</h2><div class="hs">'+S.rv.map(card).join("")+'</div>':'');
+  h+='<h2 class="sec">Arzon topilmalar <small data-a="tab" data-v="catalog">Hammasi ›</small></h2><div class="hs hsd">'+deals.map(dealCard).join("")+'</div>';h+='<h2 class="sec">Siz uchun <small data-a="tab" data-v="catalog">Hammasi ›</small></h2><div class="grid g4">'+top.slice(0,6).map(card).join("")+'</div>'+(S.rv&&S.rv.length?'<h2 class="sec">Yaqinda ko\'rilganlar</h2><div class="hs">'+S.rv.map(card).join("")+'</div>':'');
   var list=pfFilt(sortList(P.map(function(_,i){return i}).filter(function(i){return P[i].n.toLowerCase().indexOf(S.term.toLowerCase())>-1})));
   h+='<h2 class="sec">Barcha tovarlar <small>'+list.length+' ta</small></h2><div class="sortbar">'+[["pop","Mashhur"],["cheap","Arzon"],["exp","Qimmat"]].map(function(x){return '<button data-a="sort" data-v="'+x[0]+'" class="'+(S.sort===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("")+'</div>';
   h+=pfBar();h+=list.length?'<div class="grid">'+list.map(card).join("")+'</div>':'<div class="mut">'+(P.length?"Hech narsa topilmadi.":(LOADED?"Tovarlar hali qo\u2018shilmagan.":"Mahsulotlar yuklanmoqda\u2026"))+'</div>';
@@ -3657,13 +3658,13 @@ function product(i,mode){
   var p=P[i];if(S.oi!==i){S.oi=i;S.osz="";S.ocol="";S.rv=[i].concat((S.rv||[]).filter(function(x){return x!==i})).slice(0,8)}if(!p.av&&mode==="avia")mode="auto";S.mode=mode;var m=mode;
   var again=$("sh").classList.contains("open")&&window._pid===i;window._pid=i;var st0=again?$("sp").scrollTop:0;$("sp").classList.toggle("nofx",again);
   window._galSig=galList(p,S.ocol).map(function(m){return m.u}).join("|");
-  window._fullSh=1;openSheet(galHtml(p,S.ocol)+'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h3 style="margin:12px 0 2px">'+esc(p.n)+'</h3><button class="plk" data-plink="'+esc(String(p.id))+'">🔗 Havola</button></div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan · ⭐ 4.8</div>'+
+  window._fullSh=1;openSheet(galHtml(p,S.ocol)+'<div class="pcard" data-pt="d"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h3 style="margin:12px 0 2px">'+esc(p.n)+'</h3><button class="plk" data-plink="'+esc(String(p.id))+'">🔗 Havola</button></div><div class="pbig">'+fmt(goods(p))+'</div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan · ⭐ 4.8</div><div class="ptabs"><button type="button" data-ptab="d" class="on">Tavsif</button><button type="button" data-ptab="n">Narx</button><button type="button" data-ptab="r">Sharhlar</button></div>'+
   (p.d?'<div class="pdesc" style="font-size:13.5px;line-height:1.5;margin:8px 0 4px;white-space:pre-line;opacity:.85">'+esc(p.d)+'</div>':'')+
   '<div class="opt"><button data-a="mode" data-v="auto" data-i="'+i+'" class="'+(m==="auto"?"on":"")+'"><b>🚛 Avto</b><br>'+DAYS.auto+'<br>~'+fmt(cargo(p,"auto"))+'</button><button data-a="mode" data-v="avia" data-i="'+i+'" '+(p.av?"":"disabled")+' class="'+(m==="avia"?"on":"")+'"><b>✈️ Avia</b><br>'+DAYS.avia+'<br>~'+fmt(cargo(p,"avia"))+'</button></div>'+
   (!p.av?'<div class="warn">Bu tovar avia cargoda taqiqlangan (batareya, elektronika yoki suyuqlik). Faqat avto mumkin.</div>':'')+
   '<details class="ban"'+(m==="avia"?' open':'')+'><summary>⚠️ Avia cargoda taqiqlangan tovarlar</summary><div class="note">Avia cargo qoidasi (06.12.2025). Bu turdagi buyumlarni avia kargoga buyurtma qilish taqiqlanadi:</div><ul>'+BU.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><div class="note">Заказывать такие товары через авиа-карго запрещено:</div><ul>'+BR.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul></details>'+
   '<div class="pricebox"><div class="ln"><span>Tovar narxi</span><b>'+fmt(goods(p))+'</b></div><div class="ln"><span>Cargo ~'+p.kg+' kg × $'+CG[m]+'</span><span>~'+fmt(cargo(p,m))+'</span></div><div class="ln uzl"><span>UzPost uchun to\'lov<small>1 kg gacha 15 000 so\'m, keyingi kg uchun +3 000 so\'m</small></span><b>'+fmt(uzp(p.kg))+'</b></div><div class="note">Cargo alohida hisoblanadi: tovar omborga kelganda haqiqiy og\'irlik o\'lchanadi.</div></div>'+
-  simBox(i));
+  simBox(i)+'</div>');
   if(window.vfProdReviews)vfProdReviews(p);
   setProdBar(i);
   if(again)$("sp").scrollTop=st0;
@@ -5808,5 +5809,143 @@ html body .top .ib{background:var(--v3-s2)!important;color:var(--v3-ink)!importa
 #app .mut{color:var(--v3-mute)!important;padding:20px 16px!important}
 </style>
 
+<style id="sb-orange">
+/* SARBON ORANGE — referens: to'q sariq e-commerce ilova. Faqat dizayn/joylashuv; handler, ID, data-a o'zgarmagan */
+html:root:root:root{--o:#FF7A1A;--o2:#FF9B45;--os:rgba(255,122,26,.12);--v3-acc:#FF7A1A;--v3-acc2:#FF9B45;--v3-soft:rgba(255,122,26,.12)}
+html:root:root:root[data-day]{--v3-bg:#F5F5F7;--v3-s:#fff;--v3-s2:#F1EFF3;--v3-ink:#17141F;--v3-mute:#8A8696;--v3-line:rgba(25,18,40,.07);--v3-sh:0 8px 24px rgba(30,20,50,.07);--tint:#FFEBDA}
+html:root:root:root:not([data-day]){--v3-bg:#1B1830;--v3-s:#27233F;--v3-s2:#322D50;--v3-ink:#F5F2FF;--v3-mute:#A9A3C4;--v3-line:rgba(190,175,255,.11);--v3-sh:0 10px 28px rgba(8,5,22,.45);--tint:#3A3158}
+html:root:root:root,html:root:root:root body{background:var(--v3-bg)!important;color:var(--v3-ink)!important}
+html:root:root:root:not([data-day]) body{background:radial-gradient(120% 50% at 80% -5%,rgba(124,77,255,.22),transparent 60%),var(--v3-bg)!important}
+.sbbg,.bgflash,#snow,svg.land,.bgstars,.dayclouds,.atlas,.seasonwave{display:none!important}
+
+/* ===== yuqori qism: menyu | qidiruv | rejim ===== */
+html:root:root:root body .top>.ib[data-a="menu"],html:root:root:root body .top>.tbtn{width:46px!important;height:46px!important;border-radius:15px!important;background:var(--v3-s)!important;color:var(--v3-ink)!important;border:1px solid var(--v3-line)!important;box-shadow:var(--v3-sh)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html:root:root:root body #sbar.search{background:var(--v3-s)!important;border:1px solid var(--v3-line)!important;border-radius:15px!important;height:46px!important;box-shadow:var(--v3-sh)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;color:var(--v3-mute)!important}
+html:root:root:root body #sbar svg{stroke:var(--o)!important}
+html:root:root:root body #sbar input{color:var(--v3-ink)!important;background:none!important;border:0!important}
+
+/* ===== banner: rangli katta karta + tugma ===== */
+#app .bn{border-radius:28px!important;min-height:160px!important;background:linear-gradient(120deg,#FF7A1A,#FFB04A)!important;color:#fff!important}
+#app .bn.b2{background:linear-gradient(120deg,#5B3FD6,#9A6BFF)!important}
+#app .bn.b3{background:linear-gradient(120deg,#E0531C,#FF8A3D)!important}
+#app .bn.b4{background:linear-gradient(120deg,#2B2650,#5A46A8)!important}
+#app .bn.b5{background:linear-gradient(120deg,#FF6A3D,#FFA24D)!important}
+#app .bn h2,#app .bn p{color:#fff!important;text-shadow:none!important}
+#app .bn::after{content:"Xarid qilish";position:absolute;left:22px;bottom:18px;background:#1B1830;color:#fff;font-size:12px;font-weight:800;padding:8px 16px;border-radius:999px}
+#app .bn p{margin-bottom:34px!important}
+#app .dots i.on{background:var(--o)!important}
+
+/* ===== kategoriyalar: yumaloq ikonkalar ===== */
+#app .cstrip button span{border-radius:50%!important;width:62px!important;height:62px!important;background:var(--tint)!important;box-shadow:inset 0 0 0 2px var(--v3-s)!important}
+#app .cstrip button svg{stroke:var(--o)!important}
+#app .cstrip button{flex:0 0 70px!important}
+
+/* ===== bo'lim sarlavhalari ===== */
+#app .sec{font-size:19px!important;display:flex!important;justify-content:space-between;align-items:baseline}
+#app .sec small{color:var(--v3-mute)!important;font-weight:600!important;cursor:pointer}
+#app .sec small[data-a]{color:var(--o)!important}
+
+/* ===== tovar kartalari ===== */
+#app .card{position:relative;border-radius:24px!important;padding:8px;overflow:visible!important}
+#app .card .pic{margin:0!important;border-radius:18px!important;background:var(--tint)!important;aspect-ratio:1/1.02}
+#app .card .in{padding:10px 6px 4px!important}
+#app .card .n{font-weight:700!important;height:34px!important}
+#app .card .sold{color:var(--v3-mute)!important}
+#app .card .orow{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:6px}
+#app .card .orow .pr{margin:0!important;color:var(--o)!important;font-size:15px!important}
+#app .card .orow .pr s{color:var(--v3-mute)!important}
+#app .card .plus{width:30px;height:30px;border-radius:50%;background:var(--o);color:#fff;display:grid;place-items:center;font-size:20px;font-weight:700;line-height:1;flex:0 0 30px;box-shadow:0 6px 14px rgba(255,122,26,.35)}
+#app .card .heart{right:14px!important;top:14px!important;border-radius:11px!important;background:var(--os)!important;color:var(--o)!important;backdrop-filter:none!important;box-shadow:none!important}
+#app .card .badge{background:var(--o)!important;color:#fff!important;left:14px!important;top:14px!important}
+#app .hsd .card{flex:0 0 172px!important}
+#app .hsd .card .pic{aspect-ratio:1/.85}
+#app .grid.g4,#app .grid{grid-template-columns:1fr 1fr!important;align-items:start}
+#app .grid>.card:nth-child(even){margin-top:26px}
+#app .sortbar button.on,#app .opt button.on{background:var(--o)!important;border-color:var(--o)!important;color:#fff!important}
+#app .ktb span{border-radius:50%!important}
+
+/* ===== pastki panel: o'rtada suzuvchi to'q sariq tugma ===== */
+#nav{width:100%!important;max-width:none!important;left:0!important;right:0!important;transform:none!important;bottom:0!important;border-radius:26px 26px 0 0!important;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px))!important;border:0!important;border-top:1px solid var(--v3-line)!important;box-shadow:0 -10px 30px rgba(20,10,40,.10)!important;background:var(--v3-s)!important;overflow:visible!important}
+#nav .pill{display:none!important}
+#nav .navb{display:grid!important;grid-template-columns:repeat(5,1fr);align-items:end;max-width:520px;margin:0 auto}
+#nav button{font-size:0!important;position:relative;height:46px;display:grid;place-items:center;background:none!important;color:var(--v3-mute)!important}
+#nav button svg{width:23px!important;height:23px!important}
+#nav button.on{color:var(--o)!important}
+#nav button.on::after{content:"";position:absolute;bottom:2px;width:5px;height:5px;border-radius:50%;background:var(--o)}
+#nav button:nth-child(3){width:60px;height:60px;border-radius:50%;margin:-34px auto 0;background:linear-gradient(135deg,var(--o2),var(--o))!important;color:#fff!important;box-shadow:0 10px 22px rgba(255,122,26,.45);border:4px solid var(--v3-s)!important}
+#nav button:nth-child(3).on::after{display:none}
+#nav button i{position:absolute;top:2px;right:6px;font-size:10px!important;font-style:normal;min-width:17px;height:17px;border-radius:9px;background:#1B1830!important;color:#fff!important;display:grid;place-items:center}
+#fab{bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;right:14px!important;width:50px!important;height:50px!important;background:#1B1830!important;box-shadow:0 8px 20px rgba(0,0,0,.3)!important}
+#ap{bottom:calc(150px + env(safe-area-inset-bottom,0px))!important}
+#app{padding-bottom:130px!important}
+
+/* ===== savat: qator + jami + Checkout ===== */
+#app .row{border-radius:22px!important;align-items:center}
+#app .row .t b{color:var(--o)!important}
+#app .q{flex-direction:row!important;align-items:center;gap:8px!important;background:var(--v3-s2)!important;padding:4px!important}
+#app .q span{min-width:16px}
+#app .q button:last-child{background:var(--o)!important;color:#fff!important}
+#app .pay1{background:var(--os)!important;color:var(--o)!important}
+#app .sum{border-radius:26px!important}
+#app .sum .ln b{color:var(--o)!important}
+#app .btn,#sp .btn,#vs .vsgo,#vs .vsgo.c{background:linear-gradient(135deg,var(--o2),var(--o))!important;box-shadow:0 12px 24px rgba(255,122,26,.35)!important}
+#app .pick.on,#sp .pick.on{background:var(--o)!important;border-color:var(--o)!important}
+
+/* ===== tovar oynasi: katta rasm + ko'tarilgan oq panel ===== */
+#sp{padding-left:16px!important;padding-right:16px!important}
+#sp .gal{width:calc(100% + 32px)!important;margin:-14px -16px 0!important;border-radius:0 0 40px 40px!important;aspect-ratio:1/.9!important;background:var(--tint)!important}
+#sp .pcard{position:relative;z-index:2;margin:-26px -16px 0;padding:20px 16px 130px;background:var(--v3-bg);border-radius:32px 32px 0 0}
+#sp .pbig{font-size:26px;font-weight:800;color:var(--o);margin:2px 0 4px}
+#sp h3{margin-top:0!important}
+#sp .plk{background:var(--os)!important;color:var(--o)!important}
+#sp .opt button.on{background:var(--os)!important;border:1.5px solid var(--o)!important;color:var(--v3-ink)!important}
+#sp .pricebox .ln b{color:var(--o)!important}
+#sp .back{position:relative;z-index:4}
+#sh .pbf,#pbf{left:12px!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;width:auto!important;border-radius:999px!important;background:#17141F!important;border:0!important;padding:8px!important;box-shadow:0 14px 34px rgba(0,0,0,.35)!important}
+#pbf .pbi{background:rgba(255,255,255,.10)!important;color:#fff!important;border-radius:50%!important;min-width:48px!important;width:48px;height:48px!important}
+#pbf .pbi span{display:none}
+#pbf .pbi.on{color:var(--o)!important;background:rgba(255,122,26,.18)!important}
+#pbf .pbi i{background:var(--o)!important}
+#pbf .pbb{height:48px!important;background:linear-gradient(135deg,var(--o2),var(--o))!important;box-shadow:none!important}
+#vs .vsv[aria-pressed="true"]{background:var(--o)!important;border-color:var(--o)!important}
+#vs .vse,#vs .vsmu{color:var(--o)!important}
+
+/* ===== yon menyu, AI ===== */
+#mn .me,#ap .bub.me,#ap .bub.u{background:linear-gradient(135deg,var(--o2),var(--o))!important}
+#mn .me button{color:var(--o)!important}
+#mn button.li b{background:var(--o)!important}
+#ap .bub.bot{background:var(--v3-s2)!important}
+
+
+/* ===== tovar tablari ===== */
+#sp .ptabs{display:flex;gap:6px;margin:14px 0 10px;border-bottom:1px solid var(--v3-line)}
+#sp .ptabs button{flex:1;border:0;background:none;color:var(--v3-mute);font-weight:700;font-size:13.5px;padding:10px 4px;position:relative}
+#sp .ptabs button.on{color:var(--o)}
+#sp .ptabs button.on::after{content:"";position:absolute;left:18%;right:18%;bottom:-1px;height:3px;border-radius:3px;background:var(--o)}
+#sp .pcard[data-pt="d"] :is(.pricebox,#vfpr),
+#sp .pcard[data-pt="n"] :is(.pdesc,.opt,.warn,details.ban,#vfpr),
+#sp .pcard[data-pt="r"] :is(.pdesc,.opt,.warn,details.ban,.pricebox){display:none!important}
+/* ===== bosh sahifa: banner yuqorida ===== */
+#app .banners{padding-top:8px!important}
+#app .b3d{border-radius:28px!important}
+</style>
+<script id="sb-orange-js">
+(function(){
+  if(typeof window.card!=="function"||typeof P==="undefined")return;
+  function heart(i){return '<button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button>'}
+  window.card=function(i){var p=P[i];
+    return '<div class="card oc" data-a="open" data-v="'+i+'">'+pic(p,"pic")+(p.s>30000?'<span class="badge">Test o\'tgan</span>':'')+heart(i)+
+    '<div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">⭐ 4.8 · '+kf(p.s)+' ta sotilgan</div>'+
+    '<div class="orow"><div class="pr">'+fmt(goods(p))+'</div><span class="plus">+</span></div></div></div>'};
+  window.dealCard=function(i){var p=P[i];
+    return '<div class="card oc deal" data-a="open" data-v="'+i+'">'+pic(p,"pic")+'<span class="badge">-30%</span>'+heart(i)+
+    '<div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">🔥 '+kf(p.s)+' kishi oldi</div>'+
+    '<div class="orow"><div class="pr">'+fmt(goods(p))+' <s>'+fmt(r(goods(p)*1.43))+'</s></div><span class="plus">+</span></div></div></div>'};
+  try{if(typeof render==="function"&&window._lastRender!==undefined){window._lastRender=null;render()}}catch(e){}
+})();
+
+
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-ptab]");if(!b)return;e.stopPropagation();var c=b.closest(".pcard");if(!c)return;c.dataset.pt=b.dataset.ptab;[].forEach.call(c.querySelectorAll("[data-ptab]"),function(x){x.classList.toggle("on",x===b)})},true);
+</script>
 </body>
 </html>
