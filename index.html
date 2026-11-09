@@ -3320,7 +3320,7 @@ function home(){var deals=sbShuf(P.map(function(_,i){return i}).filter(function(
     h+='<h2 class="sec">Natijalar <small>'+res.length+' ta</small></h2><div class="sortbar">'+[["pop","Mashhur"],["cheap","Arzon"],["exp","Qimmat"]].map(function(x){return '<button data-a="sort" data-v="'+x[0]+'" class="'+(S.sort===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("")+'</div>';
     h+=res.length?'<div class="grid">'+res.map(card).join("")+'</div>':'<div class="mut">'+(P.length?"Hech narsa topilmadi.":(LOADED?"Tovarlar hali qo\u2018shilmagan.":"Mahsulotlar serverdan yuklanmadi. Internetni tekshirib, qayta urinib ko\u2018ring."))+'</div>';
     return h}
-    h+='<div class="b3d" id="b3dslot"></div>';
+    h+='<div class="b3d" id="b3dslot"></div>';h+='<div class="cstrip">'+CATS.map(function(c){return '<button data-a="opencat" data-v="'+c[0]+'"><span>'+svg(ICON[c[0]],26)+'</span>'+c[1]+'</button>'}).join("")+'</div>';
   var top=(function(){var all=P.map(function(_,i){return i}).sort(function(a,b){return P[b].s-P[a].s}),pool=all.slice(0,Math.max(24,8)),fresh=pool.filter(function(i){return deals.indexOf(i)<0});if(fresh.length<8)fresh=pool;var pick=sbShuf(fresh,2).slice(0,8);return pick})();
   h+='<h2 class="sec">Arzon topilmalar <small>o\'ngga suring</small></h2><div class="hs">'+deals.map(dealCard).join("")+'</div>';h+='<h2 class="sec">Tavsiya etamiz <small>o\'ngga suring</small></h2><div class="hs">'+top.map(card).join("")+'</div>'+(S.rv&&S.rv.length?'<h2 class="sec">Yaqinda ko\'rilganlar</h2><div class="hs">'+S.rv.map(card).join("")+'</div>':'');
   var list=pfFilt(sortList(P.map(function(_,i){return i}).filter(function(i){return P[i].n.toLowerCase().indexOf(S.term.toLowerCase())>-1})));
@@ -5000,5 +5000,158 @@ document.addEventListener("click",function(ev){
 },true);
 })();
 </script>
+<style id="sb-night-redesign">
+/* ===== TUNGI REJIM: qora-binafsha fon (4-rasm) + to'q sariq urg'u va toza kartalar (3-rasm), binafsha banner (1-rasm), yumshoq pill/chiplar (2-rasm) ===== */
+html[data-theme="dark"]:not([data-day]){--bg:#14121F;--ink:#F4F2FF;--mute:#A9A5C8;--line:rgba(255,255,255,.08);--brand:#FF8A3D;--teal:#A78BFA;--pink:#FF6A2B;--gold:#FFB84D;
+ background:radial-gradient(520px 420px at 92% -4%,rgba(139,92,246,.38),transparent 62%),radial-gradient(480px 420px at -6% 104%,rgba(255,122,61,.20),transparent 62%),radial-gradient(420px 320px at 50% 55%,rgba(56,189,248,.07),transparent 70%),linear-gradient(165deg,#0F0E18 0%,#1A1730 55%,#12101C 100%) fixed!important}
+html[data-theme="dark"]:not([data-day]) body{background:transparent!important;color:var(--ink)}
+html[data-theme="dark"]:not([data-day]) body::before{background:rgba(139,92,246,.16)!important}
+html[data-theme="dark"]:not([data-day]) body::after{background:rgba(255,122,61,.12)!important}
+html[data-theme="dark"]:not([data-day]) .sbbg,html[data-theme="dark"]:not([data-day]) .bgflash,html[data-theme="dark"]:not([data-day]) .land,html[data-theme="dark"]:not([data-day]) .dayclouds,html[data-theme="dark"]:not([data-day]) .bgstars,html[data-theme="dark"]:not([data-day]) #snow{display:none!important}
+/* kartalar */
+html[data-theme="dark"]:not([data-day]) .card,html[data-theme="dark"]:not([data-day]) .row,html[data-theme="dark"]:not([data-day]) .sum,html[data-theme="dark"]:not([data-day]) .contact a,html[data-theme="dark"]:not([data-day]) .copy,html[data-theme="dark"]:not([data-day]) .me,html[data-theme="dark"]:not([data-day]) .aibox,html[data-theme="dark"]:not([data-day]) .pricebox,html[data-theme="dark"]:not([data-day]) .form,html[data-theme="dark"]:not([data-day]) .hubb,html[data-theme="dark"]:not([data-day]) .hb{background:linear-gradient(180deg,#252238,#1E1B30)!important;border:1px solid rgba(255,255,255,.07)!important;border-radius:20px!important;box-shadow:0 8px 24px rgba(0,0,0,.35)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html[data-theme="dark"]:not([data-day]) .card .pic{filter:saturate(.95) brightness(.95);border-radius:16px;margin:6px 6px 0;height:128px}
+html[data-theme="dark"]:not([data-day]) .card .in{padding:10px 12px 12px}
+html[data-theme="dark"]:not([data-day]) .card .n{color:#F4F2FF!important;font-weight:600}
+html[data-theme="dark"]:not([data-day]) .card .sold{color:#A9A5C8!important}
+html[data-theme="dark"]:not([data-day]) .card .pr{color:#FF8A3D!important;font-weight:800}
+html[data-theme="dark"]:not([data-day]) .card .pr s{color:#7F7A9E!important;font-weight:500}
+html[data-theme="dark"]:not([data-day]) .badge{background:linear-gradient(135deg,#FF8A3D,#FF5A1F)!important;color:#fff!important;border-radius:10px!important}
+html[data-theme="dark"]:not([data-day]) .heart{background:rgba(255,122,61,.16)!important;color:#FF8A3D!important;border:1px solid rgba(255,138,61,.45)!important;box-shadow:none!important;border-radius:12px!important}
+/* sarlavhalar */
+html[data-theme="dark"]:not([data-day]) .sec,html[data-theme="dark"]:not([data-day]) h2,html[data-theme="dark"]:not([data-day]) h3{color:#F4F2FF!important}
+html[data-theme="dark"]:not([data-day]) .sec small{color:#FF8A3D!important}
+/* bannerlar: binafsha (1-rasm) + to'q sariq */
+html[data-theme="dark"]:not([data-day]) .bn{background:linear-gradient(125deg,#5B2EE8,#8B5CF6 60%,#B07CFF)!important;box-shadow:0 14px 30px rgba(91,46,232,.35)!important;border:1px solid rgba(255,255,255,.12)}
+html[data-theme="dark"]:not([data-day]) .bn.b2{background:linear-gradient(125deg,#FF6A2B,#FF9A3D)!important;box-shadow:0 14px 30px rgba(255,106,43,.30)!important}
+html[data-theme="dark"]:not([data-day]) .bn.b3{background:linear-gradient(125deg,#2E2A5E,#6D4AE8 70%,#22B8CF)!important}
+html[data-theme="dark"]:not([data-day]) .bn.b4{background:linear-gradient(125deg,#3B1F7A,#C026D3 80%,#FF8A3D)!important}
+html[data-theme="dark"]:not([data-day]) .bn.b5{background:linear-gradient(125deg,#E8541E,#FF8A3D 60%,#FFC24D)!important}
+html[data-theme="dark"]:not([data-day]) .dots i{background:rgba(255,255,255,.22)}
+html[data-theme="dark"]:not([data-day]) .dots i.on{background:#FF8A3D}
+/* kategoriyalar */
+html[data-theme="dark"]:not([data-day]) .cats{background:transparent!important;border-color:transparent!important}
+html[data-theme="dark"]:not([data-day]) .cat{color:#E9E6FF}
+html[data-theme="dark"]:not([data-day]) .cat span{box-shadow:0 8px 18px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.10)}
+/* qidiruv va maydonlar */
+html[data-theme="dark"]:not([data-day]) .search,html[data-theme="dark"]:not([data-day]) .search.glass{background:#221F36!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:16px!important}
+html[data-theme="dark"]:not([data-day]) input,html[data-theme="dark"]:not([data-day]) textarea,html[data-theme="dark"]:not([data-day]) select{background:#221F36!important;color:#F4F2FF!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:14px!important}
+html[data-theme="dark"]:not([data-day]) ::placeholder{color:#8E89B0}
+/* tugmalar */
+html[data-theme="dark"]:not([data-day]) .btn,html[data-theme="dark"]:not([data-day]) .pbb,html[data-theme="dark"]:not([data-day]) .prow .buyn,html[data-theme="dark"]:not([data-day]) .prow .btn,html[data-theme="dark"]:not([data-day]) .btn.primary{background:linear-gradient(135deg,#FF9A3D,#FF5A1F)!important;color:#fff!important;border:0!important;border-radius:999px!important;box-shadow:0 8px 20px rgba(255,106,43,.35)!important}
+html[data-theme="dark"]:not([data-day]) .btn.ghost{background:rgba(255,255,255,.06)!important;color:#FFB070!important;border:1px solid rgba(255,138,61,.4)!important;box-shadow:none!important}
+html[data-theme="dark"]:not([data-day]) .pbi{background:rgba(255,255,255,.07)!important;color:#FF8A3D!important;border:1px solid rgba(255,255,255,.10)!important}
+/* chiplar va saralash */
+html[data-theme="dark"]:not([data-day]) .pick,html[data-theme="dark"]:not([data-day]) .opt button,html[data-theme="dark"]:not([data-day]) .qs button,html[data-theme="dark"]:not([data-day]) .tmap button,html[data-theme="dark"]:not([data-day]) .ulist button,html[data-theme="dark"]:not([data-day]) .sortbar button,html[data-theme="dark"]:not([data-day]) .hubt button,html[data-theme="dark"]:not([data-day]) .aich button{background:#221F36!important;color:#E9E6FF!important;border:1px solid rgba(255,255,255,.09)!important;border-radius:999px!important;box-shadow:none!important}
+html[data-theme="dark"]:not([data-day]) .opt button.on,html[data-theme="dark"]:not([data-day]) .sortbar button.on,html[data-theme="dark"]:not([data-day]) .tmap button.on,html[data-theme="dark"]:not([data-day]) .ulist button.on,html[data-theme="dark"]:not([data-day]) .hubt button.on,html[data-theme="dark"]:not([data-day]) .hb.on,html[data-theme="dark"]:not([data-day]) .pick.on{background:linear-gradient(135deg,#FF9A3D,#FF5A1F)!important;color:#fff!important;border-color:transparent!important}
+/* pastki menyu: suzuvchi kapsula, faol bo'lim to'q sariq */
+html[data-theme="dark"]:not([data-day]) .nav,html[data-theme="dark"]:not([data-day]) .nav.glass{background:rgba(30,27,48,.92)!important;border:1px solid rgba(255,255,255,.09)!important;box-shadow:0 14px 34px rgba(0,0,0,.5)!important;-webkit-backdrop-filter:blur(18px)!important;backdrop-filter:blur(18px)!important}
+html[data-theme="dark"]:not([data-day]) .nav button{color:#8E89B0!important}
+html[data-theme="dark"]:not([data-day]) .nav button.on{color:#FF8A3D!important}
+html[data-theme="dark"]:not([data-day]) .nav button svg{filter:none!important}
+html[data-theme="dark"]:not([data-day]) .nav .pill,html[data-theme="dark"]:not([data-day]) .pill{background:rgba(255,138,61,.16)!important;box-shadow:none!important}
+html[data-theme="dark"]:not([data-day]) .nav i{background:#FF6A2B!important;color:#fff!important}
+/* sahifa ustidagi oynalar va yon menyu */
+html[data-theme="dark"]:not([data-day]) .sh .sp,html[data-theme="dark"]:not([data-day]) .menu,html[data-theme="dark"]:not([data-day]) .sp{background:rgba(24,21,40,.97)!important}
+html[data-theme="dark"]:not([data-day]) .sh.full .sp{background:#14121F!important}
+html[data-theme="dark"]:not([data-day]) .ov{background:rgba(6,5,14,.6)!important}
+html[data-theme="dark"]:not([data-day]) .fab{background:linear-gradient(135deg,#8B5CF6,#FF6A2B)!important;box-shadow:0 10px 24px rgba(139,92,246,.45)!important}
+html[data-theme="dark"]:not([data-day]) .totop{background:#2A2640!important;color:#FF8A3D!important}
+html[data-theme="dark"]:not([data-day]) .pbf{background:#1A172B!important;border-top:1px solid rgba(255,255,255,.08)!important}
+html[data-theme="dark"]:not([data-day]) .gal,html[data-theme="dark"]:not([data-day]) .big{background:#1E1B30!important}
+html[data-theme="dark"]:not([data-day]) .sh.full .sp .back{background:#252238!important;color:#FF8A3D!important}
+html[data-theme="dark"]:not([data-day]) .bub.bot{background:#2A2640!important;color:#F4F2FF!important}
+html[data-theme="dark"]:not([data-day]) .warn{background:rgba(255,106,43,.16)!important;color:#FFB48A!important}
+</style>
+<style id="sb-day-redesign">
+/* ===== Kategoriya doiralari (3-rasm) — kunduz va tun ===== */
+.cstrip{display:flex;gap:14px;overflow-x:auto;padding:16px 14px 2px;scrollbar-width:none}
+.cstrip::-webkit-scrollbar{display:none}
+.cstrip button{flex:0 0 auto;width:66px;border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--ink);cursor:pointer;transition:transform .15s}
+.cstrip button:active{transform:scale(.92)}
+.cstrip span{width:58px;height:58px;border-radius:50%;display:grid;place-items:center}
+html[data-day] .cstrip span{background:#FFF1EC;color:#FF5A1F;box-shadow:0 4px 12px rgba(255,90,31,.14)}
+html[data-day] .cstrip button{color:#1F1F1F}
+html[data-theme="dark"]:not([data-day]) .cstrip span{background:rgba(255,138,61,.14);color:#FF8A3D;box-shadow:inset 0 0 0 1px rgba(255,138,61,.35)}
+/* ===== KUNDUZ: 3-rasmdagi toza oq-to'q sariq dizayn ===== */
+html[data-day] body .top>.ib[data-a="menu"],
+html[data-day] body #sbar.search,
+html[data-day] body .top>.tbtn{background:#FFFFFF!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid #EEEEEE!important;box-shadow:0 4px 14px rgba(0,0,0,.08)!important;color:#1F1F1F!important}
+html[data-day] body #sbar.search{border-radius:16px!important}
+html[data-day] body .card{background:#FFFFFF!important;border:0!important;border-radius:18px!important;box-shadow:0 4px 18px rgba(0,0,0,.07)!important}
+html[data-day] body .card .pic{background:#F4F4F6!important;filter:none!important;border-radius:14px;margin:8px 8px 0;height:128px}
+html[data-day] body .card .n{color:#1F1F1F!important;font-weight:600}
+html[data-day] body .card .pr{color:#1F1F1F!important;font-weight:800}
+html[data-day] body .card .pr s{color:#A0A0A8!important;font-weight:500}
+html[data-day] body .card .sold{color:#8A8A92!important}
+html[data-day] body .heart{width:28px;height:28px;border-radius:9px!important;background:#FF5A1F!important;color:#fff!important;border:0!important;box-shadow:none!important;font-size:14px;right:14px;top:14px}
+html[data-day] body .badge{background:#1F1F1F!important;color:#fff!important;border-radius:8px!important;left:14px;top:14px}
+html[data-day] body .sec{font-size:18px;font-weight:800;color:#1F1F1F!important}
+html[data-day] body .sec small{color:#A0A0A8!important;font-weight:600}
+html[data-day] body .sortbar button{background:#FFFFFF!important;color:#5A5A62!important;border:1px solid #EEEEEE!important;border-radius:999px!important;box-shadow:none!important}
+html[data-day] body .sortbar button.on{background:#FF5A1F!important;color:#fff!important;border-color:#FF5A1F!important}
+html[data-day] body .bn{border-radius:22px!important;background:linear-gradient(125deg,#FF7A3D,#FF4B1F)!important}
+html[data-day] body .btn,html[data-day] body .pbb,html[data-day] body .btn.primary{background:#FF5A1F!important;border-radius:999px!important;box-shadow:0 6px 16px rgba(255,90,31,.28)!important}
+html[data-day] body .nav,html[data-day] body .nav.glass{background:#FFFFFF!important;border:0!important;border-radius:28px!important;box-shadow:0 10px 30px rgba(0,0,0,.12)!important}
+html[data-day] body .nav button{color:#9A9AA2!important}
+html[data-day] body .nav button.on{color:#FF5A1F!important}
+html[data-day] body .nav .pill,html[data-day] body .pill{background:#FFF1EC!important;border-radius:22px!important}
+html[data-day] body .ktb{background:#FFFFFF!important;border:0!important;border-radius:18px!important;box-shadow:0 4px 14px rgba(0,0,0,.06)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+</style>
+<style id="sb-ref-ui">
+/* ===== BARCHA SAHIFALAR: 3-rasm uslubi (shakl + rang). Matn, tugma nomlari, animatsiyalar o'zgarmaydi ===== */
+html[data-day]{--u-s:#FFFFFF;--u-s2:#F4F4F6;--u-ink:#1F1F1F;--u-mute:#8A8A92;--u-line:#EEEEF0;--u-acc:#FF5A1F;--u-acc2:#FF8A3D;--u-soft:#FFF1EC;--u-sh:0 4px 18px rgba(0,0,0,.07)}
+html[data-theme="dark"]:not([data-day]){--u-s:#221F36;--u-s2:#2C2846;--u-ink:#F4F2FF;--u-mute:#A9A5C8;--u-line:rgba(255,255,255,.08);--u-acc:#FF7A2B;--u-acc2:#FFA24D;--u-soft:rgba(255,138,61,.15);--u-sh:0 8px 24px rgba(0,0,0,.38)}
+/* kartalar va ro'yxat qatorlari */
+html[data-theme]:not(.u1):not(.u2) body :is(.card,.row,.sum,.form .pick,.pricebox,.aibox,.hubb,.hb,.ktb,.contact a,.copy,.me){background:var(--u-s)!important;background-image:none!important;border:0!important;border-radius:20px!important;box-shadow:var(--u-sh)!important;color:var(--u-ink)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html[data-theme]:not(.u1):not(.u2) body :is(.pic,.big,.gal,.th){background:var(--u-s2)!important;filter:none!important;border-radius:16px}
+html[data-theme]:not(.u1):not(.u2) body .card .pic{margin:8px 8px 0;height:128px}
+html[data-theme]:not(.u1):not(.u2) body :is(.card .n,.row .t,.t,.sec,h2,h3,.pick b,.sum b){color:var(--u-ink)!important}
+html[data-theme]:not(.u1):not(.u2) body :is(.sold,.mut,.note,small,.pick span,.ln span){color:var(--u-mute)!important}
+html[data-theme]:not(.u1):not(.u2) body .card .pr{color:var(--u-ink)!important;font-weight:800}
+html[data-theme]:not(.u1):not(.u2) body .card .pr s{color:var(--u-mute)!important;font-weight:500}
+html[data-theme]:not(.u1):not(.u2) body .sec{font-size:18px;font-weight:800}
+html[data-theme]:not(.u1):not(.u2) body .sec small{color:var(--u-acc)!important;font-weight:700}
+/* yurakcha — to'q sariq kvadrat, belgi — qora/to'q sariq */
+html[data-theme]:not(.u1):not(.u2) body .heart{width:28px;height:28px;border-radius:9px!important;background:var(--u-acc)!important;color:#fff!important;border:0!important;box-shadow:none!important;font-size:14px;right:14px;top:14px}
+html[data-theme]:not(.u1):not(.u2) body .badge{background:var(--u-acc)!important;color:#fff!important;border-radius:8px!important;left:14px;top:14px}
+/* savat: miqdor kapsulasi (− 1 +) */
+html[data-theme]:not(.u1):not(.u2) body .q{display:flex;align-items:center;gap:6px;border:1.5px solid var(--u-line);border-radius:999px;padding:3px 5px;background:transparent!important}
+html[data-theme]:not(.u1):not(.u2) body .q button{width:26px;height:26px;border-radius:50%!important;border:0!important;background:var(--u-soft)!important;color:var(--u-acc)!important;font-weight:800;box-shadow:none!important}
+html[data-theme]:not(.u1):not(.u2) body .q span{min-width:16px;text-align:center;font-weight:700;color:var(--u-ink)}
+html[data-theme]:not(.u1):not(.u2) body .pay1{background:var(--u-soft)!important;color:var(--u-acc)!important;border:0!important;border-radius:999px!important;font-weight:700;box-shadow:none!important}
+html[data-theme]:not(.u1):not(.u2) body .sum .ln:last-of-type{border-top:1px dashed var(--u-line)}
+/* tugmalar: to'q sariq yumaloq (Checkout / Add to Cart / Buy Now) */
+html[data-theme]:not(.u1):not(.u2) body :is(.btn,.pbb,.btn.primary,.prow .buyn){background:linear-gradient(135deg,var(--u-acc2),var(--u-acc))!important;color:#fff!important;border:0!important;border-radius:999px!important;min-height:48px;box-shadow:0 8px 20px rgba(255,90,31,.30)!important}
+html[data-theme]:not(.u1):not(.u2) body .btn.ghost{background:var(--u-soft)!important;color:var(--u-acc)!important;box-shadow:none!important;border:1.5px solid var(--u-acc)!important}
+html[data-theme]:not(.u1):not(.u2) body .pbi{background:var(--u-s)!important;color:var(--u-acc)!important;border:0!important;box-shadow:var(--u-sh)!important}
+/* chiplar / o'lcham-rang / tablar (3-rasmdagi Description-Specifications kabi) */
+html[data-theme]:not(.u1):not(.u2) body :is(.sortbar button,.opt button,.qs button,.tmap button,.ulist button,.aich button){background:var(--u-s)!important;color:var(--u-ink)!important;border:1.5px solid var(--u-line)!important;border-radius:12px!important;box-shadow:none!important}
+html[data-theme]:not(.u1):not(.u2) body :is(.sortbar button.on,.opt button.on,.tmap button.on,.ulist button.on){background:var(--u-acc)!important;color:#fff!important;border-color:var(--u-acc)!important}
+html[data-theme]:not(.u1):not(.u2) body .sp .opt button.on::before,html[data-theme]:not(.u1):not(.u2) body .sp .sortbar button.on::before{display:none!important}
+html[data-theme]:not(.u1):not(.u2) body .hubt button{background:transparent!important;color:var(--u-mute)!important;border:0!important;box-shadow:none!important;border-radius:999px!important;font-weight:600}
+html[data-theme]:not(.u1):not(.u2) body .hubt button.on{background:var(--u-acc)!important;color:#fff!important}
+/* tovar oynasi va yon menyu */
+html[data-theme]:not(.u1):not(.u2) body :is(.sp,.menu){background:var(--u-s)!important;color:var(--u-ink)!important}
+html[data-theme]:not(.u1):not(.u2) body .sh.full .sp{background:var(--u-s2)!important}
+html[data-theme]:not(.u1):not(.u2) body .pbf{background:var(--u-s)!important;border-top:0!important;border-radius:26px 26px 0 0!important;box-shadow:0 -10px 30px rgba(0,0,0,.12)!important}
+html[data-theme]:not(.u1):not(.u2) body .sh.full .sp .back{background:var(--u-s)!important;color:var(--u-ink)!important;border-radius:14px!important;box-shadow:var(--u-sh)!important}
+/* yordam / AI suhbat */
+html[data-theme]:not(.u1):not(.u2) body .bub{border-radius:18px!important}
+html[data-theme]:not(.u1):not(.u2) body .bub.bot{background:var(--u-s)!important;color:var(--u-ink)!important;box-shadow:var(--u-sh)}
+html[data-theme]:not(.u1):not(.u2) body .bub:not(.bot){background:linear-gradient(135deg,var(--u-acc2),var(--u-acc))!important;color:#fff!important}
+html[data-theme]:not(.u1):not(.u2) body .fab{background:linear-gradient(135deg,var(--u-acc2),var(--u-acc))!important;box-shadow:0 10px 24px rgba(255,90,31,.38)!important}
+html[data-theme]:not(.u1):not(.u2) body :is(input,textarea,select){background:var(--u-s)!important;color:var(--u-ink)!important;border:1.5px solid var(--u-line)!important;border-radius:14px!important}
+/* pastki menyu: oq/qora kapsula, faol bo'lim to'q sariq */
+html[data-theme]:not(.u1):not(.u2) body :is(.nav,.nav.glass){background:var(--u-s)!important;border:0!important;border-radius:28px!important;box-shadow:0 12px 32px rgba(0,0,0,.18)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html[data-theme]:not(.u1):not(.u2) body .nav button{color:var(--u-mute)!important}
+html[data-theme]:not(.u1):not(.u2) body .nav button.on{color:var(--u-acc)!important}
+html[data-theme]:not(.u1):not(.u2) body :is(.nav .pill,.pill){background:var(--u-soft)!important;border-radius:22px!important;box-shadow:none!important}
+/* tepa vidjetlar tunda ham qattiq */
+html[data-theme="dark"]:not([data-day]) body .top>.ib[data-a="menu"],
+html[data-theme="dark"]:not([data-day]) body #sbar.search,
+html[data-theme="dark"]:not([data-day]) body .top>.tbtn{background:#221F36!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid rgba(255,255,255,.08)!important;box-shadow:0 6px 18px rgba(0,0,0,.4)!important;color:#F4F2FF!important}
+html[data-theme="dark"]:not([data-day]) body #sbar.search{border-radius:16px!important}
+</style>
 </body>
 </html>
