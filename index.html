@@ -3381,18 +3381,18 @@ function promoRows(){var r=[];
   ((MYREF&&MYREF.coupons)||[]).forEach(function(c){r.push({c:c.code,p:c.pct,t:c.why==="welcome"?"Taklif orqali kelganingiz uchun":c.why==="review"?"Sharh uchun sovg'a":"Do'stingiz taklifi uchun",u:!!c.used})});
   return r}
 function promoList(mode){var r=promoRows();if(!r.length)return "";
-  return '<div style="margin-top:12px"><div class="note" style="padding:0 0 6px"><b>Promokodlarim</b></div>'+r.map(function(x){
+  return '<div class="promos" style="margin-top:12px"><div class="note" style="padding:0 0 6px"><b>Promokodlarim</b></div>'+r.map(function(x){
     var on=S.promo===x.c,btn="";
     if(!x.u)btn=mode==="cart"?'<button class="btn" data-a="promopick" data-v="'+esc(x.c)+'" style="width:auto;margin:0;padding:8px 14px">'+(on?'Tanlandi ✓':'Qo\'llash')+'</button>':'<button class="btn" data-x="cpy" data-v="'+esc(x.c)+'" style="width:auto;margin:0;padding:8px 14px">Nusxalash</button>';
-    return '<div style="display:flex;align-items:center;gap:8px;padding:9px 10px;margin-bottom:6px;border-radius:12px;border:1px dashed var(--line);background:rgba(255,255,255,.5)'+(x.u?';opacity:.5':'')+'"><div style="flex:1;min-width:0"><b style="letter-spacing:.5px;user-select:all">'+esc(x.c)+'</b> <span style="color:var(--pink);font-weight:800">−'+x.p+'%</span><div class="note" style="padding:0">'+esc(x.t)+(x.u?' · ishlatilgan':'')+'</div></div>'+btn+'</div>'}).join("")+'</div>'}
+    return '<div class="promo-row" style="display:flex;align-items:center;gap:8px;padding:9px 10px;margin-bottom:6px;border-radius:12px;border:1px dashed var(--line);background:rgba(255,255,255,.5)'+(x.u?';opacity:.5':'')+'"><div style="flex:1;min-width:0"><b style="letter-spacing:.5px;user-select:all">'+esc(x.c)+'</b> <span style="color:var(--pink);font-weight:800">−'+x.p+'%</span><div class="note" style="padding:0">'+esc(x.t)+(x.u?' · ishlatilgan':'')+'</div></div>'+btn+'</div>'}).join("")+'</div>'}
 function refCard(){
-  var h='<div class="contact glass" style="margin-top:12px;display:block;padding:14px"><b>Do\'stingizni taklif qiling</b>';
+  var h='<div class="contact glass refc" style="margin-top:12px;display:block;padding:14px"><b>Do\'stingizni taklif qiling</b>';
   if(!S.sess)return h+'<div class="note" style="padding:4px 0 8px">Taklif havolangizni olish uchun avval kiring. Do\'stingiz havola orqali kirsa, ikkalangizga 10% chegirma kupon beriladi.</div><button class="btn" data-a="login">Kirish</button></div>';
   var d=MYREF;if(!d)return h+'<div class="note" style="padding:4px 0 8px">Yuklanmoqda…</div></div>';
   var txt="Xitoy tovarlari so'mda, Sarbonda. Havola orqali kiring va 10% chegirma kuponi oling:";
   return h+'<div class="note" style="padding:4px 0 8px">Do\'stingiz havolangiz orqali kirib ro\'yxatdan o\'tsa, ikkalangizga ham 10% chegirma kuponi (tasodifiy kod) beriladi. Taklif qilinganlar: <b>'+(d.invited||0)+'</b> ta.</div>'
    +'<div class="trkbox"><span>🔗</span><b>'+esc(d.link)+'</b><button data-x="cpy" data-v="'+esc(d.link)+'">Nusxalash</button></div>'
-   +'<a href="https://t.me/share/url?url='+encodeURIComponent(d.link)+'&text='+encodeURIComponent(txt)+'" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;background:#229ED9;color:#fff;border-radius:12px;padding:12px;font-weight:800;margin-top:10px">Telegram orqali yuborish</a>'
+   +'<a href="https://t.me/share/url?url='+encodeURIComponent(d.link)+'&text='+encodeURIComponent(txt)+'" target="_blank" rel="noopener" class="tgshare" style="display:block;text-align:center;text-decoration:none;background:#229ED9;color:#fff;border-radius:12px;padding:12px;font-weight:800;margin-top:10px">Telegram orqali yuborish</a>'
    +promoList("help")+'</div>'}
 function loadRef(){if(!S.sess||!S.sess.token)return Promise.resolve();
   return fetch(WORKER+"/ref-info?token="+encodeURIComponent(S.sess.token),{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
@@ -3548,11 +3548,16 @@ function aiChat(inline){
   return '<div class="aibox glass'+(inline?'':' apin')+'">'+'<div class="aihd"><span class="dot"></span><div><b>Sarbon AI yordamchi</b><small>Onlayn · odatda darhol javob beradi</small></div>'+(inline?'':'<button class="xb" data-a="aiclose" aria-label="Yopish">×</button>')+'</div><div class="ailog'+(inline?' tall':'')+'">'+S.chat.slice(-14).map(function(m,k,arr){var gi=S.chat.length-arr.length+k;return '<div class="bub '+(m.f==="me"?"me":"bot")+(gi>=S.fresh?" in":"")+'">'+esc(m.t)+'</div>'}).join("")+(S.typing?'<div class="bub bot typing"><i></i><i></i><i></i></div>':"")+'</div><div class="aich">'+CHIPS.map(function(q){return '<button data-a="bq" data-v="'+esc(q)+'">'+esc(q)+'</button>'}).join("")+'</div><div class="aiin"><input placeholder="Savol yozing..."><button data-a="ask" aria-label="Yuborish">➤</button></div></div>';
 }
 function support(){
-  var h=(window.sbAdminBtn?window.sbAdminBtn():'')+'<h2 class="sec">Yordam</h2>'+aiChat(true)+'<h2 class="sec">Tez savollar</h2><div class="tips">'+TIPS.map(function(t){return '<button class="tip" data-a="bq" data-v="'+esc(t[1])+'"><span>'+t[0]+'</span>'+esc(t[1])+'</button>'}).join("")+'</div>';
-  h+='<h2 class="sec">Narx kalkulyatori</h2><div class="contact glass" style="display:block;padding:14px"><input id="kcw" type="number" inputmode="decimal" placeholder="Og\'irligi, kg" style="width:100%;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;margin-bottom:8px;font:inherit"><select id="kcm" style="width:100%;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;margin-bottom:8px;font:inherit"><option value="auto">Avto \u2014 $'+CG.auto+'/kg</option><option value="avia">Avia \u2014 $'+CG.avia+'/kg</option></select><div id="kcr">'+kcalc(0,"auto")+'</div></div>';
-  h+='<details class="op glass" style="margin-top:12px"><summary>Qaytarish va bekor qilish qoidalari</summary><div style="padding-top:8px;font-size:13px;line-height:1.5">Buyurtmani Xitoyda sotib olinguncha bekor qilish mumkin, pul qaytariladi. Sotib olingandan keyin bekor qilib bo\'lmaydi. Nuqsonli yoki noto\'g\'ri tovar kelsa, filialda ochib ko\'rib, 3 kun ichida rasm bilan yozing. Cargo va UzPost to\'lovlari qaytarilmaydi.<br><small style="color:var(--mute)">Namuna matn: o\'zingizning qoidalaringizga moslab beraman.</small></div></details>';
-  h+=refCard();
-  return h;
+  var tips=TIPS.map(function(t){return '<button class="tip" data-a="bq" data-v="'+esc(t[1])+'"><span>'+t[0]+'</span>'+esc(t[1])+'</button>'}).join("");
+  return '<div class="sup">'
+   +'<h1 class="sup-h">Yordam</h1>'
+   +'<section class="sup-contact">'+(window.sbAdminBtn?window.sbAdminBtn():'')+'</section>'
+   +'<section class="sup-ai">'+aiChat(true)+'</section>'
+   +'<section class="sup-sec"><h2 class="sec">Tez savollar</h2><div class="tips">'+tips+'</div></section>'
+   +'<section class="sup-sec"><h2 class="sec">Narx kalkulyatori</h2><div class="kc"><div class="kc-in"><input id="kcw" type="number" inputmode="decimal" placeholder="Og\'irligi, kg"><select id="kcm"><option value="auto">Avto \u2014 $'+CG.auto+'/kg</option><option value="avia">Avia \u2014 $'+CG.avia+'/kg</option></select></div><div id="kcr" class="kc-out">'+kcalc(0,"auto")+'</div></div></section>'
+   +'<details class="op"><summary>Qaytarish va bekor qilish qoidalari</summary><div class="op-b">Buyurtmani Xitoyda sotib olinguncha bekor qilish mumkin, pul qaytariladi. Sotib olingandan keyin bekor qilib bo\'lmaydi. Nuqsonli yoki noto\'g\'ri tovar kelsa, filialda ochib ko\'rib, 3 kun ichida rasm bilan yozing. Cargo va UzPost to\'lovlari qaytarilmaydi.<br><small>Namuna matn: o\'zingizning qoidalaringizga moslab beraman.</small></div></details>'
+   +refCard()
+   +'</div>';
 }
 
 function placePill(){var nav=$("nav"),on=document.querySelector("#navb button.on"),p=$("pill");if(!on||!p)return;var nr=nav.getBoundingClientRect(),br=on.getBoundingClientRect();var nl=br.left-nr.left+3;p.style.width=(br.width-6)+"px";p.style.left=nl+"px";if(p._l!==undefined&&Math.abs(p._l-nl)>1){p.classList.remove("jig");void p.offsetWidth;p.classList.add("jig")}p._l=nl}
@@ -4184,7 +4189,7 @@ try{S.night=localStorage.getItem(document.documentElement.getAttribute("data-ski
 try{var sb=parseFloat(localStorage.getItem("sarbon.fb"));if(sb){fbB=sb;$("fab").style.bottom=sb+"px";$("ap").style.bottom=(sb+66)+"px"}}catch(e){}
 applyTheme();
 render();
-function kcalc(w,m){var c=Math.round(w*CG[m]*USD/1000)*1000,u=w>0?uzp(w):0;return '<div class="ln"><span>Cargo</span><span>~'+fmt(c)+'</span></div><div class="ln"><span>UzPost</span><span>~'+fmt(u)+'</span></div><div class="ln" style="font-weight:800;border-top:1px solid var(--line);margin-top:6px;padding-top:8px"><span>Jami taxminiy</span><span>'+fmt(c+u)+'</span></div><div class="note" style="padding:6px 0 0">Yetib kelish: '+DAYS[m]+'. Cargo haqiqiy og\'irlik bo\'yicha aniqlanadi.</div>'}
+function kcalc(w,m){var c=Math.round(w*CG[m]*USD/1000)*1000,u=w>0?uzp(w):0;return '<div class="ln"><span>Cargo</span><span>~'+fmt(c)+'</span></div><div class="ln"><span>UzPost</span><span>~'+fmt(u)+'</span></div><div class="ln tot"><span>Jami taxminiy</span><span>'+fmt(c+u)+'</span></div><div class="note">Yetib kelish: '+DAYS[m]+'. Cargo haqiqiy og\'irlik bo\'yicha aniqlanadi.</div>'}
 function kupd(){if(!$("kcr")||!$("kcw")||!$("kcm"))return;$("kcr").innerHTML=kcalc(parseFloat($("kcw").value)||0,$("kcm").value)}
 document.addEventListener("input",function(e){if(e.target.id==="kcw")kupd()});
 document.addEventListener("change",function(e){if(e.target.id==="kcm")kupd()});
@@ -6051,6 +6056,82 @@ html:root:root:root #vs .vsmu{text-align:center!important;color:var(--o)!importa
 html:root:root:root #vs .vse{text-align:center;color:#E5484D!important}
 html:root:root:root #vs .vsgo{height:56px!important;border-radius:999px!important;font-size:16px!important;background:linear-gradient(135deg,var(--o2),var(--o))!important;box-shadow:0 12px 26px rgba(124,58,237,.38)!important}
 html:root:root:root #vs .vsgo.c{background:linear-gradient(135deg,#34296B,#1E1840)!important;box-shadow:0 12px 26px rgba(20,12,50,.35)!important}
+</style>
+<style id="sb-help-layout">
+/* YORDAM BO'LIMI — yangi joylashuv: Admin → AI chat → Tez savollar → Kalkulyator → Qoidalar → Taklif */
+html:root:root:root body #app .sup{--s:var(--v3-s,#fff);--s2:var(--v3-s2,#f1eff3);--ink:var(--v3-ink,#17141f);--mute:var(--v3-mute,#8a8696);--ln:var(--v3-line,rgba(0,0,0,.08));--ac:var(--o,#7c3aed);--ac2:var(--o2,#9b6bff);--tn:var(--os,rgba(124,58,237,.12));display:flex;flex-direction:column;gap:22px;padding:6px 16px 130px;margin:0;color:var(--ink)}
+html:root:root:root body #app .sup *{box-sizing:border-box}
+html:root:root:root body #app .sup .sup-h{margin:2px 2px 0;font-size:28px;line-height:1.1;font-weight:800;letter-spacing:-.4px;color:var(--ink)}
+html:root:root:root body #app .sup section{margin:0;padding:0;min-width:0}
+html:root:root:root body #app .sup .sec{margin:0 2px 10px!important;font-size:18px!important;font-weight:800!important;color:var(--ink)!important;display:block}
+
+/* 1. admin + push */
+html:root:root:root body #app .sup .sup-contact{display:flex;flex-direction:column;gap:10px}
+html:root:root:root body #app .sup .achat-btn{width:100%!important;margin:0!important;padding:14px 16px!important;gap:14px;border-radius:22px!important}
+html:root:root:root body #app .sup .achat-btn .ic{flex:none;width:46px;height:46px;border-radius:15px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:23px}
+html:root:root:root body #app .sup .achat-btn>span:nth-child(2){flex:1;min-width:0}
+html:root:root:root body #app .sup .achat-btn b{font-size:16px;line-height:1.2}
+html:root:root:root body #app .sup .achat-btn small{display:flex;align-items:center;gap:6px;font-size:12px;line-height:1.3;margin-top:4px}
+html:root:root:root body #app .sup .achat-btn small .live{flex:none}
+html:root:root:root body #app .sup .achat-btn .ab{flex:none;margin-left:0}
+html:root:root:root body #app .sup .sup-contact .btn.ghost{margin:0!important;width:100%!important;height:46px!important;padding:0 16px!important;border-radius:16px!important;font-size:14px!important;font-weight:700;background:var(--s)!important;color:var(--ink)!important;border:1px solid var(--ln)!important;box-shadow:none!important}
+html:root:root:root body #app .sup .sup-contact .note{margin:0!important;padding:12px 14px!important;border-radius:16px;background:var(--s2);font-size:12.5px;line-height:1.45}
+
+/* 2. AI chat */
+html:root:root:root body #app .sup .aibox{margin:0!important;padding:14px!important;border-radius:24px!important;background:var(--s)!important;border:1px solid var(--ln)!important;box-shadow:0 8px 24px rgba(30,20,60,.06)!important;display:flex;flex-direction:column;gap:12px;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html:root:root:root body #app .sup .aihd{margin:0!important;padding:0 0 12px;border-bottom:1px solid var(--ln);gap:12px}
+html:root:root:root body #app .sup .aihd b{font-size:15px;color:var(--ink)}
+html:root:root:root body #app .sup .aihd small{display:block;margin-top:2px;font-size:12px;color:var(--mute)}
+html:root:root:root body #app .sup .ailog.tall{height:auto!important;min-height:0!important;max-height:min(42vh,300px)!important;overflow-y:auto;padding:0!important;margin:0}
+html:root:root:root body #app .sup .ailog.tall::before{display:none}
+html:root:root:root body #app .sup .ailog .bub{max-width:86%;margin:0 0 8px}
+html:root:root:root body #app .sup .ailog .bub:last-child{margin-bottom:0}
+html:root:root:root body #app .sup .aich{margin:0 -14px!important;padding:0 14px 2px!important;gap:8px}
+html:root:root:root body #app .sup .aich button{padding:9px 14px!important;border-radius:999px!important;font-size:13px!important;flex:none}
+html:root:root:root body #app .sup .aiin{gap:8px;align-items:center}
+html:root:root:root body #app .sup .aiin input{height:48px;min-width:0;padding:0 16px!important;border-radius:999px!important;background:var(--s2)!important;color:var(--ink)!important;border:1px solid var(--ln)!important;font-size:15px}
+html:root:root:root body #app .sup .aiin button{flex:none;width:48px;height:48px;border-radius:50%!important;background:linear-gradient(135deg,var(--ac2),var(--ac))!important;color:#fff!important;font-size:17px;display:grid;place-items:center;padding:0}
+
+/* 3. tez savollar */
+html:root:root:root body #app .sup .tips{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important}
+html:root:root:root body #app .sup .tip{flex-direction:row!important;align-items:center!important;justify-content:flex-start;gap:10px;min-height:62px;margin:0!important;padding:10px 12px!important;border-radius:18px!important;text-align:left;font-size:13px!important;font-weight:600;line-height:1.25;background:var(--s)!important;border:1px solid var(--ln)!important;color:var(--ink)!important;box-shadow:none!important}
+html:root:root:root body #app .sup .tip span{flex:none;width:36px;height:36px;border-radius:12px;background:var(--s2);display:grid;place-items:center;font-size:19px;line-height:1}
+
+/* 4. kalkulyator */
+html:root:root:root body #app .sup .kc{padding:14px;border-radius:24px;background:var(--s);border:1px solid var(--ln);box-shadow:0 8px 24px rgba(30,20,60,.06)}
+html:root:root:root body #app .sup .kc-in{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+html:root:root:root body #app .sup .kc input,html:root:root:root body #app .sup .kc select{width:100%!important;min-width:0;height:48px;margin:0!important;padding:0 14px!important;border-radius:14px!important;border:1px solid var(--ln)!important;background:var(--s2)!important;color:var(--ink)!important;font:inherit;font-size:15px;outline:none}
+html:root:root:root body #app .sup .kc-out{margin-top:12px;padding-top:6px;border-top:1px dashed var(--ln)}
+html:root:root:root body #app .sup .kc .ln{padding:8px 2px;font-size:14px;color:var(--mute)!important}
+html:root:root:root body #app .sup .kc .ln.tot{margin-top:6px;padding:13px 14px;border-radius:16px;background:var(--tn);color:var(--ink)!important;font-size:16px;font-weight:800;border:0}
+html:root:root:root body #app .sup .kc .note{padding:10px 2px 0!important;font-size:12.5px;line-height:1.45}
+
+/* 5. qoidalar */
+html:root:root:root body #app .sup details.op{margin:0!important;padding:0!important;border-radius:20px;background:var(--s);border:1px solid var(--ln);box-shadow:none}
+html:root:root:root body #app .sup details.op summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;list-style:none;cursor:pointer;font-size:15px;font-weight:700;color:var(--ink)}
+html:root:root:root body #app .sup details.op summary::-webkit-details-marker{display:none}
+html:root:root:root body #app .sup details.op summary::marker{content:""}
+html:root:root:root body #app .sup details.op summary::after{content:"";flex:none;width:8px;height:8px;margin-right:4px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(45deg) translateY(-2px);transition:transform .2s}
+html:root:root:root body #app .sup details.op[open] summary::after{transform:rotate(225deg) translateY(-2px)}
+html:root:root:root body #app .sup details.op .op-b{padding:0 18px 18px;font-size:13.5px;line-height:1.55;color:var(--ink)}
+html:root:root:root body #app .sup details.op .op-b small{display:block;margin-top:8px;color:var(--mute)}
+
+/* 6. taklif */
+html:root:root:root body #app .sup .refc{margin:0!important;padding:16px!important;display:flex!important;flex-direction:column;gap:12px;border-radius:24px!important;background:var(--s)!important;border:1px solid var(--ln)!important;box-shadow:0 8px 24px rgba(30,20,60,.06)!important}
+html:root:root:root body #app .sup .refc>b{font-size:18px;font-weight:800;color:var(--ink)}
+html:root:root:root body #app .sup .refc>.note{padding:0!important;font-size:13px;line-height:1.5}
+html:root:root:root body #app .sup .refc .trkbox{margin:0;padding:6px 6px 6px 14px;gap:10px;border-radius:16px;background:var(--s2)}
+html:root:root:root body #app .sup .refc .trkbox b{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;word-break:normal;letter-spacing:0;font-size:13px;font-weight:600;color:var(--ink)}
+html:root:root:root body #app .sup .refc .trkbox button{flex:none;height:40px;padding:0 16px;border-radius:12px;font-size:13px;background:linear-gradient(135deg,var(--ac2),var(--ac))}
+html:root:root:root body #app .sup .refc .tgshare{margin:0!important;height:48px;display:flex!important;align-items:center;justify-content:center;border-radius:16px!important;font-size:15px}
+html:root:root:root body #app .sup .refc>.btn{margin:0;height:50px}
+html:root:root:root body #app .sup .promos{margin:4px 0 0!important;padding-top:14px;border-top:1px solid var(--ln)}
+html:root:root:root body #app .sup .promos>.note{padding:0 0 10px!important}
+html:root:root:root body #app .sup .promos>.note b{font-size:14px;color:var(--ink)}
+html:root:root:root body #app .sup .promo-row{margin:0 0 8px!important;padding:12px 12px 12px 14px!important;gap:10px!important;border-radius:16px!important;border:1px dashed var(--ln)!important;background:var(--s2)!important}
+html:root:root:root body #app .sup .promo-row:last-child{margin-bottom:0!important}
+html:root:root:root body #app .sup .promo-row b{color:var(--ink)}
+html:root:root:root body #app .sup .promo-row .btn{flex:none;height:40px!important;padding:0 16px!important;margin:0!important;font-size:13px!important;border-radius:999px!important;box-shadow:none!important}
 </style>
 <script id="sb-orange-js">
 (function(){
