@@ -3593,6 +3593,19 @@ function login(){
   }).catch(function(){var l=$("tgl");if(l)l.textContent="Aloqa yo'q";if($("tgs"))$("tgs").textContent="Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring."});
 }
 
+/* ---------- Kirish usullarini ulash (Telegram + Google) ---------- */
+function lkRender(me){var b=$("lkbox");if(!b)return;
+  var s='<div class="pfgt">Kirish usullari</div><div class="note">Telegram: '+(me.lt?'✅ ulangan':'ulanmagan')+'</div><div class="note">Google: '+(me.lg?'✅ ulangan':'ulanmagan')+'</div>';
+  if(!me.lt)s+='<button class="btn" data-a="lkt" style="margin-top:8px">Telegramni ulash</button>';
+  if(!me.lg)s+='<button class="btn" data-a="lkg" style="margin-top:8px">Google\'ni ulash</button>';
+  s+='<div class="note" id="lkm"></div>';b.innerHTML=s}
+function lkLoad(){if(!S.sess||!S.sess.token)return;
+  fetch(WORKER+"/me?token="+S.sess.token).then(function(r){return r.json()}).then(function(me){if(me.ok)lkRender(me)}).catch(function(){})}
+function lkWatch(){var n=0,iv=setInterval(function(){n++;if(n>50||!$("lkbox")){clearInterval(iv);return}
+  fetch(WORKER+"/me?token="+S.sess.token).then(function(r){return r.json()}).then(function(me){
+    if(me.ok&&me.lt&&me.lg){clearInterval(iv);lkRender(me);var m=$("lkm");if(m)m.textContent="Ulandi ✅"}}).catch(function(){})},2500)}
+function lkOpen(u,tg){try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData){if(tg)Telegram.WebApp.openTelegramLink(u);else Telegram.WebApp.openLink(u,{try_instant_view:false});return}}catch(e){}window.open(u,"_blank")}
+
 /* ---------- Google bilan kirish ---------- */
 var GCID="241259146600-hjd3c7cq0m4op3rtg0emh9tpv8cn19l9.apps.googleusercontent.com",GREADY=false;
 function gMsg(t){var e=$("gs");if(e)e.textContent=t}
@@ -3804,7 +3817,19 @@ document.addEventListener("click",function(e){
       +'<label><span>Telefon</span><input id="pf3" type="tel" inputmode="tel" placeholder="+998..." autocomplete="tel" maxlength="20" value="'+esc(u0.phone||"")+'"></label></div>'
       +'<div id="pfe" style="color:#D6246E;font-size:13px;min-height:18px;margin:8px 4px 4px"></div>'
       +'<button class="btn" data-a="profsave">Saqlash</button>'
+      +'<div id="lkbox" style="margin-top:16px"></div>'
       +(window.vfPR?vfPR():''));
+    lkLoad();
+    return}
+  if(a==="lkg"||a==="lkt"){var kd=a==="lkg"?"g":"t",lm=$("lkm");if(!S.sess||!S.sess.token)return;if(lm)lm.textContent="Tayyorlanmoqda...";
+    fetch(WORKER+"/link-start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:S.sess.token,kind:kd})}).then(function(r){return r.json()}).then(function(d){
+      lm=$("lkm");
+      if(!d.ok){if(lm)lm.textContent=d.error==="already"?"Allaqachon ulangan.":"Xatolik. Qayta urinib ko'ring.";return}
+      if(kd==="g"){lkOpen(WORKER+"/google-start?id="+d.id,0);if(lm)lm.textContent="Google'da akkauntni tanlang, keyin shu yerga qayting.";lkWatch();return}
+      fetch(WORKER+"/customer-bot",{cache:"no-store"}).then(function(r){return r.json()}).then(function(b){
+        lm=$("lkm");if(!b.username){if(lm)lm.textContent="Bot topilmadi.";return}
+        lkOpen("https://t.me/"+b.username+"?start=l_"+d.id,1);if(lm)lm.textContent="Botda Start bosing va HA deb yozing, keyin shu yerga qayting.";lkWatch()});
+    }).catch(function(){lm=$("lkm");if(lm)lm.textContent="Internet xatosi. Qayta urinib ko'ring."});
     return}
   if(a==="profsave"){
     var f1=$("pf1").value.trim(),l1=$("pf2").value.trim(),p1=$("pf3").value.replace(/\D/g,""),pe=$("pfe");
