@@ -9,7 +9,7 @@
 <style>html.boot body>*{visibility:hidden!important}html.boot{background:#B4C2DC!important}html.boot:not([data-day]){background:#0B0D22!important}</style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>(function(){try{var q=new URLSearchParams(location.search),c=q.get("lt");if(c&&/^[a-z0-9]{16,80}$/.test(c)){window.__lt=c;q.delete("lt");var s=q.toString();history.replaceState(null,"",location.pathname+(s?"?"+s:"")+location.hash)}}catch(e){}})();</script>
-<script>(function(){var d=document.documentElement;d.classList.add("boot");try{d.setAttribute("data-theme","dark");if(localStorage.getItem("sarbon.theme")!=="dark")d.setAttribute("data-day","1");var sk=localStorage.getItem("sarbon.design");if(sk==="premium")d.setAttribute("data-skin","premium")}catch(e){}setTimeout(function(){d.classList.remove("boot")},3000)})();</script>
+<script>(function(){var d=document.documentElement;d.classList.add("boot");try{d.setAttribute("data-theme","dark");var sk=localStorage.getItem("sarbon.design");if(sk==="premium")d.setAttribute("data-skin","premium");if(localStorage.getItem(sk==="premium"?"sarbon.ptheme":"sarbon.theme")!=="dark")d.setAttribute("data-day","1")}catch(e){}setTimeout(function(){d.classList.remove("boot")},3000)})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#25308F">
 <link rel="manifest" href="manifest.json">
@@ -3236,8 +3236,8 @@ html:not([data-theme="dark"]) #vs .vsx{background:rgba(37,48,143,.13)}
 <div class="ov" id="mv">
   <aside class="menu" id="mn">
     <div id="mh"></div>
-    <button class="li" data-a="theme"><i class="mi a-sun"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC247" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" fill="#FFC247"/><g class="rays"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg></i>Kunduzgi / tungi rejim</button>
-    <div class="design-switch" aria-label="Dizayn tanlash"><div class="design-title">Dizaynni tanlash</div><button type="button" data-a="design" data-v="classic" class="design-choice" id="designClassic"><span class="design-preview classic-preview"></span><span><b>Asl Sarbon</b><small>Hozirgi dizayn</small></span><i class="design-check">✓</i></button><button type="button" data-a="design" data-v="premium" class="design-choice" id="designPremium"><span class="design-preview premium-preview"></span><span><b>Premium dizayn</b><small>Binafsha va oq / qora</small></span><i class="design-check">✓</i></button><div class="design-hint">Premium dizaynda kunduzgi / tungi tugmasi ranglarni almashtiradi.</div></div>
+    <button class="li" data-a="theme" data-skin="classic"><i class="mi a-sun"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC247" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" fill="#FFC247"/><g class="rays"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg></i>Kunduzgi / tungi rejim</button>
+    <button class="li" data-a="theme" data-skin="premium"><i class="mi a-sun"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC247" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" fill="#FFC247"/><g class="rays"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg></i>Yangi dizayn (kun / tun)</button>
     <button class="li" data-a="tab" data-v="orders"><i class="mi a-box"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg></i>Hisobotlarim</button>
     <button class="li" data-a="tab" data-v="cart"><i class="mi a-cart"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC247" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H6.5"/><circle cx="9.5" cy="19.5" r="1.3" fill="#FFC247"/><circle cx="17" cy="19.5" r="1.3" fill="#FFC247"/></svg></i>Buyurtmalarim</button>
     <button class="li" data-a="tab" data-v="support"><i class="mi a-bot"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6FAE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 3.5V8"/><circle cx="12" cy="3" r="1" fill="#FF6FAE"/><circle class="eye" cx="9" cy="13.5" r="1.2" fill="#FF6FAE"/><circle class="eye" cx="15" cy="13.5" r="1.2" fill="#FF6FAE"/></svg></i>Yordam va AI bot</button>
@@ -3558,12 +3558,16 @@ function support(){
 function placePill(){var nav=$("nav"),on=document.querySelector("#navb button.on"),p=$("pill");if(!on||!p)return;var nr=nav.getBoundingClientRect(),br=on.getBoundingClientRect();var nl=br.left-nr.left+3;p.style.width=(br.width-6)+"px";p.style.left=nl+"px";if(p._l!==undefined&&Math.abs(p._l-nl)>1){p.classList.remove("jig");void p.offsetWidth;p.classList.add("jig")}p._l=nl}
 window.addEventListener("resize",placePill);
 function sendMsg(q){S.chat.push({f:"me",t:q});S.typing=true;render();setTimeout(function(){S.typing=false;S.chat.push({f:"bot",t:answer(q)});render()},650+Math.min(900,q.length*18))}
-function toggleTheme(btn){
+function toggleTheme(btn,skin){
   if(window._themeBusy)return;
   var r=btn.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
   var R=Math.hypot(Math.max(cx,window.innerWidth-cx),Math.max(cy,window.innerHeight-cy));
-  var nxt=!S.night;
-  var swap=function(){S.night=nxt;applyTheme();try{localStorage.setItem("sarbon.theme",nxt?"dark":"light")}catch(e){}};
+  var cur=document.documentElement.getAttribute("data-skin")==="premium"?"premium":"classic";
+  var want=skin==="premium"?"premium":(skin==="classic"?"classic":cur);
+  var key=function(k){return k==="premium"?"sarbon.ptheme":"sarbon.theme"};
+  var nxt;
+  if(want!==cur){var st=null;try{st=localStorage.getItem(key(want))}catch(e){}nxt=(st==="dark")}else nxt=!S.night;
+  var swap=function(){document.documentElement.setAttribute("data-skin",want);S.night=nxt;applyTheme();try{localStorage.setItem("sarbon.design",want);localStorage.setItem(key(want),nxt?"dark":"light")}catch(e){}};
   if(!document.startViewTransition){swap();return}
   window._themeBusy=true;
   var vt=document.startViewTransition(swap);
@@ -3957,7 +3961,7 @@ document.addEventListener("click",function(e){
   var t=e.target.closest("[data-a]");if(!t)return;
   var a=t.dataset.a,v=t.dataset.v;
   if(a==="gp"||a==="gn"){var gs=t.parentNode.querySelector(".gs");if(gs)gs.scrollBy({left:(a==="gn"?1:-1)*gs.clientWidth,behavior:"smooth"});return}
-  if(a==="theme"){toggleTheme(t);return}
+  if(a==="theme"){toggleTheme(t,t.dataset.skin);return}
   if(a==="design"){setDesign(v);return}
   if(a==="top"){window.scrollTo({top:0,behavior:"smooth"});return}
   if(a==="menu"){$("mv").classList.add("open");return}
@@ -4176,7 +4180,7 @@ catIdx=(catIdx+1)%8;var p=catPos(catIdx);if(!p)return;catHist.push(p);if(catHist
 var segs=box.querySelectorAll('.cseg');segs.forEach(function(el,k){var q=catHist[catHist.length-1-k];if(!q){el.style.opacity=0;return}el.style.opacity='';el.style.transform='translate('+(q.x-el.offsetWidth/2)+'px,'+(q.y-el.offsetHeight/2)+'px)'})}
 
 
-try{S.night=localStorage.getItem("sarbon.theme")==="dark"}catch(e){}
+try{S.night=localStorage.getItem(document.documentElement.getAttribute("data-skin")==="premium"?"sarbon.ptheme":"sarbon.theme")==="dark"}catch(e){}
 try{var sb=parseFloat(localStorage.getItem("sarbon.fb"));if(sb){fbB=sb;$("fab").style.bottom=sb+"px";$("ap").style.bottom=(sb+66)+"px"}}catch(e){}
 applyTheme();
 render();
@@ -5599,6 +5603,24 @@ html[data-skin="premium"]:not([data-day]) .bub.bot{background:#302448!important;
 html[data-skin="premium"]:not([data-day]) :is(.pick,.opt button,.qs button,.tmap button,.ulist button,.sortbar button,.hubt button,.aich button){background:#29203D!important;color:#E9E2FA!important;border:1px solid rgba(190,170,255,.14)!important}
 html[data-skin="premium"]:not([data-day]) :is(.pick.on,.opt button.on,.qs button.on,.tmap button.on,.ulist button.on,.sortbar button.on,.hubt button.on){background:#7838EF!important;color:#fff!important;border-color:#A78BFA!important}
 html[data-skin="premium"] :is(.card,.btn,.menu button.li,.design-choice){transition:background .25s ease,border-color .25s ease,box-shadow .25s ease,color .25s ease}
+
+/* Yangi dizayn v2: kunduz = SHOPIN (oq+binafsha), tun = qora+binafsha+to'q sariq */
+html[data-skin="premium"][data-day]{background:#EDEDF2!important}
+html[data-skin="premium"][data-day] .top.glass{background:linear-gradient(135deg,#7B3FF2,#8E5CFA)!important;border:0!important;border-radius:0 0 30px 30px!important;box-shadow:0 10px 30px rgba(123,63,242,.28)!important}
+html[data-skin="premium"][data-day] .top .ib{background:#fff!important;color:#7B3FF2!important}
+html[data-skin="premium"][data-day] .search{border-radius:12px!important;background:#fff!important}
+html[data-skin="premium"][data-day] .cat span{background:#F0E9FF!important;border-radius:18px!important;box-shadow:none!important}
+html[data-skin="premium"][data-day] .cat svg{stroke:#7B3FF2!important;color:#7B3FF2!important}
+html[data-skin="premium"][data-day] .card{background:#fff!important;border:0!important;border-radius:18px!important;box-shadow:0 8px 24px rgba(60,30,120,.08)!important}
+html[data-skin="premium"][data-day] .sec small{background:#7B3FF2;color:#fff!important;padding:5px 12px;border-radius:8px}
+html[data-skin="premium"][data-day] .nav{background:#fff!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(60,30,120,.14)!important}
+html[data-skin="premium"]:not([data-day]){background:linear-gradient(160deg,#1A1626,#26203A 55%,#1E1A30) fixed!important}
+html[data-skin="premium"]:not([data-day]) .top.glass{background:rgba(32,27,48,.92)!important;border:0!important;border-bottom:1px solid rgba(255,170,90,.18)!important;border-radius:0 0 28px 28px!important}
+html[data-skin="premium"]:not([data-day]) .cat span{background:#2B2540!important;box-shadow:inset 0 0 0 2px #FFA94D,0 0 18px rgba(255,150,60,.25)!important;border-radius:50%!important}
+html[data-skin="premium"]:not([data-day]) .cat svg{stroke:#FFB45E!important;color:#FFB45E!important}
+html[data-skin="premium"]:not([data-day]) .card{background:linear-gradient(160deg,#2C2644,#221D36)!important;border:1px solid rgba(255,170,90,.18)!important;border-radius:22px!important}
+html[data-skin="premium"]:not([data-day]) .card .pr,html[data-skin="premium"]:not([data-day]) .sec small{color:#FFB45E!important}
+html[data-skin="premium"]:not([data-day]) .nav{background:#241F38!important;border:1px solid rgba(190,150,255,.2)!important;border-radius:26px!important}
 </style>
 
 </body>
