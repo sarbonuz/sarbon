@@ -3417,6 +3417,10 @@ function catOf(k){return CATS.filter(function(c){return c[0]===k})[0]}
 function svg(p,sz){return "<svg viewBox='0 0 24 24' width='"+sz+"' height='"+sz+"' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'>"+p+"</svg>"}
 function thumb(u,cls){u=String(u||"");if(u.indexOf("/m/")<0||u.indexOf("?")>=0||!window.WORKER||u.indexOf(window.WORKER)!==0)return u;return u+"?w="+(cls==="big"?900:480)}
 function pic(p,cls){return '<div class="'+cls+'" style="background:'+p.b+'">'+(p.img?'<img src="'+esc(thumb(p.img,cls))+'" alt="" loading="lazy" decoding="async" data-i="'+esc(p.n.charAt(0))+'" onerror="var s=document.createElement(\'span\');s.className=\'ini\';s.textContent=this.dataset.i;this.replaceWith(s)">':'<span class="ini">'+esc(p.n.charAt(0))+'</span>')+'</div>'}
+var COLM=[["to.?q sariq|orange|оранж","#F97316"],["sariq|yellow|жел","#FACC15"],["qora|black|чер","#17141F"],["(^|\\s)oq|white|бел","#FFFFFF"],["qizil|red|крас","#E53935"],["ko.?k|blue|син|голуб","#2563EB"],["yashil|green|зел","#16A34A"],["jigar|brown|кор","#8B5A2B"],["kumush|silver|сереб","#C0C7D1"],["kul|gr[ae]y|сер","#9CA3AF"],["pushti|pink|роз","#F472B6"],["binafsha|purple|violet|фиол","#8B5CF6"],["oltin|gold|зол","#D4AF37"],["bej|beige|беж","#E5D3B3"]];
+function colHex(n){var t=String(n||"").toLowerCase();for(var k=0;k<COLM.length;k++){if(new RegExp(COLM[k][0]).test(t))return COLM[k][1]}return "linear-gradient(135deg,#c4b5fd,#7c3aed)"}
+function cDots(p){var a=(p.rang||[]).slice(0,4);if(!a.length)return "";return '<span class="cdots">'+a.map(function(n){return '<i style="background:'+colHex(n)+'"></i>'}).join("")+'</span>'}
+function catSpan(c){var l=idx(c[0]);for(var k=0;k<l.length;k++){var p=P[l[k]];if(p&&p.img)return '<span class="cph"><img src="'+esc(thumb(p.img,"pic"))+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'"></span>'}return '<span>'+svg(ICON[c[0]],26)+'</span>'}
 function card(i){var p=P[i];return '<div class="card" data-a="open" data-v="'+i+'">'+pic(p,"pic")+(p.s>30000?'<span class="badge">Test o\'tgan</span>':'')+'<button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan</div><div class="pr">'+fmt(goods(p))+'</div></div></div>'}
 function sortList(a){var l=a.slice();if(S.sort==="cheap")l.sort(function(x,y){return P[x].y-P[y].y});if(S.sort==="exp")l.sort(function(x,y){return P[y].y-P[x].y});if(S.sort==="pop")l.sort(function(x,y){return P[y].s-P[x].s});return l}
 function dealCard(i){var p=P[i];return '<div class="card deal" data-a="open" data-v="'+i+'">'+pic(p,"pic")+'<span class="badge">-30%</span><button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="pr">'+fmt(goods(p))+' <s>'+fmt(r(goods(p)*1.43))+'</s></div><div class="sold">🔥 '+kf(p.s)+' kishi oldi</div></div></div>'}
@@ -3441,7 +3445,7 @@ function home(){var deals=sbShuf(P.map(function(_,i){return i}).filter(function(
     h+=res.length?'<div class="grid">'+res.map(card).join("")+'</div>':'<div class="mut">'+(P.length?"Hech narsa topilmadi.":(LOADED?"Tovarlar hali qo\u2018shilmagan.":"Mahsulotlar serverdan yuklanmadi. Internetni tekshirib, qayta urinib ko\u2018ring."))+'</div>';
     return h}
 if(isPrem()){
-    h+=bannersHtml();h+='<div class="cstrip">'+CATS.map(function(c){return '<button data-a="opencat" data-v="'+c[0]+'"><span>'+svg(ICON[c[0]],26)+'</span>'+c[1]+'</button>'}).join("")+'</div>';
+    h+=bannersHtml();h+='<div class="cstrip">'+CATS.map(function(c){return '<button data-a="opencat" data-v="'+c[0]+'">'+catSpan(c)+c[1]+'</button>'}).join("")+'</div>';
   h+='<div class="b3d" id="b3dslot"></div>';
 }else{
     h+='<div class="b3d" id="b3dslot"></div>';h+='<div class="cstrip">'+CATS.map(function(c){return '<button data-a="opencat" data-v="'+c[0]+'"><span>'+svg(ICON[c[0]],26)+'</span>'+c[1]+'</button>'}).join("")+'</div>';
@@ -3806,7 +3810,7 @@ function lkCss(){
   +".lkb{border:0;border-radius:12px;padding:10px 16px;font-family:inherit;font-weight:800;font-size:14px;background:var(--pink);color:#fff;cursor:pointer;flex:none}"
   +".lkb.lkd{background:rgba(127,127,127,.18);color:var(--ink)}.lkb:disabled{opacity:.35}";
   document.head.appendChild(s)}
-var LKI={t:'<span class="lki" style="background:#229ED9"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#229ED9" d="M21.6 3.4 2.9 10.6c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.9 5.7c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.2-15.1c.3-1.3-.5-1.9-1.5-1.5zM8.9 13.2l9.6-6c.5-.3.9-.1.5.2l-7.9 7.1-.3 3.4z"/></svg></span>',g:'<span class="lki" style="background:#fff;border:1px solid #dadce0"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 010-9.4l-7.9-6.1a24 24 0 000 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg></span>',y:'<span class="lki" style="background:#000;color:#FC3F1D;font:800 18px/40px system-ui,sans-serif">Я</span>'};
+var LKI={t:'<span class="lki" style="background:#229ED9"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M21.6 3.4 2.9 10.6c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.9 5.7c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.2-15.1c.3-1.3-.5-1.9-1.5-1.5zM8.9 13.2l9.6-6c.5-.3.9-.1.5.2l-7.9 7.1-.3 3.4z"/></svg></span>',g:'<span class="lki" style="background:#fff;border:1px solid #dadce0"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 010-9.4l-7.9-6.1a24 24 0 000 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg></span>',y:'<span class="lki" style="background:#000;color:#FC3F1D;font:800 18px/40px system-ui,sans-serif">Я</span>'};
 function lkCnt(M){return(M.t?1:0)+(M.g?1:0)+(M.y?1:0)}
 function lkRender(me){var b=$("lkbox");if(!b)return;lkCss();
   var M=me.m||{t:!!me.lt,g:!!me.lg,y:false},cnt=lkCnt(M),cur=me.cur||"";window._lkCnt=cnt;
@@ -4091,11 +4095,11 @@ document.addEventListener("click",function(e){
       +'<div class="pfgt">Shaxsiy ma\'lumotlar</div><div class="pff">'
       +'<label><span>Ism</span><input id="pf1" placeholder="Ismingiz" autocomplete="given-name" maxlength="30" value="'+esc(fv)+'"></label>'
       +'<label><span>Familya</span><input id="pf2" placeholder="Familyangiz" autocomplete="family-name" maxlength="30" value="'+esc(lv)+'"></label>'
-      +'<label><span>Telefon — akkaunt login raqami</span><input id="pf3" type="tel" inputmode="tel" placeholder="+998..." autocomplete="tel" maxlength="20" value="'+esc(u0.phone||"")+'"></label></div>'
-      +'<div class="pfgt" style="margin-top:18px">Akkaunt xavfsizligi</div>'
-      +'<button type="button" class="btn ghost" data-a="pwmanage" style="width:100%;margin-top:8px">🔒 Parolni o‘zgartirish</button>'
+      +'<label><span>Telefon</span><input id="pf3" type="tel" inputmode="tel" placeholder="+998..." autocomplete="tel" maxlength="20" value="'+esc(u0.phone||"")+'"></label></div>'
       +'<div id="pfe" style="color:#D6246E;font-size:13px;min-height:18px;margin:8px 4px 4px"></div>'
       +'<button class="btn" data-a="profsave">Saqlash</button>'
+      +'<div class="pfgt">Xavfsizlik</div>'
+      +'<button type="button" class="btn ghost pwrow" data-a="pwmanage">🔒 Parolni o‘zgartirish</button>'
       +'<div id="lkbox" style="margin-top:16px"></div>'
       +(window.vfPR?vfPR():''));
     lkLoad();
@@ -5106,7 +5110,7 @@ var frame=A?'<g transform="translate(12 12)"><g><animateTransform attributeName=
 var st='<polygon points="'+pts.join(" ")+'" fill="url(#'+id+'s)" stroke="'+S[0]+'" stroke-width=".5" stroke-linejoin="round"/><polygon points="'+cp.join(" ")+'" fill="#fff" fill-opacity=".5"/>'
 +(A?'<g clip-path="url(#'+id+'k)"><rect x="-8" y="-3" width="16" height="3.4" fill="url(#'+id+'v)"><animateTransform attributeName="transform" type="translate" values="0 -9;0 -9;0 10;0 10" keyTimes="0;'+SA+';'+SB+';1" '+T+'/></rect></g>':'');
 var star='<g transform="translate(12 12.3)">'+(A?'<g><animateTransform attributeName="transform" type="scale" values="'+Z.v+'" keyTimes="'+Z.k+'" '+T+'/><polygon points="'+pts.join(" ")+'" fill="'+G+'" filter="url(#'+id+'b)" opacity=".9"/>'+st+'<polygon points="'+pts.join(" ")+'" fill="#000" opacity="0"><animate attributeName="opacity" values="'+ZS.v+'" keyTimes="'+ZS.k+'" '+T+'/></polygon></g>':st)+'</g>';
-var out='<svg class="vfi vt" width="'+size+'" height="'+size+'" viewBox="0 0 24 24" overflow="visible" style="'+(still?'':'filter:saturate(1.4) drop-shadow(0 0 3px '+G+')'+(size>=30?' drop-shadow(0 0 10px '+G+'aa)':''))+'" aria-hidden="true"><defs>'
+var out='<svg class="vfi vt" width="'+size+'" height="'+size+'" viewBox="0 0 24 24" overflow="visible" style="'+(still?'':'filter:saturate(1.2)')+'" aria-hidden="true"><defs>'
 +'<linearGradient id="'+id+'o" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+R[0]+'"/>'+mid+'<stop offset="1" stop-color="'+R[2]+'"/></linearGradient>'
 +'<linearGradient id="'+id+'i" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+I[0]+'"/><stop offset="1" stop-color="'+I[1]+'"/></linearGradient>'
 +'<linearGradient id="'+id+'s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+S[0]+'"/><stop offset="1" stop-color="'+S[1]+'"/></linearGradient>'
@@ -5125,7 +5129,9 @@ var out='<svg class="vfi vt" width="'+size+'" height="'+size+'" viewBox="0 0 24 
 +(still?'':(p.n>=1?spark(3,3.5,0,1.4):'')+(p.n>=2?spark(21.5,8,.55,1.2):'')+(p.n>=3?spark(5,21.5,1,1.3):'')+(p.n>=4?spark(20,20.5,.3,1.1):''))
 +(k==="red"&&A?ember(6,0)+ember(12,.5)+ember(18,1):'')
 +'</svg>';return out}
-function badge(v,t,sz,click){return (v?'<span class="vfb" title="Rasmiy tasdiqlangan"'+(click?' data-vf="verify"':'')+'><span class="vfo">✓</span></span>':'')+(t?'<span class="vfb" title="'+esc(t.name)+'"'+(click?' data-vf="badge"':'')+'>'+tierIcon(t.color,sz||22,t.k||NK[String(t.name||"").toLowerCase()])+'</span>':'')}
+function vfG(t){var k=t&&(t.k||NK[String(t.name||"").toLowerCase()]);return (VP[k]&&VP[k].g)||(t&&/^#[0-9a-fA-F]{6}$/.test(t.color||"")?t.color:"#fbbf24")}
+function vfA(t,html){return '<span class="vfa" style="--g:'+vfG(t)+'">'+html+'</span>'}
+function badge(v,t,sz,click){return (v?'<span class="vfb" title="Rasmiy tasdiqlangan"'+(click?' data-vf="verify"':'')+'><span class="vfo">✓</span></span>':'')+(t?'<span class="vfb" title="'+esc(t.name)+'"'+(click?' data-vf="badge"':'')+'>'+vfA(t,tierIcon(t.color,sz||22,t.k||NK[String(t.name||"").toLowerCase()]))+'</span>':'')}
 window.vfBadge=badge;
 function need(){if(tok())return true;vfSheet('<h3>Avval kiring</h3><p>Bu bo\'lim uchun saytda «Telegram orqali kirish» tugmasini bosing.</p>');return false}
 function shrink(file,max,cap,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);var q=.85,u=c.toDataURL("image/jpeg",q);while(u.length>cap&&q>.35){q-=.1;u=c.toDataURL("image/jpeg",q)}cb(u.length>cap?null:u)};im.onerror=function(){cb(null)};im.src=r.result};r.onerror=function(){cb(null)};r.readAsDataURL(file)}
@@ -5134,15 +5140,15 @@ function refresh(){if(!tok())return;post("/badge/me").then(function(d){if(d.ok){
 function deco(){var h=document.querySelector("#mh .me h3");if(h&&VB&&!h.querySelector(".vfb")&&(VB.verified||VB.tier))h.insertAdjacentHTML("beforeend",badge(VB.verified,VB.tier,22,1))}
 function inject(){deco()}
 var IC={id:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M6 16.5c.7-1.7 4.3-1.7 6 0M14.5 10H18M14.5 14H17"/>',star:'<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/>',msg:'<path d="M20.5 12a8 8 0 0 1-11.6 7.1L4 20l1-4.5A8 8 0 1 1 20.5 12z"/>',out:'<path d="M9 4H6.5A2.5 2.5 0 0 0 4 6.5v11A2.5 2.5 0 0 0 6.5 20H9M15.5 8L20 12l-4.5 4M20 12H9"/>'};
-function sv(d){return '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>'}
+function sv(d){return '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>'}
 var CH='<svg class="pfc" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
-function pfi(bg,d){return '<span class="pfi" style="background:'+bg+'">'+sv(d)+'</span>'}
-function pfRows(){var v=VB||{},bi=v.tier?'<span class="pfi pfib">'+tierIcon(v.tier.color,32,v.tier.k||NK[String(v.tier.name||"").toLowerCase()])+'</span>':pfi("linear-gradient(135deg,#f59e0b,#ef4444)",IC.star);
+function pfi(k,d){return '<span class="pfi t-'+k+'">'+sv(d)+'</span>'}
+function pfRows(){var v=VB||{},bi=v.tier?'<span class="pfi pfib">'+vfA(v.tier,tierIcon(v.tier.color,30,v.tier.k||NK[String(v.tier.name||"").toLowerCase()]))+'</span>':pfi("y",IC.star);
 return '<div class="pfgt">Hisob</div><div class="pfg">'
-+'<div class="pfr" data-vf="verify">'+pfi("linear-gradient(135deg,#3b82f6,#6366f1)",IC.id)+'<span class="pft"><b>Verifikatsiya</b><small'+(v.verified?' class="ok"':'')+'>'+(VB?(v.verified?"Tasdiqlangan":"Tasdiqlanmagan"):"")+'</small></span>'+CH+'</div>'
++'<div class="pfr" data-vf="verify">'+pfi("b",IC.id)+'<span class="pft"><b>Verifikatsiya</b><small'+(v.verified?' class="ok"':'')+'>'+(VB?(v.verified?"Tasdiqlangan":"Tasdiqlanmagan"):"")+'</small></span>'+CH+'</div>'
 +'<div class="pfr" data-vf="badge">'+bi+'<span class="pft"><b>Badge</b><small>'+(v.tier?esc(v.tier.name)+" · "+v.orders+" buyurtma":(VB?"Hali ochilmagan":""))+'</small></span>'+CH+'</div>'
-+'<div class="pfr" data-vf="rev">'+pfi("linear-gradient(135deg,#f59e0b,#fbbf24)",IC.msg)+'<span class="pft"><b>Sharhlar</b><small>Barcha sharhlar va baholash</small></span>'+CH+'</div></div>'
-+'<div class="pfg" style="margin-top:18px"><div class="pfr out" data-a="logout">'+pfi("linear-gradient(135deg,#ef4444,#dc2626)",IC.out)+'<span class="pft"><b>Chiqish</b></span></div></div>'}
++'<div class="pfr" data-vf="rev">'+pfi("y",IC.msg)+'<span class="pft"><b>Sharhlar</b><small>Barcha sharhlar va baholash</small></span>'+CH+'</div></div>'
++'<div class="pfg" style="margin-top:18px"><div class="pfr out" data-a="logout">'+pfi("r",IC.out)+'<span class="pft"><b>Chiqish</b></span></div></div>'}
 window.vfPH=function(u){u=u||{};var nm=String(u.name||""),ini=(nm.trim().charAt(0)||"?").toUpperCase();return '<div class="pfh"><div class="pfav">'+esc(ini)+'</div><div class="pfhi"><div class="pfn">'+esc(nm)+'<span id="pfbd">'+(VB?badge(VB.verified,VB.tier,24,1):'')+'</span></div><div class="pfs">'+esc(u.email||u.phone||"")+'</div></div></div>'};
 window.vfPR=function(){if(tok())post("/badge/me").then(function(d){if(d&&d.ok){VB=d;var el=document.getElementById("pfm");if(el)el.innerHTML=pfRows();var bd=document.getElementById("pfbd");if(bd)bd.innerHTML=badge(VB.verified,VB.tier,24,1)}}).catch(function(){});return '<div id="pfm">'+pfRows()+'</div>'};
 var mh=document.getElementById("mh");if(mh)new MutationObserver(inject).observe(mh,{childList:true,subtree:true});inject();
@@ -5548,7 +5554,7 @@ document.addEventListener("click",function(e){var b=e.target.closest&&e.target.c
   window.card=function(i){if(!isPrem())return _card0(i);var p=P[i];
     return '<div class="card oc" data-a="open" data-v="'+i+'">'+pic(p,"pic")+(p.s>30000?'<span class="badge">Test o\'tgan</span>':'')+heart(i)+
     '<div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">⭐ 4.8 · '+kf(p.s)+' ta sotilgan</div>'+
-    '<div class="orow"><div class="pr">'+fmt(goods(p))+'</div><span class="plus">+</span></div></div></div>'};
+    '<div class="orow"><div class="pr">'+fmt(goods(p))+'</div>'+cDots(p)+'</div></div></div>'};
   window.dealCard=function(i){if(!isPrem())return _deal0(i);var p=P[i];
     return '<div class="card oc deal" data-a="open" data-v="'+i+'">'+pic(p,"pic")+'<span class="badge">-30%</span>'+heart(i)+
     '<div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">🔥 '+kf(p.s)+' kishi oldi</div>'+
@@ -5568,6 +5574,79 @@ b.innerHTML='<div class="pbr"><div class="pq"><button type="button" data-pq="-1"
 document.addEventListener("click",function(e){var q=e.target.closest&&e.target.closest("[data-pq]");if(!q)return;e.stopPropagation();var n=Math.max(1,Math.min(99,(window._pq||1)+(+q.dataset.pq)));window._pq=n;var el=document.getElementById("pqn");if(el)el.textContent=n},true);
 document.addEventListener("click",function(e){var t=e.target.closest&&e.target.closest('#pbf [data-vs="cart"],#pbf [data-vs="buy"]');if(!t||!(window._pq>1))return;var n=window._pq-1;setTimeout(function(){var up=document.querySelector('#vs [data-vs="qp"]');if(!up)return;for(var k=0;k<n;k++)up.click()},140)});
 (function(){var m=function(){var h=document.documentElement;try{var a=document.getElementById("sbar");}catch(x){}};})();
+</script>
+<style id="sb-v5">
+/* ===== PROFIL (eski va yangi dizayn): minimal, tushunarli ===== */
+html{--pfsf:#fff;--pfln:rgba(127,127,127,.18)}
+html:not([data-day]){--pfsf:rgba(255,255,255,.07)}
+html body .sp .pff{background:none!important;border-radius:0!important;overflow:visible!important;display:grid;gap:12px;margin:0 0 4px}
+html body .sp .pff label{display:block!important;padding:0!important;min-height:0!important;margin:0!important;border:0!important}
+html body .sp .pff label+label{border:0!important}
+html body .sp .pff label span{display:block!important;width:auto!important;margin:0 0 6px 4px;font-size:12px;font-weight:700;opacity:.6;letter-spacing:.02em}
+html body .sp .pff input{display:block!important;width:100%!important;box-sizing:border-box!important;height:50px!important;padding:0 15px!important;border:1px solid var(--pfln)!important;border-radius:15px!important;background:var(--pfsf)!important;font-size:16px!important;text-align:left!important}
+html body .sp .pff input::placeholder{text-align:left!important;opacity:.45}
+html body .sp .pff input:focus{border-color:var(--o,#7C3AED)!important;box-shadow:0 0 0 3px rgba(124,58,237,.14)!important}
+html body .sp .pfgt{margin:20px 4px 8px}
+html body #sp button.btn.pwrow{position:relative;display:flex;align-items:center;justify-content:flex-start;width:100%;margin:0;padding:0 40px 0 16px;height:52px;border:1px solid var(--pfln)!important;border-radius:15px;background:var(--pfsf)!important;color:inherit!important;box-shadow:none!important;font-size:15px;font-weight:700;text-align:left}
+html body #sp button.btn.pwrow::after{content:"\203A";position:absolute;right:16px;top:50%;transform:translateY(-52%);font-size:24px;opacity:.4;font-weight:400}
+html body .sp .pfg{background:var(--pfsf)!important;border:1px solid var(--pfln);border-radius:18px;overflow:hidden}
+.pfr{min-height:58px}.pfr+.pfr{border-top:1px solid var(--pfln)!important}
+.pfr .pft{flex:1;min-width:0}.pfr .pfc{margin-left:auto;flex:none;opacity:.35}
+.pfi{width:38px;height:38px;border-radius:12px}.pfi svg{width:20px;height:20px}
+.pfi.t-b{background:rgba(59,130,246,.14);color:#3b82f6}
+.pfi.t-y{background:rgba(245,158,11,.16);color:#d97706}
+.pfi.t-r{background:rgba(239,68,68,.14);color:#ef4444}
+.pfi.pfib{background:none;overflow:visible}
+.pfr.out{background:rgba(239,68,68,.07)}
+html body .sp .lkl{background:var(--pfsf);border:1px solid var(--pfln);border-radius:18px;padding:0 14px;margin-top:0}
+html body .sp .lkr{padding:11px 0}
+html body .sp .lkb{padding:8px 15px;border-radius:11px;font-size:13px}
+/* ===== BADGE: yangi animatsiya — aylanuvchi nur halqasi + sokin to'lqin ===== */
+@property --vfa{syntax:"<angle>";inherits:false;initial-value:0deg}
+.vfa{--g:#fbbf24;position:relative;display:inline-grid;place-items:center;vertical-align:middle;isolation:isolate;margin:0 1px}
+.vfa::before{content:"";position:absolute;inset:-3px;border-radius:36%;padding:1.8px;background:conic-gradient(from var(--vfa),transparent 0 55%,var(--g) 85%,#fff 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:vfaSpin 2.8s linear infinite;pointer-events:none;z-index:2}
+.vfa::after{content:"";position:absolute;inset:-3px;border-radius:36%;border:1.5px solid var(--g);opacity:0;animation:vfaPing 2.8s ease-out infinite;pointer-events:none}
+@keyframes vfaSpin{to{--vfa:360deg}}
+@keyframes vfaPing{0%{transform:scale(.92);opacity:.65}75%,100%{transform:scale(1.6);opacity:0}}
+@media(prefers-reduced-motion:reduce){.vfa::before,.vfa::after{animation:none}}
+/* ===== YANGI DIZAYN: bosh sahifa, qidiruv, tovar paneli ===== */
+html[data-skin="premium"] #fab{display:none!important}
+html[data-skin="premium"] #app .grid>.card:nth-child(even){margin-top:0!important}
+html[data-skin="premium"] #app .grid .card .sold{display:none!important}
+html[data-skin="premium"] #app .card .n{height:auto!important;min-height:34px;font-size:13.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html[data-skin="premium"] #app .card .orow{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:5px}
+html[data-skin="premium"] #app .card .orow .pr{margin:0!important;font-size:15px!important;font-weight:800}
+.cdots{display:flex;gap:3px;flex:none}.cdots i{width:11px;height:11px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.16)}
+html[data-skin="premium"] #app .cstrip button span.cph{padding:0!important;overflow:hidden}
+.cph img{width:100%;height:100%;object-fit:cover;display:block}
+html[data-skin="premium"] #app .cstrip button{font-size:12px;font-weight:600}
+html[data-skin="premium"] body #sbar.search{display:flex;align-items:center;gap:8px;padding-right:6px!important}
+html[data-skin="premium"] body #sbar.search input{flex:1;min-width:0}
+#sbar .sbf,#sbar .sbx{flex:none;width:34px;height:34px;border:0;border-radius:11px;background:var(--os,rgba(124,58,237,.12));color:var(--o,#7C3AED);display:grid;place-items:center;font-size:22px;line-height:1;padding:0}
+#sbar .sbx{display:none}#sbar.has .sbx{display:grid}#sbar.has .sbf{display:none}
+html:not([data-skin="premium"]) #sbar .sbf,html:not([data-skin="premium"]) #sbar .sbx{display:none!important}
+</style>
+<script id="sb-v5js">
+(function(){
+var FS='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>';
+function isP(){return document.documentElement.getAttribute("data-skin")==="premium"}
+function sbar(){var w=document.getElementById("sbar");if(!w)return;
+  if(isP()&&!w.querySelector(".sbf")){
+    var f=document.createElement("button");f.type="button";f.className="sbf";f.setAttribute("aria-label","Saralash");f.innerHTML=FS;
+    var x=document.createElement("button");x.type="button";x.className="sbx";x.setAttribute("aria-label","Tozalash");x.innerHTML="&times;";
+    w.appendChild(f);w.appendChild(x)}
+  var q=w.querySelector("input");if(q)w.classList.toggle("has",!!q.value)}
+sbar();setInterval(sbar,500);
+document.addEventListener("input",function(e){if(e.target&&e.target.id==="q")sbar()});
+document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target&&e.target.id==="q")e.target.blur()});
+document.addEventListener("click",function(e){var T=e.target;if(!T||!T.closest)return;
+  var w=T.closest("#sbar");
+  if(w){var q=w.querySelector("input");
+    if(T.closest(".sbx")){if(typeof S!=="undefined")S.term="";if(typeof render==="function")render();q=document.querySelector("#sbar input");if(q){q.value="";q.focus()}sbar();return}
+    if(T.closest(".sbf")){var sb=document.querySelector(".sortbar");if(sb)sb.scrollIntoView({behavior:"smooth",block:"center"});return}
+    if(T.closest("svg")&&q)q.focus();return}
+});
+})();
 </script>
 </body>
 </html>
