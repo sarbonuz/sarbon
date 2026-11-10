@@ -3612,7 +3612,7 @@ function toggleTheme(btn,skin){
   var key=function(k){return k==="premium"?"sarbon.ptheme":"sarbon.theme"};
   var nxt;
   if(want!==cur){var st=null;try{st=localStorage.getItem(key(want))}catch(e){}nxt=(st==="dark")}else nxt=!S.night;
-  var swap=function(){document.documentElement.setAttribute("data-skin",want);S.night=nxt;applyTheme();try{localStorage.setItem("sarbon.design",want);localStorage.setItem(key(want),nxt?"dark":"light")}catch(e){}if(want!==cur){try{render()}catch(e){}}};
+  var swap=function(){document.documentElement.setAttribute("data-skin",want);S.night=nxt;applyTheme();try{if(!window._tmpC)localStorage.setItem("sarbon.design",want);localStorage.setItem(key(want),nxt?"dark":"light")}catch(e){}if(want!==cur){try{render()}catch(e){}}};
   if(!document.startViewTransition){swap();return}
   window._themeBusy=true;
   var vt=document.startViewTransition(swap);
@@ -3658,8 +3658,10 @@ function syncSearch(){var w=document.getElementById("sbar");
   if(!w){w=document.createElement("div");w.id="sbar";w.className="search glass";w.innerHTML=SB_HTML;document.body.appendChild(w)}
   var on=S.tab==="home";if(w.style.display!==(on?"":"none"))w.style.display=on?"":"none";
   var q=w.firstElementChild&&w.querySelector("input");if(q&&q.value!==S.term)q.value=S.term}
+/* Premium (oq) dizaynda "Buyurtmalarim" (savat tugmasi) -> eski dizayndagi to'liq hub oynasi */
+function sbSkinSync(){try{var de=document.documentElement,real=localStorage.getItem("sarbon.design")==="premium";window._tmpC=false;if(!real)return;var want=S.tab==="cart"?"classic":"premium",cur=de.getAttribute("data-skin")==="premium"?"premium":"classic";window._tmpC=(want==="classic");if(want===cur)return;if(want==="premium")de.setAttribute("data-skin","premium");else de.removeAttribute("data-skin");var st=localStorage.getItem(want==="premium"?"sarbon.ptheme":"sarbon.theme");S.night=(st==="dark");applyTheme();syncDesignChoices()}catch(e){}}
 function render(){
-  var keep=snapUI();S._rsig=S._osig;
+  sbSkinSync();var keep=snapUI();S._rsig=S._osig;
   var h=S.tab==="home"?home():S.tab==="catalog"?catalog():S.tab==="cart"?hub():S.tab==="orders"?orders():support();
   var out=S.anim?'<div class="fu">'+h+'</div>':h;var same=!S.anim&&window._lastRender===out;window._lastRender=out;if(!same){$("app").innerHTML=out;restoreUI(keep);mount3d()}S.anim=false;syncSearch();
   var n=cartN();
