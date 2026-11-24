@@ -3156,7 +3156,7 @@ html:not([data-theme="dark"]) #vs .vsx{background:rgba(37,48,143,.13)}
     <button class="li" data-a="tab" data-v="orders"><i class="mi a-box"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg></i>Hisobotlarim</button>
     <button class="li" data-a="tab" data-v="cart"><i class="mi a-cart"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC247" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H6.5"/><circle cx="9.5" cy="19.5" r="1.3" fill="#FFC247"/><circle cx="17" cy="19.5" r="1.3" fill="#FFC247"/></svg></i>Buyurtmalarim</button>
     <button class="li" data-a="tab" data-v="support"><i class="mi a-bot"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6FAE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 3.5V8"/><circle cx="12" cy="3" r="1" fill="#FF6FAE"/><circle class="eye" cx="9" cy="13.5" r="1.2" fill="#FF6FAE"/><circle class="eye" cx="15" cy="13.5" r="1.2" fill="#FF6FAE"/></svg></i>Yordam va AI bot</button>
-    <div class="ver">version 0.7.2 · yangi dizayn</div>
+    <div class="ver">version 0.7.3 · yangi dizayn</div>
   </aside>
 </div>
 
@@ -3424,9 +3424,15 @@ var COLM=[["to.?q sariq|orange|оранж","#F97316"],["sariq|yellow|жел","#F
 function colHex(n){var t=String(n||"").toLowerCase();for(var k=0;k<COLM.length;k++){if(new RegExp(COLM[k][0]).test(t))return COLM[k][1]}return "linear-gradient(135deg,#c4b5fd,#7c3aed)"}
 function cDots(p){var a=(p.rang||[]).slice(0,4);if(!a.length)return "";return '<span class="cdots">'+a.map(function(n){return '<i style="background:'+colHex(n)+'"></i>'}).join("")+'</span>'}
 function catSpan(c){var l=idx(c[0]);for(var k=0;k<l.length;k++){var p=P[l[k]];if(p&&p.img)return '<span class="cph"><img src="'+esc(thumb(p.img,"pic"))+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'"></span>'}return '<span>'+svg(ICON[c[0]],26)+'</span>'}
-function card(i){var p=P[i];return '<div class="card" data-a="open" data-v="'+i+'">'+pic(p,"pic")+(p.s>30000?'<span class="badge">🔥 Ko\'p sotilgan</span>':'')+'<button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan</div><div class="pr">'+fmt(goods(p))+'</div></div></div>'}
+function card(i){var p=P[i];return '<div class="card" data-a="open" data-v="'+i+'">'+pic(p,"pic")+(p.s>30000?'<span class="badge">🔥 Ko\'p sotilgan</span>':'')+(ktOn(p)?'<span class="badge ktbd">−'+p.kt.p+'%</span>':'')+'<button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan</div><div class="pr">'+fmt(goods(p))+(ktOn(p)?' <s class="kts">'+fmt(p.kt.o)+'</s>':'')+'</div></div></div>'}
 function sortList(a){var l=a.slice();if(S.sort==="cheap")l.sort(function(x,y){return P[x].y-P[y].y});if(S.sort==="exp")l.sort(function(x,y){return P[y].y-P[x].y});if(S.sort==="pop")l.sort(function(x,y){return P[y].s-P[x].s});return l}
-function dealCard(i){var p=P[i];return '<div class="card deal" data-a="open" data-v="'+i+'">'+pic(p,"pic")+'<span class="badge">-30%</span><button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="pr">'+fmt(goods(p))+' <s>'+fmt(r(goods(p)*1.43))+'</s></div><div class="sold">🔥 '+kf(p.s)+' kishi oldi</div></div></div>'}
+function dealCard(i){var p=P[i],k=ktOn(p);return '<div class="card deal" data-a="open" data-v="'+i+'">'+pic(p,"pic")+'<span class="badge">'+(k?'−'+p.kt.p+'%':'💸 Arzon')+'</span><button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="pr">'+fmt(goods(p))+(k?' <s>'+fmt(p.kt.o)+'</s>':'')+'</div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan</div></div></div>'}
+/* v0.7.3: Kun taklifi — faqat bot orqali qo'yilgan HAQIQIY chegirma (narx serverda ham shunday hisoblanadi) */
+function ktOn(p){return !!(p&&p.kt&&p.kt.u>Date.now())}
+function ktLeft(u){var s=Math.max(0,Math.floor((u-Date.now())/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h<10?"0":"")+h+":"+(m<10?"0":"")+m+":"+(x<10?"0":"")+x}
+function ktNote(p){return ktOn(p)?'<div class="note ktn">⏰ <b>Kun taklifi −'+p.kt.p+'%</b> · eski narx <s>'+fmt(p.kt.o)+'</s> · tugashiga <b class="ktc" data-u="'+p.kt.u+'">'+ktLeft(p.kt.u)+'</b></div>':''}
+function ktBanner(){var i=-1;P.forEach(function(p,k){if(i<0&&ktOn(p))i=k});if(i<0)return '';var p=P[i];return '<div class="ktb" data-a="open" data-v="'+i+'">'+pic(p,"pic")+'<div class="ktb-i"><div class="ktb-t">⏰ Kun taklifi · −'+p.kt.p+'%</div><div class="n">'+esc(p.n)+'</div><div class="pr">'+fmt(goods(p))+' <s>'+fmt(p.kt.o)+'</s></div><div class="ktb-c">Tugashiga: <b class="ktc" data-u="'+p.kt.u+'">'+ktLeft(p.kt.u)+'</b></div></div></div>'}
+setInterval(function(){try{var a=document.querySelectorAll(".ktc");for(var k=0;k<a.length;k++)a[k].textContent=ktLeft(+a[k].getAttribute("data-u"))}catch(e){}},1000);
 function idx(c){return P.map(function(_,i){return i}).filter(function(i){return P[i].c===c})}
 
 function rfBn(){
@@ -3463,9 +3469,9 @@ if(isPrem()){
 }
   var top=(function(){var all=P.map(function(_,i){return i}).sort(function(a,b){return P[b].s-P[a].s}),pool=all.slice(0,Math.max(24,8)),fresh=pool.filter(function(i){return deals.indexOf(i)<0});if(fresh.length<8)fresh=pool;var pick=sbShuf(fresh,2).slice(0,8);return pick})();
 if(isPrem()){
-  h+='<h2 class="sec">Siz uchun <small data-a="tab" data-v="catalog">Hammasi</small></h2><div class="grid g4">'+top.slice(0,6).map(card).join("")+'</div>';h+='<h2 class="sec">Arzon topilmalar <small data-a="tab" data-v="catalog">Hammasi</small></h2><div class="hs hsd">'+deals.map(dealCard).join("")+'</div>';h+=''+(S.rv&&S.rv.length?'<h2 class="sec">Yaqinda ko\'rilganlar</h2><div class="hs">'+S.rv.map(card).join("")+'</div>':'');
+  h+='<h2 class="sec">Siz uchun <small data-a="tab" data-v="catalog">Hammasi</small></h2><div class="grid g4">'+top.slice(0,6).map(card).join("")+'</div>';h+=ktBanner()+'<h2 class="sec">Arzon topilmalar <small data-a="tab" data-v="catalog">Hammasi</small></h2><div class="hs hsd">'+deals.map(dealCard).join("")+'</div>';h+=''+(S.rv&&S.rv.length?'<h2 class="sec">Yaqinda ko\'rilganlar</h2><div class="hs">'+S.rv.map(card).join("")+'</div>':'');
 }else{
-  h+='<h2 class="sec">Arzon topilmalar <small>o\'ngga suring</small></h2><div class="hs">'+deals.map(dealCard).join("")+'</div>';h+='<h2 class="sec">Tavsiya etamiz <small>o\'ngga suring</small></h2><div class="hs">'+top.map(card).join("")+'</div>'+(S.rv&&S.rv.length?'<h2 class="sec">Yaqinda ko\'rilganlar</h2><div class="hs">'+S.rv.map(card).join("")+'</div>':'');
+  h+=ktBanner()+'<h2 class="sec">Arzon topilmalar <small>o\'ngga suring</small></h2><div class="hs">'+deals.map(dealCard).join("")+'</div>';h+='<h2 class="sec">Tavsiya etamiz <small>o\'ngga suring</small></h2><div class="hs">'+top.map(card).join("")+'</div>'+(S.rv&&S.rv.length?'<h2 class="sec">Yaqinda ko\'rilganlar</h2><div class="hs">'+S.rv.map(card).join("")+'</div>':'');
 }
   var list=pfFilt(sortList(P.map(function(_,i){return i}).filter(function(i){return P[i].n.toLowerCase().indexOf(S.term.toLowerCase())>-1})));
   h+='<h2 class="sec">Barcha tovarlar <small>'+list.length+' ta</small></h2><div class="sortbar">'+[["pop","Mashhur"],["cheap","Arzon"],["exp","Qimmat"]].map(function(x){return '<button data-a="sort" data-v="'+x[0]+'" class="'+(S.sort===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("")+'</div>';
@@ -3717,7 +3723,7 @@ function product(i,mode){
   '<div class="opt"><button data-a="mode" data-v="auto" data-i="'+i+'" class="'+(m==="auto"?"on":"")+'"><b>🚛 Avto</b><br>'+DAYS.auto+'<br>~'+fmt(cargo(p,"auto"))+'</button><button data-a="mode" data-v="avia" data-i="'+i+'" '+(p.av?"":"disabled")+' class="'+(m==="avia"?"on":"")+'"><b>✈️ Avia</b><br>'+DAYS.avia+'<br>~'+fmt(cargo(p,"avia"))+'</button></div>'+
   (!p.av?'<div class="warn">Bu tovar avia cargoda taqiqlangan (batareya, elektronika yoki suyuqlik). Faqat avto mumkin.</div>':'')+
   '<details class="ban"'+(m==="avia"?' open':'')+'><summary>⚠️ Avia cargoda taqiqlangan tovarlar</summary><div class="note">Avia cargo qoidasi (06.12.2025). Bu turdagi buyumlarni avia kargoga buyurtma qilish taqiqlanadi:</div><ul>'+BU.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><div class="note">Заказывать такие товары через авиа-карго запрещено:</div><ul>'+BR.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul></details>'+
-  '<div class="pricebox"><div class="ln"><span>Tovar narxi</span><b>'+fmt(goods(p,S.ocol,S.osz))+'</b></div><div class="ln"><span>Cargo ~'+p.kg+' kg × $'+CG[m]+'</span><span>~'+fmt(cargo(p,m))+'</span></div><div class="ln uzl"><span>UzPost uchun to\'lov<small>1 kg gacha 15 000 so\'m, keyingi kg uchun +3 000 so\'m</small></span><b>'+fmt(uzp(p.kg))+'</b></div><div class="note">Cargo alohida hisoblanadi: tovar omborga kelganda haqiqiy og\'irlik o\'lchanadi.</div></div>'+
+  '<div class="pricebox"><div class="ln"><span>Tovar narxi</span><b>'+fmt(goods(p,S.ocol,S.osz))+'</b></div><div class="ln"><span>Cargo ~'+p.kg+' kg × $'+CG[m]+'</span><span>~'+fmt(cargo(p,m))+'</span></div><div class="ln uzl"><span>UzPost uchun to\'lov<small>1 kg gacha 15 000 so\'m, keyingi kg uchun +3 000 so\'m</small></span><b>'+fmt(uzp(p.kg))+'</b></div>'+ktNote(p)+'<div class="note">Cargo alohida hisoblanadi: tovar omborga kelganda haqiqiy og\'irlik o\'lchanadi.</div></div>'+
   simBox(i)+(isPrem()?'</div>':''));
   if(window.vfProdReviews)vfProdReviews(p);
   setProdBar(i);
@@ -5356,6 +5362,20 @@ document.addEventListener("click",function(ev){
 },true);
 })();
 </script>
+<style id="sb-kt-v073">
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktb{display:flex!important;flex-direction:row!important;gap:12px!important;align-items:center!important;margin:8px 16px 18px!important;padding:12px!important;border-radius:22px!important;background:linear-gradient(135deg,rgba(255,138,61,.18),rgba(139,92,246,.18))!important;border:1px solid rgba(255,138,61,.4)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 12px 28px -16px rgba(255,106,43,.6)!important;cursor:pointer;width:auto!important;height:auto!important;min-height:0!important}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktb .pic{width:96px!important;height:96px!important;min-width:96px!important;flex:0 0 96px!important;border-radius:16px!important;overflow:hidden!important;margin:0!important;aspect-ratio:1/1!important;padding:0!important}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktb .pic img{width:100%!important;height:100%!important;object-fit:cover!important}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktb .ktb-i{min-width:0;flex:1 1 auto;text-align:left!important;padding:0!important}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktb .ktb-t{font-weight:800;color:#FF6A2B!important;font-size:13px;letter-spacing:.02em}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktb .n{font-weight:700;font-size:15px;margin:3px 0!important;line-height:1.25;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal!important}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktb .pr{font-weight:800;font-size:16px}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktb s,html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .kts,html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktn s{font-weight:500;opacity:.6;font-size:12px}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktb .ktb-c{font-size:12px;opacity:.85;margin-top:3px}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktc{font-variant-numeric:tabular-nums}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktbd{background:#FF6A2B!important;color:#fff!important}
+html[data-skin]:root:root:root:root:root:root:root:root:root:not(#zz) body .ktn{border:1px solid rgba(255,138,61,.4)!important}
+</style>
 <style id="sb-pad-v072">
 /* v0.7.2: profil kabi to'liq oynalar ekran chetiga yopishmaydi; tugmalar va maydonlar biroz bo'rtib turadi */
 html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)){padding:calc(var(--sa,0px) + 58px) 18px calc(100px + env(safe-area-inset-bottom,0px))!important}
