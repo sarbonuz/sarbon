@@ -1866,11 +1866,11 @@ const PRODUCTS = [
       { icon: 'i-battery', k: 'Batareya', v: 'Video ijroda 22 soatgacha' },
       { icon: 'i-shield', k: 'Himoya', v: 'Touch ID' }
     ],
-    habitat: "Sotuv: Sarbon do'konida. Yetkazib berish shartlarini kiriting.",
+    habitat: "Sotuv: Sarbon do'konida. Xitoydan yetkazish: avto 15–25 kun, avia 7–12 kun, UzPost filiali orqali.",
     caption: 'Har bir qadamni kuzatib boring.',
     closeText: 'Mahsulotni batafsil ko\'ring.',
     lens: '50% 50%',
-    featText: 'Qisqa tavsif kiriting.',
+    featText: 'Kuchli M3 protsessor, katta 16 dyuymli ekran va uzoq ishlaydigan batareya.',
     png: '', glb: 'models/macbook-pro-m3-16.glb', price: null,
     credit: "3D model: jackbaeten (Sketchfab), CC BY 4.0. Muallifni ko'rsatish shart.",
     variants: [
@@ -1888,11 +1888,11 @@ const PRODUCTS = [
       { icon: 'i-battery', k: 'Batareya', v: '8 soat, quti bilan 24 soat' },
       { icon: 'i-shield', k: 'Himoya', v: 'IP57 (chang, ter, suv)' }
     ],
-    habitat: "Sotuv: Sarbon do'konida. Yetkazib berish shartlarini kiriting.",
+    habitat: "Sotuv: Sarbon do'konida. Xitoydan yetkazish: avto 15–25 kun, avia 7–12 kun, UzPost filiali orqali.",
     caption: 'Musiqa, o\'z tartibida.',
     closeText: 'Mahsulotni batafsil ko\'ring.',
     lens: '50% 50%',
-    featText: 'Qisqa tavsif kiriting.',
+    featText: 'Shovqinni yutadigan simsiz quloqchin: toza ovoz va qulay o\'rnashish.',
     png: '', glb: 'models/airpods-pro-3.glb', price: null,
     variants: [
       { id: 'white', name: 'Oq', hex: '#f4f4f2', glb: '', price: null },
@@ -1909,11 +1909,11 @@ const PRODUCTS = [
       { icon: 'i-battery', k: 'Batareya', v: 'Video ijroda 45 soatgacha' },
       { icon: 'i-shield', k: 'Himoya', v: 'IP68, Ceramic Shield 2' }
     ],
-    habitat: "Sotuv: Sarbon do'konida. Yetkazib berish shartlarini kiriting.",
+    habitat: "Sotuv: Sarbon do'konida. Xitoydan yetkazish: avto 15–25 kun, avia 7–12 kun, UzPost filiali orqali.",
     caption: 'Eng kuchli iPhone, qo\'lingizda.',
     closeText: 'Mahsulotni batafsil ko\'ring.',
     lens: '50% 50%',
-    featText: 'Qisqa tavsif kiriting.',
+    featText: 'Katta ekran, kuchli kamera va butun kunga yetadigan batareya.',
     png: '', glb: 'models/iphone-18-pro-max.glb', price: null,
     variants: [
       { id: 'natural', name: 'Tabiiy titan', hex: '#a7a29a', glb: '', price: null },
@@ -2862,6 +2862,7 @@ init();
     requestAnimationFrame(loop);
   }
 })();
+<\/script>
 <style id="sb-card-fit">
 /* telefon: kartaning past/tepa qismi 3D oynaning xira (mask) chetiga tushib kesilib qolmasin */
 @media (max-height:620px) and (min-width:761px){
@@ -3154,7 +3155,7 @@ html:not([data-theme="dark"]) #vs .vsx{background:rgba(37,48,143,.13)}
     <button class="li" data-a="tab" data-v="orders"><i class="mi a-box"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg></i>Hisobotlarim</button>
     <button class="li" data-a="tab" data-v="cart"><i class="mi a-cart"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC247" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H6.5"/><circle cx="9.5" cy="19.5" r="1.3" fill="#FFC247"/><circle cx="17" cy="19.5" r="1.3" fill="#FFC247"/></svg></i>Buyurtmalarim</button>
     <button class="li" data-a="tab" data-v="support"><i class="mi a-bot"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6FAE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 3.5V8"/><circle cx="12" cy="3" r="1" fill="#FF6FAE"/><circle class="eye" cx="9" cy="13.5" r="1.2" fill="#FF6FAE"/><circle class="eye" cx="15" cy="13.5" r="1.2" fill="#FF6FAE"/></svg></i>Yordam va AI bot</button>
-    <div class="ver">version 0.7.1 · yangi dizayn</div>
+    <div class="ver">version 0.7.2 · yangi dizayn</div>
   </aside>
 </div>
 
@@ -3374,7 +3375,7 @@ function kBrand(n){for(var b=0;b<BRS.length;b++)if(n.indexOf(BRS[b])===0)return 
 function kFilt(a){return a.filter(function(i){return(!S.kt||kType(P[i].n)===S.kt)&&(!S.kb||kBrand(P[i].n)===S.kb)})}
 function kBar(){function row(arr,act,cur,all){return '<div class="sortbar">'+arr.map(function(x){return '<button data-a="'+act+'" data-v="'+x+'" class="'+((cur||"")===x?'on':'')+'">'+(x||all)+'</button>'}).join("")+'</div>'}return row(["","Monitor","Mishka","Klaviatura"],"kt",S.kt,"Barcha turlar")+row([""].concat(BRS),"kb",S.kb,"Barcha brendlar")}
 function pfFilt(a){var f=S.pf;return f?a.filter(function(i){var g=goods(P[i]);return f==="lt"?g<100000:f==="mid"?g>=100000&&g<300000:f==="gt"?g>=300000:P[i].s>=30000}):a}
-function pfBar(){return '<div class="sortbar">'+[["","Hammasi"],["lt","100 minggacha"],["mid","100–300 ming"],["gt","300 mingdan yuqori"],["top","Test o'tgan"]].map(function(x){return '<button data-a="pf" data-v="'+x[0]+'" class="'+((S.pf||"")===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("")+'</div>'}
+function pfBar(){return '<div class="sortbar">'+[["","Hammasi"],["lt","100 minggacha"],["mid","100–300 ming"],["gt","300 mingdan yuqori"],["top","Ko'p sotilgan"]].map(function(x){return '<button data-a="pf" data-v="'+x[0]+'" class="'+((S.pf||"")===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("")+'</div>'}
 function simBox(i){var c=P[i].c,ids=idx(c).filter(function(x){return x!==i}).sort(function(a,b){return P[b].s-P[a].s}).slice(0,4);
  return ids.length?'<h3 style="margin:16px 0 8px;font-size:15px">O\'xshash tovarlar</h3><div class="hs" style="padding:0 0 6px">'+ids.map(card).join("")+'</div>':''}
 function promoRows(){var r=[];
@@ -3422,7 +3423,7 @@ var COLM=[["to.?q sariq|orange|оранж","#F97316"],["sariq|yellow|жел","#F
 function colHex(n){var t=String(n||"").toLowerCase();for(var k=0;k<COLM.length;k++){if(new RegExp(COLM[k][0]).test(t))return COLM[k][1]}return "linear-gradient(135deg,#c4b5fd,#7c3aed)"}
 function cDots(p){var a=(p.rang||[]).slice(0,4);if(!a.length)return "";return '<span class="cdots">'+a.map(function(n){return '<i style="background:'+colHex(n)+'"></i>'}).join("")+'</span>'}
 function catSpan(c){var l=idx(c[0]);for(var k=0;k<l.length;k++){var p=P[l[k]];if(p&&p.img)return '<span class="cph"><img src="'+esc(thumb(p.img,"pic"))+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'"></span>'}return '<span>'+svg(ICON[c[0]],26)+'</span>'}
-function card(i){var p=P[i];return '<div class="card" data-a="open" data-v="'+i+'">'+pic(p,"pic")+(p.s>30000?'<span class="badge">Test o\'tgan</span>':'')+'<button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan</div><div class="pr">'+fmt(goods(p))+'</div></div></div>'}
+function card(i){var p=P[i];return '<div class="card" data-a="open" data-v="'+i+'">'+pic(p,"pic")+(p.s>30000?'<span class="badge">🔥 Ko\'p sotilgan</span>':'')+'<button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">🔥 '+kf(p.s)+' ta sotilgan</div><div class="pr">'+fmt(goods(p))+'</div></div></div>'}
 function sortList(a){var l=a.slice();if(S.sort==="cheap")l.sort(function(x,y){return P[x].y-P[y].y});if(S.sort==="exp")l.sort(function(x,y){return P[y].y-P[x].y});if(S.sort==="pop")l.sort(function(x,y){return P[y].s-P[x].s});return l}
 function dealCard(i){var p=P[i];return '<div class="card deal" data-a="open" data-v="'+i+'">'+pic(p,"pic")+'<span class="badge">-30%</span><button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="pr">'+fmt(goods(p))+' <s>'+fmt(r(goods(p)*1.43))+'</s></div><div class="sold">🔥 '+kf(p.s)+' kishi oldi</div></div></div>'}
 function idx(c){return P.map(function(_,i){return i}).filter(function(i){return P[i].c===c})}
@@ -3589,13 +3590,13 @@ if(isPrem()){
    +'<div class="sup-seg" role="tablist">'+seg+'</div>'
    +'<div class="pane p-ask">'+aiChat(true)+'<h2 class="sec">Tez savollar</h2><div class="tips">'+tips+'</div></div>'
    +'<div class="pane p-calc"><h2 class="sec">Narx kalkulyatori</h2><div class="kc"><div class="kc-in"><input id="kcw" type="number" inputmode="decimal" placeholder="Og\'irligi, kg"><select id="kcm"><option value="auto">Avto \u2014 $'+CG.auto+'/kg</option><option value="avia">Avia \u2014 $'+CG.avia+'/kg</option></select></div><div id="kcr" class="kc-out">'+kcalc(0,"auto")+'</div></div>'
-   +'<details class="op"><summary>Qaytarish va bekor qilish qoidalari</summary><div class="op-b">Buyurtmani Xitoyda sotib olinguncha bekor qilish mumkin, pul qaytariladi. Sotib olingandan keyin bekor qilib bo\'lmaydi. Nuqsonli yoki noto\'g\'ri tovar kelsa, filialda ochib ko\'rib, 3 kun ichida rasm bilan yozing. Cargo va UzPost to\'lovlari qaytarilmaydi.<br><small>Namuna matn: o\'zingizning qoidalaringizga moslab beraman.</small></div></details></div>'
+   +'<details class="op"><summary>Qaytarish va bekor qilish qoidalari</summary><div class="op-b">Buyurtmani Xitoyda sotib olinguncha bekor qilish mumkin — to\'lov to\'liq qaytariladi. Tovar sotib olingandan keyin buyurtmani bekor qilib bo\'lmaydi. Tovarni UzPost filialida ochib tekshiring: nuqsonli yoki boshqa tovar kelsa, 3 kun ichida rasm yoki video bilan bizga yozing, ko\'rib chiqamiz. Cargo va UzPost to\'lovlari qaytarilmaydi.</div></details></div>'
    +'<div class="pane p-ref">'+refCard()+'</div>'
    +'</div>';
 }else{
   var h=(window.sbAdminBtn?window.sbAdminBtn():'')+'<h2 class="sec">Yordam</h2>'+aiChat(true)+'<h2 class="sec">Tez savollar</h2><div class="tips">'+TIPS.map(function(t){return '<button class="tip" data-a="bq" data-v="'+esc(t[1])+'"><span>'+t[0]+'</span>'+esc(t[1])+'</button>'}).join("")+'</div>';
   h+='<h2 class="sec">Narx kalkulyatori</h2><div class="contact glass" style="display:block;padding:14px"><input id="kcw" type="number" inputmode="decimal" placeholder="Og\'irligi, kg" style="width:100%;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;margin-bottom:8px;font:inherit"><select id="kcm" style="width:100%;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;margin-bottom:8px;font:inherit"><option value="auto">Avto \u2014 $'+CG.auto+'/kg</option><option value="avia">Avia \u2014 $'+CG.avia+'/kg</option></select><div id="kcr">'+kcalc(0,"auto")+'</div></div>';
-  h+='<details class="op glass" style="margin-top:12px"><summary>Qaytarish va bekor qilish qoidalari</summary><div style="padding-top:8px;font-size:13px;line-height:1.5">Buyurtmani Xitoyda sotib olinguncha bekor qilish mumkin, pul qaytariladi. Sotib olingandan keyin bekor qilib bo\'lmaydi. Nuqsonli yoki noto\'g\'ri tovar kelsa, filialda ochib ko\'rib, 3 kun ichida rasm bilan yozing. Cargo va UzPost to\'lovlari qaytarilmaydi.<br><small style="color:var(--mute)">Namuna matn: o\'zingizning qoidalaringizga moslab beraman.</small></div></details>';
+  h+='<details class="op glass" style="margin-top:12px"><summary>Qaytarish va bekor qilish qoidalari</summary><div style="padding-top:8px;font-size:13px;line-height:1.5">Buyurtmani Xitoyda sotib olinguncha bekor qilish mumkin — to\'lov to\'liq qaytariladi. Tovar sotib olingandan keyin buyurtmani bekor qilib bo\'lmaydi. Tovarni UzPost filialida ochib tekshiring: nuqsonli yoki boshqa tovar kelsa, 3 kun ichida rasm yoki video bilan bizga yozing, ko\'rib chiqamiz. Cargo va UzPost to\'lovlari qaytarilmaydi.</div></details>';
   h+=refCard();
   return h;
 }
@@ -3703,6 +3704,8 @@ function cartFlash(){clearTimeout(window._cft);window._cft=setTimeout(function()
 function favTxt(i){return S.fav[i]?'♥ Saqlangan':'♡ Saqlash'}
 function rfColors(p,i){var o=skOpts(p),a=o.col||[];if(!a.length)return "";return '<div class="rfct">Rang</div><div class="rfcc">'+a.map(function(n){return '<button type="button" data-a="ocol" data-v="'+esc(n)+'" data-i="'+i+'" class="'+(S.ocol===n?'on':'')+'" style="background:'+colHex(n)+'" aria-label="'+esc(n)+'" title="'+esc(n)+'"></button>'}).join("")+'</div>'}
 function rfGd(n){var h='<div class="gd">';for(var k=0;k<Math.min(n,5);k++)h+='<i'+(k?'':' class="on"')+'></i>';return h+'</div>'}
+/* v0.7.2: tovar ko'rildi -> worker hisoblaydi (bir sessiyada bir marta) */
+function sbView(id){try{var w=window.WORKER,k="sbv_"+id;if(!id||!w||sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1");fetch(String(w).replace(/\/$/,"")+"/v?p="+encodeURIComponent(id),{method:"POST",keepalive:true,mode:"no-cors"}).catch(function(){})}catch(e){}}
 function product(i,mode){
   if(!$("sh").classList.contains("open")&&window.sheetOpenAnim){window._skipBg=1}
   var p=P[i];if(S.oi!==i){S.oi=i;S.osz="";S.ocol="";S.rv=[i].concat((S.rv||[]).filter(function(x){return x!==i})).slice(0,8)}if(!p.av&&mode==="avia")mode="auto";S.mode=mode;var m=mode;
@@ -3717,6 +3720,7 @@ function product(i,mode){
   simBox(i)+(isPrem()?'</div>':''));
   if(window.vfProdReviews)vfProdReviews(p);
   setProdBar(i);
+  try{if(!again)sbView(p.id)}catch(e){}
   if(again)$("sp").scrollTop=st0;
   setTimeout(function(){(p.rang||[]).forEach(function(c){galList(p,c).forEach(function(m){if(m.t!=="v"){var im=new Image();im.decoding="async";im.src=m.u}})})},900);
 }
@@ -4977,7 +4981,7 @@ window.SB_DAY_CSS="html,body,body.dusk{background:#FFFFFF!important}.lx-base{bac
     });
   }
   window.sbSyncHeroDay=syncHeroDay;
-  setInterval(syncHeroDay,800);
+  setInterval(function(){if(!document.hidden)syncHeroDay()},1500);
   document.addEventListener("click",function(){ setTimeout(syncHeroDay,60) },true);
 })();
 </script>
@@ -5333,7 +5337,7 @@ html.lite.lite *{will-change:auto!important}
 /* Tovar havolasi: ?p=ID ochilganda aynan shu tovar ochiladi (openDeepLink allaqachon bor) */
 (function(){
 function base(){return location.origin+location.pathname}
-function link(id){return base()+"?p="+encodeURIComponent(id)}
+function link(id){return window.WORKER?String(window.WORKER).replace(/\/$/,"")+"/p/"+encodeURIComponent(id):base()+"?p="+encodeURIComponent(id)}
 function copy(t,done){
   function fb(){try{var a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();done(true)}catch(e){done(false)}}
   try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){done(true)},fb)}else fb()}catch(e){fb()}
@@ -5351,6 +5355,20 @@ document.addEventListener("click",function(ev){
 },true);
 })();
 </script>
+<style id="sb-pad-v072">
+/* v0.7.2: profil kabi to'liq oynalar ekran chetiga yopishmaydi; tugmalar va maydonlar biroz bo'rtib turadi */
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)){padding:calc(var(--sa,0px) + 58px) 18px calc(100px + env(safe-area-inset-bottom,0px))!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal))>*:not(.back):not(.gtop){max-width:560px;width:100%!important;align-self:stretch!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box;text-align:left}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal))>.btn,html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal))>button.btn{width:100%!important;align-self:stretch!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal))>button,html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) .btn{text-align:center!important;justify-content:center!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal))>h3:first-of-type{font-size:30px!important;letter-spacing:-.02em;margin:0 0 14px!important;padding-left:4px}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) .pfgt{padding-left:4px!important;margin-top:22px!important;letter-spacing:.08em}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) input,html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) textarea,html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) select{border-radius:16px!important;border:1px solid rgba(140,140,180,.20)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 2px 6px -2px rgba(0,0,0,.25)!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) input:focus,html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) textarea:focus{border-color:rgba(139,92,246,.65)!important;box-shadow:0 0 0 3px rgba(139,92,246,.18)!important;outline:0}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) .btn:not(.ghost),html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) button.btn:not(.ghost){border-radius:18px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -2px 0 rgba(0,0,0,.12),0 12px 26px -10px rgba(124,58,237,.6)!important;transition:transform .15s,box-shadow .15s}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) .btn:active{transform:translateY(1px) scale(.99)}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) .lkl,html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) .pfrow,html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) [data-a="pwchange"],html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz) #sh.full #sp:not(:has(.gal)) .btn.ghost{border-radius:20px!important;border:1px solid rgba(140,140,180,.16)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 8px 20px -14px rgba(0,0,0,.5)!important}
+</style>
 <style id="sb-night-redesign">
 /* ===== TUNGI REJIM: qora-binafsha fon (4-rasm) + to'q sariq urg'u va toza kartalar (3-rasm), binafsha banner (1-rasm), yumshoq pill/chiplar (2-rasm) ===== */
 html[data-theme="dark"]:not([data-day]){--bg:#14121F;--ink:#F4F2FF;--mute:#A9A5C8;--line:rgba(255,255,255,.08);--brand:#FF8A3D;--teal:#A78BFA;--pink:#FF6A2B;--gold:#FFB84D;
@@ -5658,7 +5676,7 @@ function sbar(){var w=document.getElementById("sbar");if(!w)return;
     var x=document.createElement("button");x.type="button";x.className="sbx";x.setAttribute("aria-label","Tozalash");x.innerHTML="&times;";
     w.appendChild(f);w.appendChild(x)}
   var q=w.querySelector("input");if(q)w.classList.toggle("has",!!q.value)}
-sbar();setInterval(sbar,500);
+sbar();setInterval(function(){if(!document.hidden)sbar()},1000);
 document.addEventListener("input",function(e){if(e.target&&e.target.id==="q")sbar()});
 document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target&&e.target.id==="q")e.target.blur()});
 document.addEventListener("click",function(e){var T=e.target;if(!T||!T.closest)return;
@@ -5888,11 +5906,18 @@ html[data-skin="premium"]:root:root:root:root:root:root:root:not(#zz) #app .hubt
 html[data-skin="premium"]:root:root:root:root:root:root:root:not(#zz) #app .hubt .hb em{font-size:10px;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;min-height:23px;padding:0 2px}
 html[data-skin="premium"]:root:root:root:root:root:root:root:not(#zz) #app .hubp>.btn{width:calc(100% - 40px)!important;margin:14px 20px 0!important}
 </style>
+<style id="sb-fix2">/* Tovar sahifasi: tanlangan Avto/Avia yozuvi oq-och binafsha fonda ko'rinmay qolgan edi */
+html[data-skin="premium"]:root:root:root:root:root:root:root:not(#zz) .opt button b,html[data-skin="premium"]:root:root:root:root:root:root:root:not(#zz) .opt button.on b{color:var(--ink,#111)!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:not(#zz) .opt button.on b{color:var(--o,#7C3AED)!important}
+/* Savat: chegirma qatori ikki qatorga sinib, summa pastga tushib ketmasin */
+html[data-skin="premium"]:root:root:root:root:root:root:root:not(#zz) #app .rfsheet .sum .ln span:first-child{min-width:0;padding-right:8px}
+html[data-skin="premium"]:root:root:root:root:root:root:root:not(#zz) #app .rfsheet .sum .ln span:last-child{white-space:nowrap;flex:none}
+</style>
 <script id="sb-ref-js">
 (function(){var H=document.documentElement;
 function pf(){return H.getAttribute("data-skin")==="premium"}
 function ph(){var q=document.getElementById("q");if(q){var w=pf()?"Qidirish...":"Tovar qidirish";if(q.placeholder!==w)q.placeholder=w}}
-setInterval(ph,600);ph();
+setInterval(function(){if(!document.hidden)ph()},1500);ph();
 document.addEventListener("click",function(e){var t=e.target;if(!t||!t.closest)return;
  var b=t.closest("[data-rfhub]");if(b){e.stopPropagation();H.classList.toggle("rf-hubopen");return}
  if(t.closest(".hubt .hb")||t.closest('[data-a="tab"]'))H.classList.remove("rf-hubopen");
