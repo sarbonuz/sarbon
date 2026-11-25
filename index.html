@@ -4893,8 +4893,8 @@ window.sbPdlSet=function(i,dl){var p=P[i];if(!p)return;var m=pdlAll();m[p.id]=dl
 function addrUpd(){var a=$("vsa");if(!a)return;var d=pdlGet(V.i);a.classList.toggle("none",!d);a.innerHTML='<span class="vsai">📍</span><span class="vsat">'+(d?esc(d.r+", "+d.b):"Yetkazish manzilini tanlang")+'</span><span class="vsaa">›</span>'}
 function cnt(o){return (o.col?V.col.length:1)*(o.sz?V.sz.length:1)}
 function upd(){var p=P[V.i],o=skOpts(p),n=cnt(o),done=(!o.col||V.col.length)&&(!o.sz||V.sz.length);
-var col=V.col[0]||"",pi=$("vsimg");
-var sig=V.i+"|"+col;if(pi.dataset.s!==sig){pi.dataset.s=sig;pi.innerHTML=picC(p,col,"th")}
+var col=V.col[V.col.length-1]||"",pi=$("vsimg"),kat=!!(col&&p.cm&&p.cm[col]&&p.cm[col].some(function(m){return m.t!=="v"}));
+var sig=V.i+"|"+col;if(pi.dataset.s!==sig){pi.dataset.s=sig;pi.classList.toggle("big",kat);root.classList.toggle("katta",kat);pi.innerHTML=picC(p,col,kat?"big":"th");if(col)syncPage()}
 $("vsp1").textContent=fmt(goods(p,col,V.sz[0]||""));
 $("vsm").textContent="🚚 "+(S.mode==="avia"?"Avia":"Avto")+" · yetkazish "+DAYS[S.mode==="avia"?"avia":"auto"];addrUpd();
 var names=V.col.concat(V.sz);
@@ -6095,5 +6095,6 @@ fetch("https://sarbon-orders.winncloudd.workers.dev/hb",{method:"POST",body:JSON
 setTimeout(hb,2500);setInterval(hb,45000);document.addEventListener("visibilitychange",hb);
 }catch(e){}})();
 </script>
+<style id="sb-v919-css">html:root:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs.katta .vsh{flex-wrap:wrap!important}html:root:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsimg.big{display:block!important;width:100%!important;height:min(32vh,270px)!important;border-radius:10px!important;background:#fff!important}html:root:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsimg.big img{width:100%!important;height:100%!important;object-fit:contain!important;padding:0!important}html:root:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs.katta .vsi{flex:1 0 100%!important}</style>
 </body>
 </html>
