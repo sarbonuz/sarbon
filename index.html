@@ -4200,7 +4200,7 @@ document.addEventListener("click",function(e){
     coupon: curCoupon() ? curCoupon().code : "",
     cargo: cartCargo(),
     total: cartTotal(),
-    uzp: (S.dl ? S.dl.r + ", " + S.dl.b : "")
+    uzp: (S.dl ? S.dl.r + ", " + S.dl.b : ""), uzll: (S.dl && S.dl.lat ? [S.dl.lat, S.dl.lng] : null)
   };
   fetch(ORDER_URL, {
     method: "POST",
@@ -6084,6 +6084,16 @@ document.addEventListener("visibilitychange",function(){try{if(!document.hidden&
 var _ld=window.loadMyOrders;if(_ld)window.loadMyOrders=function(){var r=_ld.apply(this,arguments);return r};
 try{if(typeof render==="function")render()}catch(e){}
 })();
+</script>
+<script>
+/* jonli globus: hozir saytda (tasodifiy id; 0 ko'ryapti, 1 savatda, 2 to'lovda) */
+(function(){try{
+var i=localStorage.getItem("sb_hb");if(!i){i=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem("sb_hb",i)}
+function hb(){if(document.hidden)return;var s=0,p=document.getElementById("pm2");if(p&&p.getClientRects().length)s=2;else if(typeof S!=="undefined"&&S.cart&&S.cart.length)s=1;
+var t=Number(localStorage.getItem("sb_hbt")||0),n=Date.now()-t>18e5?1:0;localStorage.setItem("sb_hbt",String(Date.now()));
+fetch("https://sarbon-orders.winncloudd.workers.dev/hb",{method:"POST",body:JSON.stringify({i:i,s:s,n:n}),keepalive:true}).catch(function(){})}
+setTimeout(hb,2500);setInterval(hb,45000);document.addEventListener("visibilitychange",hb);
+}catch(e){}})();
 </script>
 </body>
 </html>
