@@ -3350,6 +3350,8 @@ function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" so'm"}
 function kf(n){return n>=1000?(n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,"")+" ming":String(n)}
 /* v9.7: sotuv soni halol: Sarbon sotuvi (p.ss) alohida belgi, Xitoy (Pinduoduo) soni kichik va aniq yoziladi */
 function soldH(p,big){return p.s>0?'<span class="scn">'+kf(p.s)+' ta sotilgan</span>':''}
+function fmtS(v){return '<span class="pv">'+fmt(v).replace(/\s(so\S*m)$/,' <small class="sm">$1</small>')+'</span>'}
+function soldS(p){return p.s>0?'<span class="scn">'+kf(p.s)+' sotilgan</span>':''}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return "&#"+c.charCodeAt(0)+";"})}
 var PROMOS={SARBON10:.1};
 function cItems(){return(S.only!=null&&S.cart[S.only])?[S.cart[S.only]]:S.cart}
@@ -3430,9 +3432,9 @@ var COLM=[["to.?q sariq|orange|оранж","#F97316"],["sariq|yellow|жел","#F
 function colHex(n){var t=String(n||"").toLowerCase();for(var k=0;k<COLM.length;k++){if(new RegExp(COLM[k][0]).test(t))return COLM[k][1]}return "linear-gradient(135deg,#c4b5fd,#7c3aed)"}
 function cDots(p){var a=(p.rang||[]).slice(0,4);if(!a.length)return "";return '<span class="cdots">'+a.map(function(n){return '<i style="background:'+colHex(n)+'"></i>'}).join("")+'</span>'}
 function catSpan(c){var l=idx(c[0]);for(var k=0;k<l.length;k++){var p=P[l[k]];if(p&&p.img)return '<span class="cph"><img src="'+esc(thumb(p.img,"pic"))+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'"></span>'}return '<span>'+svg(ICON[c[0]],26)+'</span>'}
-function card(i){var p=P[i];return '<div class="card" data-a="open" data-v="'+i+'">'+pic(p,"pic")+(p.s>30000?'<span class="badge">🔥 Ko\'p sotilgan</span>':'')+(ktOn(p)?'<span class="badge ktbd">−'+p.kt.p+'%</span>':'')+'<button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="sold">'+soldH(p)+'</div><div class="pr">'+fmt(goods(p))+(ktOn(p)?' <s class="kts">'+fmt(p.kt.o)+'</s>':'')+'</div></div></div>'}
+function card(i){var p=P[i];return '<div class="card" data-a="open" data-v="'+i+'">'+pic(p,"pic")+(p.s>30000?'<span class="badge">🔥 Ko\'p sotilgan</span>':'')+(ktOn(p)?'<span class="badge ktbd">−'+p.kt.p+'%</span>':'')+'<button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="pr pdd">'+fmtS(goods(p))+(ktOn(p)?' <s class="kts">'+fmt(p.kt.o)+'</s>':'')+soldS(p)+'</div></div></div>'}
 function sortList(a){var l=a.slice();if(S.sort==="cheap")l.sort(function(x,y){return P[x].y-P[y].y});if(S.sort==="exp")l.sort(function(x,y){return P[y].y-P[x].y});if(S.sort==="pop")l.sort(function(x,y){return P[y].s-P[x].s});return l}
-function dealCard(i){var p=P[i],k=ktOn(p);return '<div class="card deal" data-a="open" data-v="'+i+'">'+pic(p,"pic")+'<span class="badge">'+(k?'−'+p.kt.p+'%':'💸 Arzon')+'</span><button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="pr">'+fmt(goods(p))+(k?' <s>'+fmt(p.kt.o)+'</s>':'')+'</div><div class="sold">'+soldH(p)+'</div></div></div>'}
+function dealCard(i){var p=P[i],k=ktOn(p);return '<div class="card deal" data-a="open" data-v="'+i+'">'+pic(p,"pic")+'<span class="badge">'+(k?'−'+p.kt.p+'%':'💸 Arzon')+'</span><button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button><div class="in"><div class="n">'+esc(p.n)+'</div><div class="pr pdd">'+fmtS(goods(p))+(k?' <s>'+fmt(p.kt.o)+'</s>':'')+soldS(p)+'</div></div></div>'}
 /* v0.7.3: Kun taklifi — faqat bot orqali qo'yilgan HAQIQIY chegirma (narx serverda ham shunday hisoblanadi) */
 function ktOn(p){return !!(p&&p.kt&&p.kt.u>Date.now())}
 function ktLeft(u){var s=Math.max(0,Math.floor((u-Date.now())/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h<10?"0":"")+h+":"+(m<10?"0":"")+m+":"+(x<10?"0":"")+x}
@@ -3534,20 +3536,20 @@ function hubWait(o){return o.srv?o.st==="yangi":o.s===0}
 function hubSent(o){return o.srv?(["yolda","uzb","uzpost","yetkazildi","topshirildi"].indexOf(o.st)>-1):o.s>=2}
 function hubMine(){return S.user?S.orders.filter(function(o){return o.ph===S.user.phone}):[]}
 function hubPayPanel(){
-  var h='<h2 class="sec">To\'lov kutilmoqda</h2>';
+  /* v9.16: "Jarayon" — barcha buyurtmalar qoladi, holat serverdan (Telegramdagi o'zgarish) real yangilanadi */
+  var h='<h2 class="sec">Jarayon</h2>';
   if(!S.user)return h+'<div class="form"><div class="mut">Ko\'rish uchun kiring.</div><button class="btn" data-a="login">Kirish</button></div>';
-  var wait=hubMine().filter(hubWait);
-  var any=false;
-  if(wait.length){any=true;h+='<div class="note" style="padding:6px 14px">To\'lov qilingan, admin tekshirmoqda. Tasdiqlangandan keyin buyurtmangiz <b>Hisobotlarim</b> bo\'limiga o\'tadi:</div>'+wait.map(function(o){return '<div class="row hubw" style="display:block"><b>Buyurtma #'+o.id+'</b> · '+fmt(o.t)+'<div class="steps" style="margin-top:8px">'+[0,1,2,3,4,5].map(function(j){return '<i class="'+(j<=o.s?'d':'')+'"></i>'}).join("")+'</div><div class="note">Holat: <b>'+ST[0]+'</b></div></div>'}).join("")}
-  if(!any)h+='<div class="mut">Hozir tekshirilayotgan to\'lov yo\'q.<br><br>To\'lovingiz tasdiqlansa ham, tasdiqlanmasa ham, buyurtmangizni <b>Hisobotlarim</b> bo\'limida ko\'rasiz.</div><button class="btn" data-a="tab" data-v="orders" style="margin-top:12px">Hisobotlarimni ochish</button>';
+  var all=hubMine().filter(function(o){return !(o.srv&&o.st==="topshirildi")});
+  if(!all.length)return h+'<div class="mut">Hozir jarayondagi buyurtma yo\'q.</div><button class="btn" data-a="tab" data-v="orders" style="margin-top:12px">Hisobotlarimni ochish</button>';
+  h+='<div class="note" style="padding:6px 14px">Buyurtmangiz holati shu yerda yangilanib turadi.</div>'+all.map(function(o){var bk=o.srv&&o.st==="bekor",lb=bk?"❌ To'lov tasdiqlanmadi (bekor qilindi)":(stLabel(o)||ST[o.s]||"");return '<div class="row hubw" data-a="ordopen" data-v="'+esc(o.id)+'" style="display:block;cursor:pointer"><b>Buyurtma #'+esc(o.id)+'</b> · '+fmt(o.t)+'<div class="steps" style="margin-top:8px">'+[0,1,2,3,4,5].map(function(j){return '<i class="'+(!bk&&j<=o.s?'d':'')+'"></i>'}).join("")+'</div><div class="note">Holat: <b'+(bk?' style="color:#E02E24"':'')+'>'+esc(lb)+'</b></div></div>'}).join("");
   return h}
 function hub(){
   if(!S.hub)S.hub="cart";
-  var mine=hubMine(),fc=hubFav().length,cn=cartN(),pn=mine.filter(hubWait).length,sn=mine.filter(hubSent).length;
+  var mine=hubMine(),fc=hubFav().length,cn=cartN(),pn=mine.filter(function(o){return !(o.srv&&(o.st==="topshirildi"||o.st==="bekor"))}).length,sn=mine.filter(hubSent).length;
   var T=[
    ["fav","Saqlanganlar",fc,"<path d='M12 21s-8-5.3-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.7-8 11-8 11z'/>","#FF6FAE","#D6246E"],
    ["cart","Savat",cn,"<path d='M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM3 3h3l3 12h10l2-8H7'/>","#FFC247","#F28C1B"],
-   ["pay","To'lov kutilmoqda",pn,"<rect x='3' y='6' width='18' height='13' rx='3'/><path d='M3 10h18M7 15h4'/>","#9B7BFF","#4A3FD0"],
+   ["pay","Jarayon",pn,"<rect x='3' y='6' width='18' height='13' rx='3'/><path d='M3 10h18M7 15h4'/>","#9B7BFF","#4A3FD0"],
    ["sent","Yuborildi",sn,"<path d='M3 7h11v9H3zM14 10h4l3 3v3h-7'/><circle cx='7' cy='18' r='1.6'/><circle cx='17' cy='18' r='1.6'/>","#2FD0DA","#25308F"],
    ["addr","Yetkazish manzili",0,"<path d='M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z'/><circle cx='12' cy='10' r='2.5'/>","#5BE08A","#16A3AE"]];
   var h='<h2 class="sec rfhub-h">Buyurtmalarim</h2>';var hubT='<div class="hubt">'+T.map(function(t){return '<button class="hb'+(S.hub===t[0]?' on':'')+'" data-a="hub" data-v="'+t[0]+'" style="--c1:'+t[4]+';--c2:'+t[5]+';--c1a:'+t[4]+'4D;--c2a:'+t[5]+'1F"><span class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+t[3]+'</svg>'+(t[2]?'<i>'+t[2]+'</i>':'')+'</span><em>'+t[1]+'</em></button>'}).join("")+'</div>';
@@ -3558,7 +3560,7 @@ function hub(){
   else if(S.hub==="addr")p='<h2 class="sec">Yetkazish manzili</h2><div class="form"><div class="note">O\'zbekistondagi UzPost filialini tanlang. Tovar shu manzilga yetkaziladi.</div><button class="pick" data-a="dl"><span>Yetkazish</span><b>'+(S.dl?esc(S.dl.r+", "+S.dl.b):"Filialni tanlang")+'</b></button></div>';
   else p=cart();
   /* Yangi dizayn: bo'limlar (Saqlanganlar/Savat/...) savat sarlavhasi ostida turadi */
-  if(isPrem()&&p.indexOf('class="rfcart"')>-1&&p.indexOf('</button></div><div class="list">')>-1){p=p.replace('</button></div><div class="list">','</button></div>'+hubT+'<div class="list">');hubT=''}
+  /* v9.16: hamma bo'lim bir xil — bo'limlar har doim tepada (savat ham) */
   return h+hubT+'<div class="hubp">'+p+'</div>'}
 function orders(ttl,flt){
   var unread=Math.max(0,S.msgs.length-(S.seen||0));
@@ -4878,17 +4880,25 @@ try{var oc=new URLSearchParams(location.search).get("chat");if(oc){try{history.r
 (function(){
 var V={i:-1,mode:"buy",multi:false,q:1,sz:[],col:[]},root=null;
 function ui(){if(root)return root;root=document.createElement("div");root.id="vs";
-root.innerHTML='<div class="vsb" data-vs="close"></div><div class="vsp" role="dialog" aria-modal="true"><div class="vsh"><div class="vsimg" id="vsimg" data-vs="zoom" role="button" aria-label="Rasmni kattalashtirish"></div><div class="vsi"><div class="vsp1" id="vsp1"></div><div class="vsm" id="vsm"></div><div class="vss" id="vss"></div><div class="vsq" id="vsq"><button type="button" data-vs="qm" aria-label="Kamaytirish">−</button><b id="vsqn">1</b><button type="button" data-vs="qp" aria-label="Ko\'paytirish">+</button></div></div><button class="vsx" type="button" data-vs="close" aria-label="Yopish">✕</button></div><div class="vsc" id="vsc"></div><div class="vsf"><div class="vse" id="vse"></div><button class="vsmu" type="button" data-vs="multi" id="vsmu"></button><button class="vsgo" type="button" data-vs="go" id="vsgo"></button></div></div><div class="vsz" id="vsz" data-vs="zclose"><img id="vszi" alt=""></div>';
+root.innerHTML='<div class="vsb" data-vs="close"></div><div class="vsp" role="dialog" aria-modal="true"><div class="vstop"><span>Variant tanlash</span><button class="vsx" type="button" data-vs="close" aria-label="Yopish">✕</button></div><button type="button" class="vsa" data-vs="addr" id="vsa"></button><div class="vsdl" id="vsm"></div><div class="vsh"><div class="vsimg" id="vsimg" data-vs="zoom" role="button" aria-label="Rasmni kattalashtirish"></div><div class="vsi"><div class="vspr"><div class="vsp1" id="vsp1"></div><div class="vsq" id="vsq"><button type="button" data-vs="qm" aria-label="Kamaytirish">−</button><b id="vsqn">1</b><button type="button" data-vs="qp" aria-label="Ko\'paytirish">+</button></div></div><div class="vss" id="vss"></div></div></div><div class="vsc" id="vsc"></div><div class="vsf"><div class="vse" id="vse"></div><button class="vsmu" type="button" data-vs="multi" id="vsmu"></button><button class="vsgo" type="button" data-vs="go" id="vsgo"></button></div></div><div class="vsz" id="vsz" data-vs="zclose"><img id="vszi" alt=""></div>';
 root.addEventListener("click",onTap);document.body.appendChild(root);return root}
-function row(t,key,arr){return '<div class="vst">'+t+'</div><div class="vsg">'+arr.map(function(x){return '<button type="button" class="vsv" data-vs="'+key+'" data-x="'+esc(x)+'" aria-pressed="false">'+esc(x)+'</button>'}).join("")+'</div>'}
+function row(t,key,arr){var p=P[V.i],ci=key==="col"&&p&&p.cm&&arr.some(function(x){return p.cm[x]&&p.cm[x].length});
+if(ci)return '<div class="vst">'+t+'</div><div class="vsg vsgi">'+arr.map(function(x){return '<button type="button" class="vsv vsci" data-vs="'+key+'" data-x="'+esc(x)+'" aria-pressed="false"><span class="vsct">'+picC(p,x,"th")+'<span class="vscz" data-vs="czoom" data-x="'+esc(x)+'">⤢</span></span><span class="vscn">'+esc(x)+'</span></button>'}).join("")+'</div>';
+return '<div class="vst">'+t+'</div><div class="vsg'+(key==="sz"?' vsgp':'')+'">'+arr.map(function(x){return '<button type="button" class="vsv" data-vs="'+key+'" data-x="'+esc(x)+'" aria-pressed="false">'+esc(x)+'</button>'}).join("")+'</div>'}
+/* v9.16: har tovar uchun alohida yetkazish manzili */
+function pdlAll(){try{return JSON.parse(localStorage.getItem("sarbon.pdl")||"{}")||{}}catch(e){return {}}}
+function pdlGet(i){var p=P[i];if(!p)return S.dl;var m=pdlAll();return m[p.id]||S.dl||null}
+window.sbPdlGet=pdlGet;
+window.sbPdlSet=function(i,dl){var p=P[i];if(!p)return;var m=pdlAll();m[p.id]=dl;try{localStorage.setItem("sarbon.pdl",JSON.stringify(m))}catch(e){}};
+function addrUpd(){var a=$("vsa");if(!a)return;var d=pdlGet(V.i);a.classList.toggle("none",!d);a.innerHTML='<span class="vsai">📍</span><span class="vsat">'+(d?esc(d.r+", "+d.b):"Yetkazish manzilini tanlang")+'</span><span class="vsaa">›</span>'}
 function cnt(o){return (o.col?V.col.length:1)*(o.sz?V.sz.length:1)}
 function upd(){var p=P[V.i],o=skOpts(p),n=cnt(o),done=(!o.col||V.col.length)&&(!o.sz||V.sz.length);
 var col=V.col[0]||"",pi=$("vsimg");
 var sig=V.i+"|"+col;if(pi.dataset.s!==sig){pi.dataset.s=sig;pi.innerHTML=picC(p,col,"th")}
 $("vsp1").textContent=fmt(goods(p,col,V.sz[0]||""));
-$("vsm").textContent=(S.mode==="avia"?"Avia · ":"Avto · ")+DAYS[S.mode==="avia"?"avia":"auto"];
+$("vsm").textContent="🚚 "+(S.mode==="avia"?"Avia":"Avto")+" · yetkazish "+DAYS[S.mode==="avia"?"avia":"auto"];addrUpd();
 var names=V.col.concat(V.sz);
-$("vss").textContent=V.multi?(names.length?(n+" ta variant tanlandi"):"Bir nechta variant tanlang"):(!(o.col||o.sz)?"":(done?names.join(", "):"Variant tanlang"));
+$("vss").textContent=V.multi?(names.length?(n+" ta variant tanlandi"):"Bir nechta variant tanlang"):(!(o.col||o.sz)?"":(done?"Tanlandi: "+names.join(", "):"Tanlang: "+[o.col?"Rang":"",o.sz?"O'lcham":""].filter(Boolean).join(", ")));
 $("vsq").style.display=V.multi?"none":"";$("vsqn").textContent=V.q;
 [].forEach.call(root.querySelectorAll(".vsv"),function(b){var arr=b.dataset.vs==="col"?V.col:V.sz;b.setAttribute("aria-pressed",arr.indexOf(b.dataset.x)>-1?"true":"false")});
 var g=$("vsgo"),k=V.mode==="cart";g.className="vsgo"+(k?" c":"");
@@ -4898,7 +4908,7 @@ V.sz=(o.sz&&S.osz)?[S.osz]:[];V.col=(o.col&&S.ocol)?[S.ocol]:[];
 var h="";if(o.col)h+=row("Rang","col",o.col);if(o.sz)h+=row("O'lcham","sz",o.sz);
 if(!o.col&&!o.sz)h+='<div class="vsn">Bu tovarda variant yo\'q. Miqdorni tanlang.</div>';
 if(S.mode==="avia")h+='<label class="vsck"><input type="checkbox" id="vok"> Tovarim yuqoridagi avia taqiqlangan ro\'yxatga kirmasligini tasdiqlayman</label>';
-$("vsc").innerHTML=h;$("vsc").scrollTop=0;$("vse").textContent="";$("vsimg").dataset.s="";
+$("vsc").innerHTML=h;$("vsc").scrollTop=0;$("vse").textContent="";$("vsimg").dataset.s="";root.classList.toggle("hasci",!!$("vsc").querySelector(".vsgi"));
 var mu=$("vsmu");mu.style.display=(o.col||o.sz)?"":"none";mu.textContent="Ko'p variant tanlash ›";
 clearTimeout(ht);root.classList.remove("out");zc();root.classList.add("on");upd()}
 var ht=0;
@@ -4918,7 +4928,8 @@ if(o.sz&&!V.sz.length)return err("O'lchamni tanlang.");
 if(S.mode==="avia"){var ck=$("vok");if(!ck||!ck.checked)return err("Avia uchun ro'yxatni tasdiqlang.")}
 var cs=o.col?V.col:[""],ss=o.sz?V.sz:[""],q=V.multi?1:V.q,buy=V.mode==="buy",ix=[];
 cs.forEach(function(c){ss.forEach(function(s){var f=-1;S.cart.forEach(function(x,j){if(x.i===i&&x.m===S.mode&&(x.sz||"")===s&&(x.col||"")===c)f=j});
-if(f<0){S.cart.push({i:i,m:S.mode,q:q,sz:s,col:c});f=S.cart.length-1}else if(buy){if(S.cart[f].q<q)S.cart[f].q=q}else S.cart[f].q+=q;ix.push(f)})});
+if(f<0){S.cart.push({i:i,m:S.mode,q:q,sz:s,col:c});f=S.cart.length-1}else if(buy){if(S.cart[f].q<q)S.cart[f].q=q}else S.cart[f].q+=q;var dl0=pdlGet(i);if(dl0)S.cart[f].dl=dl0;ix.push(f)})});
+if(!S.dl&&pdlGet(i))S.dl=pdlGet(i);
 save();
 if(!buy){hide(true);window._favDirty=1;cartBadge();return}
 hide();
@@ -4929,6 +4940,8 @@ if(!S.dl)setTimeout(function(){var e2=$("er");if(e2){e2.textContent="Avval yetka
 function onTap(e){var t=e.target.closest("[data-vs]");if(!t||!root.contains(t))return;var a=t.dataset.vs;
 if(a==="close"){syncPage();hide(true);return}
 if(a==="zoom"){zo();return}
+if(a==="czoom"){e.stopPropagation();var cb=t.closest(".vsci"),ci=cb&&cb.querySelector("img");if(ci&&ci.src){$("vszi").src=ci.src;$("vsz").classList.add("on")}return}
+if(a==="addr"){window._dlFor={i:V.i,mode:V.mode,col:V.col.slice(),sz:V.sz.slice(),q:V.q,multi:V.multi};var d0=pdlGet(V.i);if(d0&&d0.r)S.dr=d0.r;hide();window._fullSh=1;delivery();return}
 if(a==="zclose"){zc();return}
 if(a==="qm"){if(V.q>1){V.q--;upd()}return}
 if(a==="qp"){if(V.q<99){V.q++;upd()}return}
@@ -4938,6 +4951,7 @@ if(V.multi){if(k>-1)arr.splice(k,1);else arr.push(x)}else{arr.length=0;arr.push(
 err("");upd();return}
 if(a==="go")go()}
 window.vsHide=function(){hide()};
+window.vsOpen=function(i,mode,st){open(i,mode);if(st){V.multi=!!st.multi;V.col=st.col||[];V.sz=st.sz||[];V.q=st.q||1;$("vsmu").textContent=V.multi?"‹ Bitta variant":"Ko'p variant tanlash ›";upd()}};
 document.addEventListener("click",function(e){var t=e.target.closest("#pbf [data-vs]");if(!t)return;var a=t.dataset.vs,i=+t.dataset.v;
 if(a==="fav"){S.fav[i]=!S.fav[i];save();window._favDirty=1;t.classList.toggle("on",!!S.fav[i]);t.querySelector("svg").setAttribute("fill",S.fav[i]?"currentColor":"none");return}
 if(a==="cart"){open(i,"cart");return}
@@ -5615,7 +5629,7 @@ document.addEventListener("click",function(e){var b=e.target.closest&&e.target.c
   function heart(i){return '<button class="heart" data-a="fav" data-v="'+i+'">'+(S.fav[i]?'♥':'♡')+'</button>'}
   function rfDots(p){var a=(p.rang||[]),h=a.slice(0,4).map(function(n){return '<i style="background:'+colHex(n)+'"></i>'}).join("");if(!h)return "";if(a.length>4)h+='<em>+'+(a.length-4)+'</em>';return '<span class="cdots">'+h+'</span>'}
   window.card=function(i){if(!isPrem())return _card0(i);var p=P[i];
-    return '<div class="card oc" data-a="open" data-v="'+i+'">'+pic(p,"pic")+heart(i)+'<div class="in"><div class="n">'+esc(p.n)+'</div><div class="orow"><div class="pr">'+fmt(goods(p))+'</div>'+rfDots(p)+'</div></div></div>'};
+    return '<div class="card oc" data-a="open" data-v="'+i+'">'+pic(p,"pic")+heart(i)+'<div class="in"><div class="n">'+esc(p.n)+'</div><div class="orow pdd"><div class="pr">'+fmtS(goods(p))+'</div>'+soldS(p)+'</div></div></div>'};
   window.dealCard=function(i){if(!isPrem())return _deal0(i);return window.card(i)};
   try{if(typeof render==="function"&&window._lastRender!==undefined){window._lastRender=null;render()}}catch(e){}
 })();
@@ -5952,6 +5966,123 @@ document.addEventListener("click",function(e){var t=e.target;if(!t||!t.closest)r
  if(t.closest(".hubt .hb")||t.closest('[data-a="tab"]'))H.classList.remove("rf-hubopen");
  var d=t.closest(".pcard .pdesc");if(d)d.classList.toggle("open");
 },true);
+})();
+</script>
+<style id="sb-v916">/* v9.16 — Kamron 25.11 rejasi: AI bot/quyosh olib tashlandi, Pinduoduo uslubidagi kartochka va variant oynasi, 5 bo'lim bitta qatorda */
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #fab,html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #ap{display:none!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) header .tbtn{display:none!important}
+/* --- ESKI dizayn: oddiy bir xil fon, burchakli minimalistik kartochka --- */
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx){background:#F5F5F5!important;animation:none!important}
+html:not([data-skin="premium"]):not([data-day]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx){background:#111214!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) body::before,html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) body::after,html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) .grid::before,html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) .grid::after,html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) .atlas,html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) .bgstars{display:none!important;background:none!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card{border-radius:4px!important;background:#fff!important;box-shadow:none!important;border:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html:not([data-skin="premium"]):not([data-day]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card{background:#1C1D21!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .pic,html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .pic img{border-radius:4px 4px 0 0!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .n{color:#111!important;font-weight:500!important;font-size:14px!important;line-height:1.3!important}
+html:not([data-skin="premium"]):not([data-day]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .n{color:#EDEDED!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .pr.pdd{display:flex!important;align-items:baseline;gap:5px;flex-wrap:wrap;row-gap:0;white-space:nowrap;min-width:0;overflow:hidden;color:#E02E24!important;font-weight:800!important;font-size:15px!important;letter-spacing:-.3px;column-gap:3px!important;row-gap:0!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .pr.pdd .scn{overflow:hidden;text-overflow:ellipsis;min-width:0;display:inline!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .pdd small.sm{font-size:11px!important;font-weight:700!important;margin-left:1px;color:inherit!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .pdd .scn{font-size:10px!important;letter-spacing:-.2px}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card>.pic{margin:0!important;width:100%!important;border-radius:4px 4px 0 0!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card{padding:0!important;overflow:hidden!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .in{padding:8px 6px 10px!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .pdd .scn,html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .pdd .scn{font-size:11px!important;font-weight:400!important;color:#9A9A9A!important;white-space:nowrap;background:none!important;padding:0!important;border:0!important}
+html:not([data-skin="premium"]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .grid{gap:6px!important;background:none!important;padding-left:6px!important;padding-right:6px!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .orow.pdd{display:flex!important;align-items:baseline!important;column-gap:4px!important;row-gap:0!important;justify-content:flex-start!important;flex-wrap:wrap!important;min-width:0}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .orow.pdd .pr{font-size:14.5px!important;letter-spacing:-.3px;white-space:nowrap}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .grid:not(.favg3){padding-left:10px!important;padding-right:10px!important;column-gap:8px!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .grid .card.oc .in{padding-left:8px!important;padding-right:8px!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .orow.pdd .scn{font-size:9.5px!important;letter-spacing:-.25px!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .card .orow.pdd .scn{overflow:hidden;text-overflow:ellipsis}
+/* --- Buyurtmalarim: 5 bo'lim bitta ekranda, burchakli --- */
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .hubt{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px!important;overflow:visible!important;padding:10px 12px 12px!important;position:static!important;flex-wrap:nowrap!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .hubt .hb{flex:none!important;width:auto!important;min-width:0!important;padding:10px 2px 8px!important;border-radius:6px!important;gap:6px!important;margin:0!important;transform:none!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .hubt .hb .hi{width:34px!important;height:34px!important;border-radius:6px!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .hubt .hb em{font-size:10px!important;line-height:1.15!important;min-height:23px;white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important;text-align:center;padding:0 1px!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .rfcart .rfhubb{display:none!important}
+/* --- Variant oynasi: deyarli tepagacha ochiladi (Pinduoduo kabi) --- */
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsp{top:6%!important;bottom:0!important;height:auto!important;max-height:none!important;border-radius:12px 12px 0 0!important}
+#vs .vstop{flex:none;display:flex;align-items:center;justify-content:center;position:relative;height:48px;font-size:15px;font-weight:700;border-bottom:1px solid rgba(127,127,127,.15)}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vstop .vsx{top:8px!important;right:10px!important;width:32px!important;height:32px!important;font-size:17px!important}
+#vs .vsa{flex:none;display:flex;align-items:center;gap:8px;width:100%;padding:11px 14px;border:0;border-bottom:1px solid rgba(127,127,127,.15);background:none;color:inherit;font:inherit;font-size:13px;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#vs .vsa .vsai{flex:none;font-size:16px}
+#vs .vsa .vsat{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+#vs .vsa.none .vsat{color:#E02E24}
+#vs .vsa .vsaa{flex:none;font-size:20px;opacity:.5;line-height:1}
+#vs .vsdl{flex:none;padding:8px 14px;font-size:13px;font-weight:600;background:#EAF7EE;color:#14903F}
+html[data-theme="dark"]:not([data-day]) #vs .vsdl{background:rgba(34,197,94,.12);color:#4ADE80}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsh{padding:12px 14px 8px!important;align-items:flex-start}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsimg{width:64px!important;height:64px!important;border-radius:6px!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs.hasci .vsimg{display:none!important}
+#vs .vspr{display:flex;align-items:center;justify-content:space-between;gap:10px}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsp1{color:#E02E24!important;font-size:22px!important;font-weight:800!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsq{margin:0!important;align-self:center!important;border-radius:4px!important;flex:none}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vss{font-size:13px!important;font-weight:500!important;color:inherit!important;opacity:.65;margin-top:4px}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vst{font-size:14px!important;font-weight:700!important;color:inherit!important;padding:14px 0 8px!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsg.vsgi{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsv.vsci{display:flex!important;flex-direction:column;padding:0!important;min-height:0!important;border-radius:6px!important;overflow:hidden;background:rgba(127,127,127,.10)!important;border:1.5px solid transparent!important;text-align:center}
+#vs .vsct{position:relative;display:block;width:100%;aspect-ratio:1/1;overflow:hidden;background:rgba(127,127,127,.12)}
+#vs .vsct>div,#vs .vsct img{width:100%!important;height:100%!important;object-fit:cover;display:block;border-radius:0!important}
+#vs .vscz{position:absolute;left:4px;top:4px;width:22px;height:22px;border-radius:4px;background:rgba(0,0,0,.45);color:#fff;font-size:13px;line-height:22px;text-align:center;z-index:2}
+#vs .vscn{display:block;padding:6px 4px 7px;font-size:12.5px;font-weight:500;line-height:1.2;word-break:break-word}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsg.vsgp{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsg.vsgp .vsv{flex:none!important;min-height:36px!important;padding:8px 14px!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsv{border-radius:6px!important;background:rgba(127,127,127,.10)!important;border:1.5px solid transparent!important;color:inherit!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsv[aria-pressed="true"]{border-color:#E02E24!important;background:rgba(224,46,36,.08)!important;color:#E02E24!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsmu{color:#E02E24!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsgo{border-radius:8px!important}
+/* --- To'lov va boshqa ichki oynalar: tepadan boshlanadi --- */
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #sh.open:not(.full) .sp{min-height:72vh}
+html[data-day]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsp{background:#fff!important;color:#151515!important}
+html:not([data-day]):root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsp{background:#17181D!important;color:#ECECEC!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsp .vsx,html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsq button,html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsq b,html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vscn,html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsn,html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsck{color:inherit!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsq{border-color:rgba(127,127,127,.35)!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsx{background:rgba(127,127,127,.15)!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsc{border-top:0!important}
+html:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #vs .vsf{border-top:1px solid rgba(127,127,127,.15)}
+/* Savat (yangi dizayn): boshqa bo'limlardek oddiy sahifa — sarlavha + bo'limlar tepada, alohida "oyna" ko'rinishi yo'q */
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .rfhub-h{display:block!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .hubt{display:grid!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .rfch .rfback,html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .rfch .rfhubb{display:none!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .rfch{justify-content:flex-start!important;padding-left:20px!important;padding-right:20px!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .rfch b{font-size:20px!important;text-align:left!important;flex:1;margin:0!important}
+html[data-skin="premium"]:root:root:root:root:root:root:root:root:not(#zz):not(#zy):not(#zx) #app .rfsheet{border-radius:8px!important;margin:12px 12px 0!important}
+</style>
+<script id="sb-v916-js">
+/* v9.16: oynalar tarixi — "Orqaga" oldingi oynaga qaytaradi (bosh menyuga emas) */
+(function(){
+var st=[],cur=null,nopush=0;
+function key(n,a){if(n==="product")return n+":"+a[0];try{return n+":"+JSON.stringify([].slice.call(a))}catch(e){return n}}
+["product","delivery","payMethod","payment"].forEach(function(n){var f=window[n];if(typeof f!=="function")return;window[n]=function(){var args=arguments;window._shNext={k:key(n,args),fn:function(){return window[n].apply(null,args)}};return f.apply(this,args)}});
+var o=window.openSheet;
+window.openSheet=function(html){var sh=$("sh"),isOpen=sh.classList.contains("open"),nx=window._shNext;window._shNext=null;
+  if(!isOpen)st.length=0;
+  else if(!nopush&&cur&&cur.fn&&(!nx||nx.k!==cur.k)){cur.full=sh.classList.contains("full");st.push(cur);if(st.length>12)st.shift();if(cur.full)window._fullSh=1}
+  cur=nx||{k:"x",fn:null};nopush=0;return o.apply(this,arguments)};
+var c0=window.closeSheet;window.closeSheet=function(){st.length=0;cur=null;return c0.apply(this,arguments)};
+var cs0=window.closeSheetSlow;if(cs0)window.closeSheetSlow=function(){st.length=0;cur=null;return cs0.apply(this,arguments)};
+function back(){var prev=st.pop();if(!prev)return false;try{clearInterval(S.iv)}catch(e){}nopush=1;if(prev.full)window._fullSh=1;prev.fn();
+  var sp=$("sp");if(sp)sp.scrollTop=0;
+  if(window._dlFor){var d=window._dlFor;window._dlFor=null;setTimeout(function(){if(window.vsOpen)vsOpen(d.i,d.mode,d)},260)}
+  return true}
+window.sbSheetBack=back;
+window.addEventListener("click",function(e){var t=e.target;if(!t||!t.closest)return;
+  if(t.closest('[data-a="shclose"]')&&st.length){e.preventDefault();e.stopImmediatePropagation();back();return}
+  if(t.closest('[data-a="dsave"]')&&(st.length||window._dlFor)){e.preventDefault();e.stopImmediatePropagation();
+    var bn=$("bn"),b=bn?bn.value.trim():"";if(!S.dr||b.length<3){var de=$("de");if(de)de.textContent="Viloyatni tanlang va filialni xaritadan tanlang.";return}
+    var dl={r:S.dr,b:b};try{if(UZP.cur&&UZP.cur.r===S.dr){dl.i=UZP.cur.idx;dl.lat=UZP.cur.lat;dl.lng=UZP.cur.lng}}catch(x){}
+    if(window._dlFor){sbPdlSet(window._dlFor.i,dl);if(!S.dl)S.dl=dl}else S.dl=dl;
+    save();try{render()}catch(x){}if(!back())closeSheet();return}
+  if(t.closest('[data-a="sendcheck"]')&&S.only!=null&&S.cart[S.only]&&S.cart[S.only].dl&&S.chekImg){var keep=S.dl;S.dl=S.cart[S.only].dl;setTimeout(function(){S.dl=keep;try{save()}catch(x){}},0)}
+},true);
+/* AI bot olib tashlandi */
+try{S.ai=false}catch(e){}
+/* Jarayon: buyurtma holati Telegramda o'zgarsa saytda ham yangilanadi */
+setInterval(function(){try{if(document.hidden||!S.sess||!S.sess.token)return;if(S.tab==="cart"||S.tab==="orders")loadMyOrders()}catch(e){}},20000);
+document.addEventListener("visibilitychange",function(){try{if(!document.hidden&&S.sess&&S.sess.token)loadMyOrders()}catch(e){}});
+var _ld=window.loadMyOrders;if(_ld)window.loadMyOrders=function(){var r=_ld.apply(this,arguments);return r};
+try{if(typeof render==="function")render()}catch(e){}
 })();
 </script>
 </body>
